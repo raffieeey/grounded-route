@@ -39,8 +39,8 @@ Grounded Route uses WebMCP tools to let an agent operate on that shared artifact
 
 ## Project status
 
-- **Stage:** TDD v0.2, independently reviewed by Sol; implementation is blocked on the M0 fixture-freeze gate.
-- **Repository visibility:** private during design/build; it must become public with a visible license before WebMCP Challenge submission.
+- **Stage:** M0 fixture, human-first workspace, WebMCP adapter, native local-Chrome execution proof, and OSM visible attribution are implemented and verified on private `main`.
+- **Repository visibility:** private; public release is blocked by the unresolved DBKL exact-excerpt permission/removal/legal path. It must not become public until that separate gate is cleared and the user explicitly approves the transition.
 - **Canonical design:** [docs/TECHNICAL_DESIGN.md](docs/TECHNICAL_DESIGN.md)
 - **Independent design review:** [docs/reviews/sol-tdd-review.md](docs/reviews/sol-tdd-review.md)
 - **Data contract:** [data/README.md](data/README.md)
