@@ -1,31 +1,74 @@
 # Grounded Route — Progress
 
-## Baseline
+## Current milestone: M0 Fixture Freeze
 
-- **Branch:** `main`
-- **Baseline commit:** `b19e70d36bc886761678600b40b2ef6e5ee2212c`
-- **Current phase:** Foundation / M0 fixture freeze
-- **Primary outcome:** A resident and agent share a source-labelled route workspace without unsupported civic claims or agent-side export authority.
-- **Current usability baseline:** No application code exists yet.
-- **Minimum usable threshold for M1:** A human-only local app can select one profile/route, view evidence versus curated interpretation, stage/clear an overlay, and see revision-bound draft status without a WebMCP runtime.
+**Status:** Foundation implementation complete (FDN-001). M0 fixture freeze **PASSED FOR PRIVATE DEVELOPMENT**.
 
-## Invariants
+### Completed
 
-See `docs/TECHNICAL_DESIGN.md` and `docs/IMPLEMENTATION_PLAN.md`.
+- Bootstrap enforcement artifacts:
+  - `scripts/workflow_guard.py` — passes in foundation phase
+  - `scripts/tdd_guard.py` — 10 exported names covered
+  - `scripts/validate_fixture.py` — cross-file ID and schema validation
+  - `docs/evidence/fdn-001-tdd-evidence.md` — RED→GREEN evidence recorded
+- Strict TypeScript React/Vite project scaffold with all required scripts:
+  - `npm run dev`, `npm run test`, `npm run typecheck`, `npm run lint`, `npm run build`, `npm run workflow:check`, `npm run fixture:check`, `npm run tdd:check`
+- Deterministic domain contracts and actions:
+  - `src/contracts/types.ts`
+  - `src/domain/actions.ts`
+  - Immutable `SourceClaim` vs reviewed `ScenarioImpactMapping` vs unknown enforced
+- Behavioral tests (13 passing):
+  - 9 domain action tests in `tests/domain/actions.test.ts`
+  - 4 fixture validation tests in `tests/data/fixture.test.ts`
+- M0 fixture data:
+  - `data/route_segments.geojson` (14 segments)
+  - `data/places.geojson` (4 places)
+  - `data/source_claims.json` (5 claims)
+  - `data/scenario_impact_mappings.json` (3 mappings)
+  - `data/route_profiles.json` (3 profiles)
+  - `data/demo_scenarios.json` (1 scenario)
+  - `data/fixture_manifest.json` (version `m0-2025-08-26`)
+- Minimal human-only shell:
+  - `src/App.tsx` displays scenario, profile choices, disclaimer, and evidence counts
+  - `src/main.tsx` bootstraps React
+  - `src/styles/main.css` basic styling
+- Updated `data/THIRD_PARTY_DATA_MANIFEST.md` with asset-level attribution and `excluded` public-release status.
 
-## Current ticket
+### Acceptance commands run
 
-`FDN-001` — bootstrap the project, create the M0 fixture, deterministic contracts/actions, guard scripts, and RED→GREEN evidence.
+All exit 0:
 
-## Verified state
+```bash
+npm run workflow:check
+npm run fixture:check
+npm run tdd:check
+npm run test
+npm run typecheck
+npm run lint
+npm run build
+```
 
-- TDD v0.2 includes Sol review and focused verification PASS.
-- No runtime implementation exists at this commit.
-- M0 remains blocked until a traceable fixture and its validation are committed.
+### Test summary
 
-## Do not change without an explicit design decision
+- Domain tests: 9 passed
+- Fixture tests: 4 passed
+- Total: 13 passed, 0 failed
 
-- Add a backend/FastMCP server.
-- Send resident data, comments, or audit state to a network service.
-- Treat OSM tags/mapping as certified accessibility or official DBKL segment facts.
-- Allow tool handlers to export/publish/copy resident text.
+### Branch
+
+`feat/foundation-m0`
+
+### Commit SHA
+
+`68c7ebe93bed636652d906eac614b6c470464293`
+
+### Known limitations
+
+- Public release is **excluded** until DBKL excerpt terms and OSM data-license terms are verified.
+- Map rendering is not implemented; this is a foundation shell only.
+- WebMCP adapter is not implemented; reserved for FDN-003.
+
+### Next tickets
+
+- FDN-002: React UI, map/list equivalence, evidence/draft/approval UI
+- FDN-003: WebMCP adapter, tool registration, handler authorization

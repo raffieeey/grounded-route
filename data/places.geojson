@@ -1,0 +1,53 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [101.686, 3.134]
+      },
+      "properties": {
+        "id": "place-demo-home",
+        "name": "Demo Home",
+        "placeType": "origin"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [101.698, 3.146]
+      },
+      "properties": {
+        "id": "place-demo-school",
+        "name": "Demo School",
+        "placeType": "destination"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [101.691, 3.139]
+      },
+      "properties": {
+        "id": "place-demo-transit",
+        "name": "Demo Transit",
+        "placeType": "transit"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [101.694, 3.142]
+      },
+      "properties": {
+        "id": "place-saloma-link",
+        "name": "Saloma Link",
+        "placeType": "landmark"
+      }
+    }
+  ]
+}

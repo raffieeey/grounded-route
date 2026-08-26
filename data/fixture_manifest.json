@@ -1,0 +1,35 @@
+{
+  "fixtureVersion": "m0-2025-08-26",
+  "scenarioId": "saloma-link-active-mobility-demo",
+  "areaName": "KL Central / Saloma Link illustrative corridor",
+  "reviewer": "M0 Fixture Reviewer",
+  "reviewDate": "2025-08-26",
+  "sourceClaimIds": ["sc-01", "sc-02", "sc-03", "sc-04", "sc-05"],
+  "segmentIds": [
+    "seg-kl-central-to-jalan-travers",
+    "seg-jalan-travers-crossing",
+    "seg-jalan-travers-to-jalan-tun-sambanthan",
+    "seg-tun-sambanthan-plaza-crossing",
+    "seg-plaza-to-saloma-south",
+    "seg-saloma-link-bridge",
+    "seg-saloma-north-to-jalan-ampang",
+    "seg-jalan-ampang-crossing-east",
+    "seg-jalan-ampang-to-demo-school",
+    "seg-demo-school-frontage",
+    "seg-cyclist-bypass-west",
+    "seg-saloma-elevator-ramp",
+    "seg-parent-stroller-route",
+    "seg-wheelchair-alternate"
+  ],
+  "mappingIds": ["map-01", "map-02", "map-03"],
+  "profileIds": ["profile-wheelchair", "profile-parent", "profile-cyclist"],
+  "placeIds": ["place-demo-home", "place-demo-school", "place-demo-transit", "place-saloma-link"],
+  "validationCommand": "python3 scripts/validate_fixture.py",
+  "knownUncertainties": [
+    "Exact implementation timing and segment boundaries are unverified",
+    "OSM-derived/demo geometry is illustrative and not field-surveyed",
+    "Accessibility retrofit status of Saloma Link is unknown",
+    "Public-release terms for DBKL excerpts and OSM geometry are pending"
+  ],
+  "publicReleaseStatus": "excluded"
+}
