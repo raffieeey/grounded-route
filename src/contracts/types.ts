@@ -265,6 +265,48 @@ export interface AgentPort {
 }
 
 /**
+ * Human-UI-facing port.
+ * Same reversible actions as AgentPort but audited as human.
+ * No approval or export capability.
+ */
+export interface HumanPort {
+  createInitialState: () => DomainState;
+  selectScenario: (state: DomainState, scenarioId: string) => Result<DomainState>;
+  selectProfile: (state: DomainState, profileId: string) => Result<DomainState>;
+  setActiveSegments: (
+    state: DomainState,
+    segmentIds: string[],
+    expectedRevision: number
+  ) => Result<DomainState>;
+  stageMapping: (
+    state: DomainState,
+    mappingId: string,
+    expectedRevision: number
+  ) => Result<DomainState>;
+  removeStagedMapping: (
+    state: DomainState,
+    mappingId: string,
+    expectedRevision: number
+  ) => Result<DomainState>;
+  createDraft: (
+    state: DomainState,
+    text: string,
+    mappingIds: string[],
+    expectedRevision: number
+  ) => Result<DomainState>;
+  createStructuredDraft: (
+    state: DomainState,
+    input: StructuredDraftInput,
+    expectedRevision: number
+  ) => Result<DomainState>;
+  clearStagedMappings: (
+    state: DomainState,
+    expectedRevision: number
+  ) => Result<DomainState>;
+  isApprovalValid: (state: DomainState) => boolean;
+}
+
+/**
  * Resident-UI-facing port.
  * Owns explicit current-revision review transition and local export payload.
  */

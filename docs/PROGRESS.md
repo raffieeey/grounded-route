@@ -1,8 +1,8 @@
 # Grounded Route — Progress
 
-## Current milestone: M3 WebMCP Draft Loop
+## Current milestone: M4 Browser and integration proof
 
-**Status:** M0 fixture freeze and the headless browser WebMCP adapter are accepted for private development. Human-first React UI wiring, map/list equivalence, and resident approval/export UI remain next.
+**Status:** FDN-002 human-first React workspace, local map/list equivalence, resident draft/approval/export controls, and the feature-gated WebMCP host are accepted on a private integration candidate. Merge/push to `main` is pending final integration gates. A real supported browser `document.modelContext` host remains unproven.
 
 ### Completed
 
@@ -66,13 +66,13 @@ The known foundation feature commit is `957a2e858f9705a1a51deca44b60dfa941f35a83
 ### Known limitations
 
 - Public release is **excluded** until DBKL excerpt terms and visible OSM attribution are verified and implemented.
-- Map rendering, canonical keyboard-first route list, evidence-board UI, and resident approval/export UI are not implemented yet.
-- The WebMCP adapter is headless and independently accepted, but still needs React bridge wiring and a live supported ChatGPT/Chrome WebMCP proof.
+- No real supported browser `document.modelContext` host has executed the registered WebMCP tools; the lifecycle contract is verified with a local fake host.
+- E2E verifies current-approval export readiness and zero external requests, not downloaded Blob bytes.
 
 ### Next tickets
 
-- FDN-002: human-first React UI, local map/list equivalence, evidence/draft/approval/export UI, and adapter bootstrap.
-- M4/M5: browser visual/keyboard/egress evidence, live WebMCP call proof, data terms/attribution, static deployment, and later public submission transition.
+- M4: live supported-browser WebMCP execution proof and any required host-specific compatibility adjustment.
+- M5: DBKL/OSM public-release terms, visible attribution, static deployment, and later user-approved public submission transition.
 
 ## Spark frozen-blocker repair (FDN-001 focused)
 
@@ -128,4 +128,31 @@ npm run build
 
 - 68 tests passed: 27 domain, 23 WebMCP adapter, 9 evaluation, and 9 fixture tests.
 - `workflow:check`, `fixture:check`, `tdd:check`, `typecheck`, `lint`, and `build` all pass.
-- Claim ceiling: no real browser `document.modelContext` invocation or React host UI has been exercised yet.
+- Claim ceiling: React host wiring, deterministic fake-host WebMCP lifecycle, and human-first browser flows are verified; a real browser `document.modelContext` invocation remains unproven.
+
+## Human-first workspace and visual accessibility (FDN-002)
+
+**Status:** Accepted for private integration.
+
+### Completed
+
+- Human-only React workspace that deliberately works without `document.modelContext`.
+- Fixture-bound `humanPort` for human route/profile/overlay/draft actions; resident-only approval and revision-bound export remain separated from the agent surface.
+- Keyboard-first canonical route list, local illustrative SVG map, evidence board, structured draft/review panel, audit trail, and direct human export path.
+- React `WorkspaceBridge` ties feature-gated WebMCP mutations to the same rendered `DomainState`.
+- StrictMode lifecycle regression coverage: exactly six raw WebMCP registrations; no re-registration after resident state updates; cleanup aborts active registrations.
+- Mobile accessibility visual repair: 44px computed minimum button height at 390×844, label halo/stagger layout, mobile profile grid, and aligned audit rows.
+- Evidence: `docs/evidence/fdn-002-frontend-evidence.md` and `docs/evidence/fdn-002-visual-qa.md`.
+- Independent reviews: `docs/reviews/deepseek-flash-frontend-final-review.md` and `docs/reviews/deepseek-flash-visual-final-review.md` both **PASS**.
+
+### Acceptance evidence
+
+- 91 tests passed across 8 test files.
+- Desktop and Mobile Chrome Playwright flow: 4 passed.
+- At 390×844, a real production-build Playwright DOM probe found 16 visible buttons; none was under 44px high.
+- Final screenshot QA found no visible route-label overlap, clipping, or mobile overflow.
+
+### Claim ceiling
+
+- The WebMCP tool lifecycle is verified with a local fake `document.modelContext`; a real supported browser host has not yet invoked the registered tools.
+- Export readiness and zero external requests are verified; Blob download bytes are not independently asserted.

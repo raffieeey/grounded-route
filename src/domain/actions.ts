@@ -9,6 +9,7 @@ import type {
   DraftStatement,
   StructuredDraftInput,
   AgentPort,
+  HumanPort,
   ResidentPort,
 } from "@/contracts/types.ts";
 
@@ -17,6 +18,7 @@ import sourceClaimsData from "../../data/source_claims.json";
 
 interface GroundedRouteController {
   agentPort: AgentPort;
+  humanPort: HumanPort;
   residentPort: ResidentPort;
 }
 
@@ -534,6 +536,46 @@ export function createGroundedRouteController(): GroundedRouteController {
         clearStagedMappingsWithActor(state, expectedRevision, "agent-tool"),
       isApprovalValid,
     },
+    humanPort: {
+      createInitialState,
+      selectScenario: (state, scenarioId) =>
+        selectScenario(state, scenarioId, "human"),
+      selectProfile: (state, profileId) =>
+        selectProfile(state, profileId, "human"),
+      setActiveSegments: (state, segmentIds, expectedRevision) =>
+        setActiveSegments(state, segmentIds, expectedRevision, "human"),
+      stageMapping: (state, mappingId, expectedRevision) =>
+        stageMappingWithAllowedSet(
+          state,
+          mappingId,
+          expectedRevision,
+          mappingIdsForScenario(state.route.scenarioId),
+          "human"
+        ),
+      removeStagedMapping: (state, mappingId, expectedRevision) =>
+        removeStagedMapping(state, mappingId, expectedRevision, "human"),
+      createDraft: (state, text, mappingIds, expectedRevision) =>
+        createDraftWithAllowedSet(
+          state,
+          text,
+          mappingIds,
+          expectedRevision,
+          mappingIdsForScenario(state.route.scenarioId),
+          "human"
+        ),
+      createStructuredDraft: (state, input, expectedRevision) =>
+        createStructuredDraftWithAllowedSet(
+          state,
+          input,
+          expectedRevision,
+          mappingIdsForScenario(state.route.scenarioId),
+          sourceClaimIdsForScenario(state.route.scenarioId),
+          "human"
+        ),
+      clearStagedMappings: (state, expectedRevision) =>
+        clearStagedMappingsWithActor(state, expectedRevision, "human"),
+      isApprovalValid,
+    },
     residentPort: {
       approveDraft,
       requestExport: residentRequestExport,
@@ -541,4 +583,4 @@ export function createGroundedRouteController(): GroundedRouteController {
   };
 }
 
-export const { agentPort, residentPort } = createGroundedRouteController();
+export const { agentPort, humanPort, residentPort } = createGroundedRouteController();
