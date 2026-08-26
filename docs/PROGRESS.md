@@ -1,8 +1,8 @@
 # Grounded Route — Progress
 
-## Current milestone: M0 Fixture Freeze
+## Current milestone: M3 WebMCP Draft Loop
 
-**Status:** Foundation implementation complete (FDN-001). M0 fixture freeze **PASSED FOR PRIVATE DEVELOPMENT**.
+**Status:** M0 fixture freeze and the headless browser WebMCP adapter are accepted for private development. Human-first React UI wiring, map/list equivalence, and resident approval/export UI remain next.
 
 ### Completed
 
@@ -65,14 +65,14 @@ The known foundation feature commit is `957a2e858f9705a1a51deca44b60dfa941f35a83
 
 ### Known limitations
 
-- Public release is **excluded** until DBKL excerpt terms and OSM data-license terms are verified.
-- Map rendering is not implemented; this is a foundation shell only.
-- WebMCP adapter is not implemented; reserved for FDN-003.
+- Public release is **excluded** until DBKL excerpt terms and visible OSM attribution are verified and implemented.
+- Map rendering, canonical keyboard-first route list, evidence-board UI, and resident approval/export UI are not implemented yet.
+- The WebMCP adapter is headless and independently accepted, but still needs React bridge wiring and a live supported ChatGPT/Chrome WebMCP proof.
 
 ### Next tickets
 
-- FDN-002: React UI, map/list equivalence, evidence/draft/approval UI
-- FDN-003: WebMCP adapter, tool registration, handler authorization
+- FDN-002: human-first React UI, local map/list equivalence, evidence/draft/approval/export UI, and adapter bootstrap.
+- M4/M5: browser visual/keyboard/egress evidence, live WebMCP call proof, data terms/attribution, static deployment, and later public submission transition.
 
 ## Spark frozen-blocker repair (FDN-001 focused)
 
@@ -108,3 +108,24 @@ npm run typecheck
 npm run lint
 npm run build
 ```
+
+## WebMCP adapter and structured draft loop (FDN-003)
+
+**Status:** Accepted for private development as a headless browser adapter.
+
+### Completed
+
+- Browser-native, feature-gated `document.modelContext.registerTool(...)` adapter at `src/webmcp/**`.
+- Exactly six narrow tools: context, evidence lookup, stage/clear overlay, structured draft, and review status. No agent approval/export/publication/copy/download tool and no cross-origin exposure.
+- Typed UI bridge for future React state wiring; successful agent mutations are visible state replacements rather than DOM mutations.
+- Fixture-bound source/mapping authorization, revision-safe handlers, and structured `DraftStatement` provenance classes.
+- Controlled audit actors: direct/resident path actions are `human`; WebMCP actions are `agent-tool`.
+- Deterministic evaluation fixture/test coverage for `EV-01` through `EV-08`.
+- Honest RED→GREEN evidence: `docs/evidence/fdn-003-webmcp-evidence.md`.
+- Independent DeepSeek V4 Pro review **PASS**: `docs/reviews/deepseek-webmcp-review.md`.
+
+### Acceptance evidence
+
+- 68 tests passed: 27 domain, 23 WebMCP adapter, 9 evaluation, and 9 fixture tests.
+- `workflow:check`, `fixture:check`, `tdd:check`, `typecheck`, `lint`, and `build` all pass.
+- Claim ceiling: no real browser `document.modelContext` invocation or React host UI has been exercised yet.

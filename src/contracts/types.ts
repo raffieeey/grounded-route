@@ -114,10 +114,60 @@ export interface RouteState {
   revision: number;
 }
 
+/* ---------- Structured draft statements (FDN-003) ---------- */
+
+export type DraftStatementClass =
+  | "source-quote"
+  | "curated-interpretation"
+  | "resident-position"
+  | "open-question";
+
+export interface DraftStatementBase {
+  id: string;
+  statementClass: DraftStatementClass;
+  text: string;
+}
+
+export interface SourceQuoteStatement extends DraftStatementBase {
+  statementClass: "source-quote";
+  sourceClaimId: string;
+}
+
+export interface CuratedInterpretationStatement extends DraftStatementBase {
+  statementClass: "curated-interpretation";
+  mappingId: string;
+  rationale: string;
+  uncertainty: string;
+}
+
+export interface ResidentPositionStatement extends DraftStatementBase {
+  statementClass: "resident-position";
+  requestedChange: string;
+}
+
+export interface OpenQuestionStatement extends DraftStatementBase {
+  statementClass: "open-question";
+}
+
+export type DraftStatement =
+  | SourceQuoteStatement
+  | CuratedInterpretationStatement
+  | ResidentPositionStatement
+  | OpenQuestionStatement;
+
+export interface StructuredDraftInput {
+  mappingIds: string[];
+  sourceClaimIds: string[];
+  userPosition: string;
+  requestedChange: string;
+  openQuestions: string[];
+}
+
 export interface DraftComment {
   id: string;
   text: string;
   mappingIds: string[];
+  statements: DraftStatement[];
   createdAt: string;
   revision: number;
 }
@@ -136,6 +186,8 @@ export interface DomainState {
   auditLog: AuditEvent[];
 }
 
+export type AuditActor = "human" | "agent-tool";
+
 export interface AuditEvent {
   eventId: string;
   timestamp: string;
@@ -143,6 +195,7 @@ export interface AuditEvent {
   payload: Record<string, unknown>;
   revisionBefore: number;
   revisionAfter: number;
+  actor: AuditActor;
 }
 
 /* ---------- Structured results ---------- */
@@ -197,6 +250,15 @@ export interface AgentPort {
     state: DomainState,
     text: string,
     mappingIds: string[],
+    expectedRevision: number
+  ) => Result<DomainState>;
+  createStructuredDraft: (
+    state: DomainState,
+    input: StructuredDraftInput,
+    expectedRevision: number
+  ) => Result<DomainState>;
+  clearStagedMappings: (
+    state: DomainState,
     expectedRevision: number
   ) => Result<DomainState>;
   isApprovalValid: (state: DomainState) => boolean;
