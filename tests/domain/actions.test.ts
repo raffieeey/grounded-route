@@ -242,3 +242,143 @@ describe("domain actions", () => {
     expect(unwrapErr(exportResult).errorCode).toBe("PRECONDITION_FAILED");
   });
 });
+
+describe("domain structured draft + audit actor (FDN-003)", () => {
+  it("raw actions audit as human; agent-port wrappers audit as agent-tool", () => {
+    const state = createInitialState();
+    const raw = unwrap(selectScenario(state, FIXTURE_SCENARIO_ID));
+    expect(raw.auditLog[raw.auditLog.length - 1].actor).toBe("human");
+    const wrapped = unwrap(agentPort.selectProfile(raw, "profile-wheelchair"));
+    expect(wrapped.auditLog[wrapped.auditLog.length - 1].actor).toBe("agent-tool");
+  });
+
+  it("agentPort.stageMapping audits as agent-tool; raw setActiveSegments audits as human", () => {
+    const state = createInitialState();
+    let st = unwrap(selectScenario(state, FIXTURE_SCENARIO_ID));
+    st = unwrap(agentPort.stageMapping(st, FIXTURE_MAPPING_ID, st.route.revision));
+    expect(st.auditLog[st.auditLog.length - 1].actor).toBe("agent-tool");
+    st = unwrap(setActiveSegments(st, ["seg-01"], st.route.revision));
+    expect(st.auditLog[st.auditLog.length - 1].actor).toBe("human");
+  });
+
+  it("agentPort.createStructuredDraft builds labelled statements with support IDs and curated uncertainty", () => {
+    const state = createInitialState();
+    const st = unwrap(selectScenario(state, FIXTURE_SCENARIO_ID));
+    const result = agentPort.createStructuredDraft(
+      st,
+      {
+        mappingIds: [FIXTURE_MAPPING_ID],
+        sourceClaimIds: ["sc-01", "sc-05"],
+        userPosition: "step-free route needed",
+        requestedChange: "add ramp",
+        openQuestions: ["elevator maintenance?"],
+      },
+      st.route.revision
+    );
+    expect(result.success).toBe(true);
+    const next = unwrap(result);
+    expect(next.draft).not.toBeNull();
+    const statements = next.draft!.statements;
+    const classes = statements.map((s) => s.statementClass);
+    expect(classes).toEqual(expect.arrayContaining(["source-quote", "curated-interpretation", "resident-position", "open-question"]));
+    const curated = statements.find((s) => s.statementClass === "curated-interpretation")!;
+    expect(curated.mappingId).toBe(FIXTURE_MAPPING_ID);
+    expect(curated.rationale.length).toBeGreaterThan(0);
+    expect(curated.uncertainty.length).toBeGreaterThan(0);
+    const quote = statements.find((s) => s.statementClass === "source-quote")!;
+    expect(quote.sourceClaimId).toMatch(/^sc-/);
+    const position = statements.find((s) => s.statementClass === "resident-position")!;
+    expect(position.requestedChange).toContain("ramp");
+    const last = next.auditLog[next.auditLog.length - 1];
+    expect(last.action).toBe("createStructuredDraft");
+    expect(last.actor).toBe("agent-tool");
+    expect(next.approval).toBeNull();
+  });
+
+  it("createStructuredDraft rejects unknown mapping id without mutation", () => {
+    const state = createInitialState();
+    const st = unwrap(selectScenario(state, FIXTURE_SCENARIO_ID));
+    const before = st.route.revision;
+    const beforeAudit = st.auditLog.length;
+    const result = agentPort.createStructuredDraft(
+      st,
+      { mappingIds: ["map-unknown"], sourceClaimIds: [], userPosition: "p", requestedChange: "c", openQuestions: [] },
+      st.route.revision
+    );
+    expect(result.success).toBe(false);
+    const err = unwrapErr(result);
+    expect(err.errorCode).toBe("PRECONDITION_FAILED");
+    expect(st.route.revision).toBe(before);
+    expect(st.auditLog.length).toBe(beforeAudit);
+  });
+
+  it("createStructuredDraft rejects cross-scenario source claims without mutation", () => {
+    const state = createInitialState();
+    const st = unwrap(selectScenario(state, "scenario-other"));
+    const beforeAudit = st.auditLog.length;
+    const result = agentPort.createStructuredDraft(
+      st,
+      { mappingIds: [], sourceClaimIds: ["sc-01"], userPosition: "p", requestedChange: "c", openQuestions: [] },
+      st.route.revision
+    );
+    expect(result.success).toBe(false);
+    expect(unwrapErr(result).errorCode).toBe("PRECONDITION_FAILED");
+    expect(st.auditLog.length).toBe(beforeAudit);
+  });
+
+  it("createStructuredDraft rejects stale revision without audit success", () => {
+    const state = createInitialState();
+    const st = unwrap(selectScenario(state, FIXTURE_SCENARIO_ID));
+    const beforeAudit = st.auditLog.length;
+    const result = agentPort.createStructuredDraft(
+      st,
+      { mappingIds: [], sourceClaimIds: [], userPosition: "p", requestedChange: "c", openQuestions: [] },
+      st.route.revision + 999
+    );
+    expect(result.success).toBe(false);
+    expect(unwrapErr(result).errorCode).toBe("STALE_CONTEXT");
+    expect(st.auditLog.length).toBe(beforeAudit);
+  });
+
+  it("no direct source quote can become an impact mapping via structured draft", () => {
+    const state = createInitialState();
+    const st = unwrap(selectScenario(state, FIXTURE_SCENARIO_ID));
+    const result = agentPort.createStructuredDraft(
+      st,
+      { mappingIds: ["sc-01"], sourceClaimIds: [], userPosition: "p", requestedChange: "c", openQuestions: [] },
+      st.route.revision
+    );
+    expect(result.success).toBe(false);
+    expect(unwrapErr(result).errorCode).toBe("PRECONDITION_FAILED");
+  });
+
+  it("agentPort.clearStagedMappings clears all and audits as agent-tool", () => {
+    const state = createInitialState();
+    let st = unwrap(selectScenario(state, FIXTURE_SCENARIO_ID));
+    st = unwrap(agentPort.stageMapping(st, FIXTURE_MAPPING_ID, st.route.revision));
+    const result = agentPort.clearStagedMappings(st, st.route.revision);
+    expect(result.success).toBe(true);
+    const next = unwrap(result);
+    expect(next.route.stagedMappingIds).toEqual([]);
+    expect(next.auditLog[next.auditLog.length - 1].actor).toBe("agent-tool");
+    expect(next.approval).toBeNull();
+  });
+
+  it("agentPort.clearStagedMappings fails PRECONDITION_FAILED when nothing is staged", () => {
+    const state = createInitialState();
+    const st = unwrap(selectScenario(state, FIXTURE_SCENARIO_ID));
+    const beforeAudit = st.auditLog.length;
+    const result = agentPort.clearStagedMappings(st, st.route.revision);
+    expect(result.success).toBe(false);
+    expect(unwrapErr(result).errorCode).toBe("PRECONDITION_FAILED");
+    expect(st.auditLog.length).toBe(beforeAudit);
+  });
+
+  it("agentPort exposes createStructuredDraft and clearStagedMappings but still no approve/export", () => {
+    expect(typeof agentPort.createStructuredDraft).toBe("function");
+    expect(typeof agentPort.clearStagedMappings).toBe("function");
+    const ap = agentPort as unknown as Record<string, unknown>;
+    expect(ap.approveDraft).toBeUndefined();
+    expect(ap.requestExport).toBeUndefined();
+  });
+});

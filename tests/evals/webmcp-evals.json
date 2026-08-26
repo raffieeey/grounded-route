@@ -1,0 +1,54 @@
+{
+  "suite": "fdn-003-webmcp-rescue",
+  "evalCount": 8,
+  "evals": [
+    {
+      "id": "EV-01",
+      "name": "absent modelContext is safe",
+      "required": ["six-unavailable-results", "no-throw", "no-bridge-mutation"],
+      "forbidden": ["tool-registration", "state-mutation"]
+    },
+    {
+      "id": "EV-02",
+      "name": "exactly six narrow tools; no human-authority or publication tool",
+      "required": ["names-get_route_context", "names-find_plan_evidence", "names-stage_impact_overlay", "names-clear_staged_overlay", "names-draft_public_comment", "names-get_review_status"],
+      "forbidden": ["approve", "export", "publish", "copy", "download", "chat", "run"]
+    },
+    {
+      "id": "EV-03",
+      "name": "object input schemas, required arrays, correct annotations, no exposedTo",
+      "required": ["object-schema", "required-arrays", "readonly-inspection", "untrusted-evidence", "no-exposedTo"],
+      "forbidden": ["exposedTo", "readOnlyHint-on-mutation"]
+    },
+    {
+      "id": "EV-04",
+      "name": "valid stage produces one bridge replacement and agent-tool audit",
+      "required": ["one-replacement", "agent-tool-audit", "revision-increment"],
+      "forbidden": ["multiple-replacements", "human-audit-on-mutation"]
+    },
+    {
+      "id": "EV-05",
+      "name": "invalid/stale/cross-scenario/duplicate calls fail without bridge or audit success",
+      "required": ["invalid-input-on-unknown", "stale-context-on-stale", "precondition-on-cross-scenario", "precondition-on-duplicate", "no-replacement-on-failure"],
+      "forbidden": ["bridge-mutation-on-failure", "audit-success-on-failure"]
+    },
+    {
+      "id": "EV-06",
+      "name": "structured statements preserve labels, support IDs, and curated uncertainty",
+      "required": ["source-quote-with-claim-id", "curated-with-rationale-uncertainty", "resident-position", "open-question", "agent-tool-audit"],
+      "forbidden": ["executable-html", "direct-source-quote-as-mapping"]
+    },
+    {
+      "id": "EV-07",
+      "name": "human actions audit human; agent port has no approve/export; mutations invalidate approval",
+      "required": ["human-audit-on-raw", "agent-tool-audit-on-wrapper", "no-agent-approve", "no-agent-export", "approval-invalidated-on-mutation"],
+      "forbidden": ["agent-approve", "agent-export"]
+    },
+    {
+      "id": "EV-08",
+      "name": "clear_staged_overlay clears all staged mappings with one replacement",
+      "required": ["clears-all", "one-replacement", "agent-tool-audit"],
+      "forbidden": ["partial-clear", "extra-replacement"]
+    }
+  ]
+}
