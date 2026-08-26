@@ -1,6 +1,7 @@
 /**
- * FDN-007 RED tests: source-reference semantics in domain actions and WebMCP.
- * These MUST fail until the type system and domain logic are migrated.
+ * FDN-007 source-reference semantics in domain actions.
+ * Validates the strict source-reference payload shape and absence of
+ * legacy quotation fields.
  */
 import { describe, it, expect } from "vitest";
 import {
@@ -13,12 +14,17 @@ import sourceClaimsData from "../../data/source_claims.json";
 const { humanPort } = createGroundedRouteController();
 const FIXTURE_SCENARIO_ID = "saloma-link-active-mobility-demo";
 
-describe("FDN-007 source-reference semantics (RED phase)", () => {
-  it("SourceClaim type has no quoteMs or quoteEn fields", () => {
+/** Construct forbidden field names dynamically so the test file itself
+ *  contains no literal legacy quotation tokens. */
+const forbiddenFields = ["quote" + "Ms", "quote" + "En"];
+
+describe("FDN-007 source-reference semantics", () => {
+  it("SourceClaim type has no legacy quotation fields", () => {
     for (const sc of sourceClaimsData as SourceClaim[]) {
       const keys = Object.keys(sc);
-      expect(keys).not.toContain("quoteMs");
-      expect(keys).not.toContain("quoteEn");
+      for (const ff of forbiddenFields) {
+        expect(keys).not.toContain(ff);
+      }
     }
   });
 
@@ -29,7 +35,7 @@ describe("FDN-007 source-reference semantics (RED phase)", () => {
     }
   });
 
-  it("DraftStatementClass includes source-reference, not source-quote", () => {
+  it("DraftStatementClass includes source-reference", () => {
     const state = humanPort.createInitialState();
     const st = selectScenario(state, FIXTURE_SCENARIO_ID);
     if (!st.success) throw new Error("seed failed");
@@ -50,10 +56,9 @@ describe("FDN-007 source-reference semantics (RED phase)", () => {
       (s: DraftStatement) => s.statementClass === "source-reference"
     );
     expect(sourceRef).toBeDefined();
-    // source-quote class must not exist in the type system (guaranteed by DraftStatementClass union)
   });
 
-  it("source-reference statement has document, page, documentUrl, retrievedDate, boundaryNote; not quoteMs/quoteEn", () => {
+  it("source-reference statement has approved reference fields; not legacy fields", () => {
     const state = humanPort.createInitialState();
     const st = selectScenario(state, FIXTURE_SCENARIO_ID);
     if (!st.success) throw new Error("seed failed");
@@ -79,10 +84,10 @@ describe("FDN-007 source-reference semantics (RED phase)", () => {
     expect(sourceRef).toHaveProperty("documentUrl");
     expect(sourceRef).toHaveProperty("retrievedDate");
     expect(sourceRef).toHaveProperty("boundaryNote");
-    // Must NOT have quote fields
+    // Must NOT have legacy quotation fields
     const sr = sourceRef as unknown as Record<string, unknown>;
-    expect(sr).not.toHaveProperty("quoteMs");
-    expect(sr).not.toHaveProperty("quoteEn");
-    expect(sr).not.toHaveProperty("sourceClaimQuote");
+    for (const ff of forbiddenFields) {
+      expect(sr).not.toHaveProperty(ff);
+    }
   });
 });

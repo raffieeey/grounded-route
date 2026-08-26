@@ -303,11 +303,6 @@ button:disabled {
   margin-bottom: 6px;
 }
 
-.source-notes {
-  font-size: 0.9rem;
-  color: var(--muted);
-  font-style: italic;
-}
 
 .mapping-rationale,
 .mapping-uncertainty {

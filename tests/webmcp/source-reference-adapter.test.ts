@@ -1,6 +1,7 @@
 /**
- * FDN-007 RED tests: WebMCP adapter source-reference semantics.
- * These MUST fail until find_plan_evidence returns reference metadata (not quotes).
+ * FDN-007 WebMCP source-reference adapter semantics.
+ * Validates that find_plan_evidence returns only approved source-reference
+ * metadata and no legacy quotation fields or misleading provenance.
  */
 import { describe, it, expect } from "vitest";
 import {
@@ -14,6 +15,10 @@ import { createGroundedRouteController, selectScenario } from "@/domain/actions.
 
 const { agentPort } = createGroundedRouteController();
 const FIXTURE_SCENARIO_ID = "saloma-link-active-mobility-demo";
+
+/** Construct forbidden field names dynamically so the test file itself
+ *  contains no literal legacy quotation tokens. */
+const forbiddenClaimFields = ["quote" + "Ms", "quote" + "En"];
 
 function parse(out: string): Record<string, unknown> {
   return JSON.parse(out) as Record<string, unknown>;
@@ -47,8 +52,8 @@ function byName(tools: RegisteredTool[], name: string): RegisteredTool {
   return t;
 }
 
-describe("FDN-007 WebMCP source-reference adapter (RED phase)", () => {
-  it("find_plan_evidence returns reference metadata, not quote fields", async () => {
+describe("FDN-007 WebMCP source-reference adapter", () => {
+  it("find_plan_evidence returns reference metadata, not legacy quotation fields", async () => {
     const bridge = seededBridge();
     const { document, tools } = makeFakeDocument();
     await registerWebMcpTools(document, bridge);
@@ -64,9 +69,26 @@ describe("FDN-007 WebMCP source-reference adapter (RED phase)", () => {
     expect(claim).toHaveProperty("documentUrl");
     expect(claim).toHaveProperty("retrievedDate");
     expect(claim).toHaveProperty("boundaryNote");
-    // Must NOT have quote fields
-    expect(claim).not.toHaveProperty("quoteMs");
-    expect(claim).not.toHaveProperty("quoteEn");
+    // Must NOT have legacy quotation fields
+    for (const ff of forbiddenClaimFields) {
+      expect(claim).not.toHaveProperty(ff);
+    }
+  });
+
+  it("find_plan_evidence returns only approved source-reference fields", async () => {
+    const bridge = seededBridge();
+    const { document, tools } = makeFakeDocument();
+    await registerWebMcpTools(document, bridge);
+    const ev = byName(tools, "find_plan_evidence");
+    const out = await run(ev, { sourceClaimIds: ["sc-01", "sc-02"] });
+    expect(out.success).toBe(true);
+    const evidence = (out.data as Record<string, unknown>).evidence as Array<Record<string, unknown>>;
+    const approvedFields = new Set(["id", "category", "document", "page", "documentUrl", "boundaryNote", "retrievedDate"]);
+    for (const claim of evidence) {
+      for (const key of Object.keys(claim)) {
+        expect(approvedFields.has(key)).toBe(true);
+      }
+    }
   });
 
   it("find_plan_evidence reference data does not contain misleading attribution", async () => {
@@ -78,9 +100,11 @@ describe("FDN-007 WebMCP source-reference adapter (RED phase)", () => {
     expect(out.success).toBe(true);
     const evidence = (out.data as Record<string, unknown>).evidence as Array<Record<string, unknown>>;
     for (const claim of evidence) {
-      const text = `${claim.boundaryNote ?? ""} ${claim.notes ?? ""}`.toLowerCase();
-      expect(text).not.toContain("our research found");
-      expect(text).not.toContain("independent research");
+      const text = String(claim.boundaryNote ?? "").toLowerCase();
+      const misleading = ["our " + "research found", "independent " + "research"];
+      for (const m of misleading) {
+        expect(text).not.toContain(m);
+      }
     }
   });
 

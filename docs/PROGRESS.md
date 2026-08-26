@@ -10,7 +10,6 @@
   - `scripts/workflow_guard.py` — passes in foundation phase
   - `scripts/tdd_guard.py` — 10 exported names covered
   - `scripts/validate_fixture.py` — cross-file ID, schema, date consistency, and M0 count validation
-  - `docs/evidence/fdn-001-tdd-evidence.md` — RED→GREEN evidence recorded, including honest M0 correction log
 - Strict TypeScript React/Vite project scaffold with all required scripts:
   - `npm run dev`, `npm run test`, `npm run typecheck`, `npm run lint`, `npm run build`, `npm run workflow:check`, `npm run fixture:check`, `npm run tdd:check`
 - Deterministic domain contracts and actions:
@@ -84,8 +83,6 @@ The known foundation feature commit is `957a2e858f9705a1a51deca44b60dfa941f35a83
 - `src/domain/actions.ts` — imported checked-in fixture mappings from `../../data/scenario_impact_mappings.json` and introduced `createGroundedRouteController()` to return capability-separated `agentPort`/`residentPort` ports with immutable fixture allowlist binding.
 - `src/domain/actions.ts` — `agentPort.stageMapping` and `agentPort.createDraft` now reject `sc-01`, unknown, and cross-scenario mapping IDs through trusted static allowlists.
 - `tests/domain/actions.test.ts` — extended SPK-FND-001 coverage for API shape and forged-input/mutational invariants.
-- `docs/evidence/fdn-001-tdd-evidence.md` — repair notes updated with this focused RED→GREEN evidence.
-- `docs/reviews/spark-foundation-review.md` — review artifact preserved verbatim.
 
 ### Test summary
 - Domain tests: 17 passed (5 new, 9 existing updated, +3 API/forgery tests)
@@ -95,7 +92,6 @@ The known foundation feature commit is `957a2e858f9705a1a51deca44b60dfa941f35a83
 ### Final independent acceptance
 
 - GLM-5.2 via Ollama Cloud independently reviewed the final foundation candidate and returned **PASS**.
-- Review artifact: `docs/reviews/glm-foundation-final-review.md`.
 - The review confirmed trusted fixture-bound mapping authorization, capability-separated agent/resident ports, revision-bound approval invalidation, and the absence of backend/runtime network/model dependencies in the foundation scope.
 
 ### Acceptance commands run
@@ -122,8 +118,6 @@ npm run build
 - Fixture-bound source/mapping authorization, revision-safe handlers, and structured `DraftStatement` provenance classes.
 - Controlled audit actors: direct/resident path actions are `human`; WebMCP actions are `agent-tool`.
 - Deterministic evaluation fixture/test coverage for `EV-01` through `EV-08`.
-- Honest RED→GREEN evidence: `docs/evidence/fdn-003-webmcp-evidence.md`.
-- Independent DeepSeek V4 Pro review **PASS**: `docs/reviews/deepseek-webmcp-review.md`.
 
 ### Acceptance evidence
 
@@ -144,7 +138,7 @@ npm run build
 - StrictMode lifecycle regression coverage: exactly six raw WebMCP registrations; no re-registration after resident state updates; cleanup aborts active registrations.
 - Mobile accessibility visual repair: 44px computed minimum button height at 390×844, label halo/stagger layout, mobile profile grid, and aligned audit rows.
 - Evidence: `docs/evidence/fdn-002-frontend-evidence.md` and `docs/evidence/fdn-002-visual-qa.md`.
-- Independent reviews: `docs/reviews/deepseek-flash-frontend-final-review.md` and `docs/reviews/deepseek-flash-visual-final-review.md` both **PASS**.
+- Independent review: `docs/reviews/deepseek-flash-visual-final-review.md` **PASS**.
 
 ### Acceptance evidence
 
@@ -169,7 +163,6 @@ npm run build
 - Native tool discovery returned exactly the six intended tools and no approval/export/copy/download/publication tool.
 - Native execution exercised context, evidence lookup, stage, draft, review status, and clear against the actual rendered workspace state.
 - The stage/clear calls visibly changed the map indicator and controlled `agent-tool` audit trail; the structured draft remained approval-invalid until a direct resident action.
-- Full command/output record: `docs/evidence/fdn-004-live-webmcp-evidence.md`.
 
 ### Claim ceiling
 
@@ -203,18 +196,20 @@ npm run build
 
 ## De-quoted transparent public candidate (FDN-007)
 
+Private quotation-bearing review and evidence history has been intentionally excluded from this candidate tree. See `docs/evidence/candidate-scope.md`.
+
 **Status:** Accepted for private candidate; repository remains private because the DBKL rights path is separate and unresolved.
 
 ### Completed
 
-- Replaced `quoteMs`/`quoteEn` fields in `SourceClaim` with `boundaryNote` — project-authored boundary note stating each record is a reference to the official document, not project-authored research.
-- Renamed `DraftStatementClass` value `source-quote` to `source-reference`; renamed `SourceQuoteStatement` to `SourceReferenceStatement` with additional reference metadata fields (`document`, `page`, `documentUrl`, `retrievedDate`, `boundaryNote`).
-- Updated `EvidenceBoard` section heading from "Direct source quotes" to "Official source references"; replaced blockquote rendering with reference card layout showing document title, page, official link, retrieval date, category, and boundary note.
+- Replaced former quotation fields in `SourceClaim` with `boundaryNote` — project-authored boundary note stating each record is a reference to the official document, not project-authored research.
+- Renamed `DraftStatementClass` value from the former quotation class to `source-reference`; renamed the former quotation statement type to `SourceReferenceStatement` with additional reference metadata fields (`document`, `page`, `documentUrl`, `retrievedDate`, `boundaryNote`).
+- Updated `EvidenceBoard` section heading to "Official source references"; replaced blockquote rendering with reference card layout showing document title, page, official link, retrieval date, category, and boundary note.
 - Updated `DraftReviewPanel` to display `source-reference` statements with document/page metadata.
 - Updated `find_plan_evidence` WebMCP tool to return source-reference metadata instead of quotation content.
-- Updated `createStructuredDraft` domain action to emit `source-reference` statements containing document/page/URL/boundary note instead of `source-quote` statements containing source text.
-- Updated CSS badge class from `.source-quote` to `.source-reference`.
-- Updated `scripts/validate_fixture.py` to require `boundaryNote` and reject `quoteMs`/`quoteEn` in source claim records.
+- Updated `createStructuredDraft` domain action to emit `source-reference` statements containing document/page/URL/boundary note instead of former quotation statements containing source text.
+- Updated CSS badge class to `.source-reference`.
+- Updated `scripts/validate_fixture.py` to require `boundaryNote` and reject former quotation fields in source claim records.
 - Added FDN-007 RED→GREEN test coverage in `tests/data/source-reference-fixture.test.ts`, `tests/domain/source-reference-semantics.test.ts`, `tests/ui/source-reference-ui.test.tsx`, and `tests/webmcp/source-reference-adapter.test.ts`.
 - Updated existing tests (fixture, domain, provenance, evals, adapter) for source-reference semantics.
 - Updated all tracked documentation to reflect source-reference terminology, not quotation terminology.

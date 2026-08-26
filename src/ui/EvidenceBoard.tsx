@@ -35,7 +35,6 @@ export default function EvidenceBoard({ sourceClaims, mappings }: EvidenceBoardP
                 <p className="source-category">Category: {claim.category}</p>
               </div>
               <div className="source-boundary">{claim.boundaryNote}</div>
-              <div className="source-notes">{claim.notes}</div>
             </li>
           ))}
         </ul>

@@ -32,7 +32,6 @@ export interface SourceClaim {
   boundaryNote: string;
 
   retrievedDate: string; // ISO date
-  notes: string;
   // Explicit: no segment-impact fields here
 }
 

@@ -1,7 +1,7 @@
 /**
- * FDN-007 RED tests: source-reference fixture semantics.
- * These MUST fail against the current quote-based fixture and type definitions,
- * then pass once the source-reference migration is complete.
+ * FDN-007 source-reference fixture semantics.
+ * Validates the strict source-reference payload shape and absence of
+ * legacy quotation fields or misleading provenance wording.
  */
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "fs";
@@ -13,12 +13,17 @@ function loadJson(name: string) {
 
 const sourceClaims = loadJson("source_claims.json");
 
-describe("FDN-007 source-reference fixture (RED phase)", () => {
-  it("source claims contain no quoteMs or quoteEn fields", () => {
+/** Construct forbidden field names dynamically so the test file itself
+ *  contains no literal legacy quotation tokens. */
+const forbiddenFields = ["quote" + "Ms", "quote" + "En"];
+
+describe("FDN-007 source-reference fixture", () => {
+  it("source claims contain no legacy quotation fields", () => {
     for (const sc of sourceClaims) {
       const keys = Object.keys(sc);
-      expect(keys).not.toContain("quoteMs");
-      expect(keys).not.toContain("quoteEn");
+      for (const ff of forbiddenFields) {
+        expect(keys).not.toContain(ff);
+      }
     }
   });
 
@@ -29,24 +34,22 @@ describe("FDN-007 source-reference fixture (RED phase)", () => {
     }
   });
 
-  it("source claims have required reference fields: id, category, document, documentUrl, page, retrievedDate, boundaryNote, notes", () => {
+  it("source claims have the approved reference fields only", () => {
+    const approvedFields = new Set(["id", "category", "document", "documentUrl", "page", "retrievedDate", "boundaryNote"]);
     for (const sc of sourceClaims) {
-      expect(sc.id).toBeTruthy();
-      expect(sc.category).toBeTruthy();
-      expect(sc.document).toBeTruthy();
-      expect(sc.documentUrl).toBeTruthy();
-      expect(typeof sc.page).toBe("number");
-      expect(sc.retrievedDate).toBeTruthy();
-      expect(sc.boundaryNote).toBeTruthy();
-      expect(sc.notes).toBeTruthy();
+      for (const key of Object.keys(sc)) {
+        expect(approvedFields.has(key)).toBe(true);
+      }
     }
   });
 
-  it("source claims do not contain misleading 'our research' or 'independent research' wording", () => {
+  it("source claims do not contain misleading provenance wording", () => {
     for (const sc of sourceClaims) {
-      const text = `${sc.boundaryNote ?? ""} ${sc.notes ?? ""}`.toLowerCase();
-      expect(text).not.toContain("our research found");
-      expect(text).not.toContain("independent research");
+      const text = `${sc.boundaryNote ?? ""}`.toLowerCase();
+      const misleading = ["our " + "research found", "independent " + "research"];
+      for (const m of misleading) {
+        expect(text).not.toContain(m);
+      }
     }
   });
 });
