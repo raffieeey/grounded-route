@@ -32,9 +32,9 @@ OSMF attribution guidance says public use requires attribution and gives specifi
 
 ### OSM action status
 
-- Geometry/tags remain **private-development only** until visible attribution is implemented and checked in the actual UI/export/build.
-- The next bounded code ticket may add visible `© OpenStreetMap contributors` attribution plus a link to the OSM copyright/ODbL page in the map/list and local export metadata.
-- This attribution work does **not** resolve the separate DBKL excerpt gate or authorize public release.
+- Visible `© OpenStreetMap contributors` attribution plus the official copyright/ODbL link is now implemented in the local route-map UI and machine-readable local export payload; FDN-006 tests and an independent review verified that path.
+- The repository remains private because DBKL exact excerpts are independently blocked. Visible OSM attribution does not resolve the separate DBKL gate or authorize public release.
+- Before public distribution of the GeoJSON subset, retain the displayed attribution and perform the final ODbL/public-distribution scope review described in this record.
 
 ## Release decision matrix
 
@@ -42,7 +42,7 @@ OSMF attribution guidance says public use requires attribution and gives specifi
 |---|---|---|
 | PTKL2040 exact excerpts | DBKL portal notices restrict copying/distribution absent clear written permission | **Blocked / excluded** |
 | Curated project interpretations | Project-authored, but trace to blocked source excerpts | **Hold with source layer** until DBKL path is resolved |
-| OSM-derived illustrative GeoJSON/tags | ODbL attribution and notice required | **Pending attribution implementation and final license review** |
+| OSM-derived illustrative GeoJSON/tags | Visible attribution and official OSM copyright/ODbL link implemented in UI/export; final public-distribution scope review still needed | **Prepared, but overall public release remains blocked by DBKL** |
 | Project code/tests/UI | MIT project-authored code | May be publishable only after upstream data/assets are safely separated |
 
 ## Claim ceiling
