@@ -743,6 +743,12 @@ button:disabled {
   border-radius: 6px;
 }
 
+.draft-form .draft-field {
+  resize: none;
+  overflow: hidden;
+  min-height: 44px;
+}
+
 .draft-statements {
   margin-top: 12px;
 }

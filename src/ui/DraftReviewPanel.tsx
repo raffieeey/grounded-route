@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import type { TextareaHTMLAttributes } from "react";
 import type { DraftComment, DraftStatement } from "@/contracts/types.ts";
 
 export interface DraftPrefill {
@@ -12,6 +13,23 @@ interface DraftReviewPanelProps {
   prefill: DraftPrefill | null;
   profileId: string | null;
   onCreateDraft: (position: string, change: string, questions: string) => void;
+}
+
+/**
+ * Auto-sizing textarea: on every value change it grows to fit its content, so a
+ * prefilled draft is fully readable without internal vertical or horizontal
+ * scrolling. Resize is locked because the element sizes itself to its content.
+ */
+function AutoTextarea(props: TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.height = "auto";
+    const natural = el.scrollHeight;
+    if (natural > 0) el.style.height = `${natural}px`;
+  }, [props.value]);
+  return <textarea ref={ref} {...props} />;
 }
 
 export default function DraftReviewPanel({
@@ -53,31 +71,34 @@ export default function DraftReviewPanel({
       <form onSubmit={handleSubmit} aria-label="Draft review" className="draft-form">
         <label>
           Your position
-          <textarea
+          <AutoTextarea
             value={position}
             onChange={(e) => setPosition(e.target.value)}
             aria-label="Your position"
             required
             rows={2}
+            className="draft-field"
           />
         </label>
         <label>
           Requested change
-          <textarea
+          <AutoTextarea
             value={change}
             onChange={(e) => setChange(e.target.value)}
             aria-label="Requested change"
             required
             rows={2}
+            className="draft-field"
           />
         </label>
         <label>
           Open questions
-          <input
-            type="text"
+          <AutoTextarea
             value={questions}
             onChange={(e) => setQuestions(e.target.value)}
             aria-label="Open questions"
+            rows={2}
+            className="draft-field"
           />
         </label>
         <button type="submit" className="btn-primary touch-target" aria-label="Prepare draft">

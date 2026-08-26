@@ -163,3 +163,60 @@ test.describe("FDN-008 route-verdict browser contract", () => {
     await expect(page.getByRole("region", { name: "Assistant activity" })).toHaveCount(0);
   });
 });
+
+test.describe("FDN-008-V5-01 prefilled draft fields are fully readable at 390x844", () => {
+  const PROFILES = ["Wheelchair user", "School-pickup parent", "Cyclist"] as const;
+
+  for (const profileButton of PROFILES) {
+    test(`V5-01 (${profileButton}): every prefilled draft field fits without internal scroll`, async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto("/");
+      await page.getByRole("button", { name: "Start a route-impact check" }).click();
+      await page.getByRole("button", { name: profileButton }).click();
+
+      // Review conditions and add a concern, per the reproduced resident flow.
+      const conditions = page.getByRole("region", { name: "Conditions to review" });
+      await conditions.getByRole("button", { name: /Add .* to my draft/i }).first().click();
+
+      const draft = page.getByRole("region", { name: "Draft review" });
+
+      const measure = async (label: string) => {
+        const field = draft.getByLabel(label);
+        await expect(field).not.toHaveValue("");
+        return field.evaluate((el) => {
+          const input = el as HTMLTextAreaElement;
+          return {
+            valueLen: (input.value ?? "").length,
+            clientHeight: input.clientHeight,
+            scrollHeight: input.scrollHeight,
+            clientWidth: input.clientWidth,
+            scrollWidth: input.scrollWidth,
+          };
+        });
+      };
+
+      for (const label of ["Your position", "Requested change", "Open questions"]) {
+        const dims = await measure(label);
+        expect(dims.valueLen, `${label} prefill must be non-empty`).toBeGreaterThan(0);
+        expect(
+          dims.scrollHeight,
+          `${label} must not scroll vertically: scrollHeight=${dims.scrollHeight} clientHeight=${dims.clientHeight}`,
+        ).toBeLessThanOrEqual(dims.clientHeight);
+        expect(
+          dims.scrollWidth,
+          `${label} must not scroll horizontally: scrollWidth=${dims.scrollWidth} clientWidth=${dims.clientWidth}`,
+        ).toBeLessThanOrEqual(dims.clientWidth);
+      }
+
+      // Editability, keyboard use, and resident-only approval/export remain intact.
+      const position = draft.getByLabel("Your position");
+      await position.fill("Edited resident position");
+      await expect(position).toHaveValue("Edited resident position");
+      await draft.getByRole("button", { name: "Prepare draft" }).click();
+      const exportBtn = page.getByRole("button", { name: "Export" });
+      await expect(exportBtn).toBeDisabled();
+      await page.getByRole("button", { name: "Approve current draft" }).click();
+      await expect(exportBtn).not.toBeDisabled();
+    });
+  }
+});

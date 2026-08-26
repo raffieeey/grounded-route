@@ -193,3 +193,100 @@ git diff --check 88f02f3..HEAD -> clean
   test injects a fake `modelContext` to drive the real adapter paths).
 - The DBKL source-reference rights path remains unresolved; the repository
   stays private.
+
+## R2 focused repair — FDN-008-V5-01 (readable mobile draft prefills)
+
+The V4 above-fold repair left a V5 draft-usability regression: at 390×844 the
+prefilled `Draft review` fields did not show their full initial content. A
+direct Playwright DOM probe (390×844, after start → profile → review conditions
+→ add a concern) measured internal scrolling on every prefilled field.
+
+RED (probe, vite preview :4173, 390x844, scrollY=0):
+
+```
+Wheelchair user
+  Your position      valueLen=135  clientHeight=59  scrollHeight=102  (vertical scroll)
+  Requested change   valueLen=145  clientHeight=59  scrollHeight=102  (vertical scroll)
+  Open questions     valueLen=162  clientWidth=318  scrollWidth=1177  (horizontal scroll, one-line input)
+School-pickup parent
+  Your position      valueLen=141  clientHeight=59  scrollHeight=102
+  Requested change   valueLen=151  clientHeight=59  scrollHeight=102
+  Open questions     valueLen=168  clientWidth=318  scrollWidth=1220
+Cyclist
+  Your position      valueLen=128  clientHeight=59  scrollHeight=102
+  Requested change   valueLen=138  clientHeight=59  scrollHeight=102
+  Open questions     valueLen=155  clientWidth=318  scrollWidth=1114
+```
+
+Root cause: `Your position`/`Requested change` were fixed `rows={2}` textareas
+that clipped ~135–151-character prefills to two visible rows, and `Open questions`
+was a single-line `<input type="text">` so a ~155–168-character joined prefill
+required horizontal scrolling.
+
+Repair (resize-safe form control, not truncation): the three draft fields are now
+auto-sizing textareas (`AutoTextarea` in `src/ui/DraftReviewPanel.tsx`). On every
+value change a `useLayoutEffect` sets the height to the content `scrollHeight`, so
+each prefilled field grows to show its full initial text with no internal scroll.
+The `Open questions` one-line input became a wrapping textarea, removing the
+horizontal scroll. `resize: none` + `overflow: hidden` keep the auto-sized box
+stable; the 44px mobile touch-target floor is preserved for the submit button
+(textareas are content-sized). Generated prefill text, labels, editability,
+keyboard use, revision invalidation, and resident-only approve/export are
+unchanged. A focused browser test
+(`tests/e2e/route-verdict-flow.spec.ts`, `FDN-008-V5-01`) was added that measures
+the real `scrollHeight`/`clientHeight` and `scrollWidth`/`clientWidth` of all
+three prefilled fields for wheelchair, school-pickup parent, and cyclist at
+390×844 (after start → profile → review conditions → add a concern), asserts
+`scrollHeight <= clientHeight` and `scrollWidth <= clientWidth` with non-empty
+prefill, and re-checks editability plus resident-only approval/export. This test
+failed before the repair (above) and passes after.
+
+GREEN (probe, vite preview :4173, 390x844, scrollY=0):
+
+```
+Wheelchair user
+  Your position      valueLen=135  clientHeight=118  scrollHeight=118  clientWidth=318  scrollWidth=318
+  Requested change   valueLen=145  clientHeight=118  scrollHeight=118  clientWidth=318  scrollWidth=318
+  Open questions     valueLen=162  clientHeight=118  scrollHeight=118  clientWidth=318  scrollWidth=318
+School-pickup parent
+  Your position      valueLen=141  clientHeight=118  scrollHeight=118  clientWidth=318  scrollWidth=318
+  Requested change   valueLen=151  clientHeight=118  scrollHeight=118  clientWidth=318  scrollWidth=318
+  Open questions     valueLen=168  clientHeight=140  scrollHeight=140  clientWidth=318  scrollWidth=318
+Cyclist
+  Your position      valueLen=128  clientHeight=118  scrollHeight=118  clientWidth=318  scrollWidth=318
+  Requested change   valueLen=138  clientHeight=118  scrollHeight=118  clientWidth=318  scrollWidth=318
+  Open questions     valueLen=155  clientHeight=118  scrollHeight=118  clientWidth=318  scrollWidth=318
+```
+
+For every profile and field: `scrollHeight == clientHeight` and
+`scrollWidth == clientWidth` — the full prefill is readable without internal
+vertical or horizontal scrolling.
+
+Gates (R2, all exit 0):
+
+```
+npm run workflow:check   -> WORKFLOW GUARD PASS
+npm run fixture:check    -> FIXTURE VALIDATION PASS
+npm run tdd:check        -> TDD GUARD PASS (14 exported names covered)
+npm run test             -> 142 passed (15 files)
+npm run typecheck        -> ok
+npm run lint             -> ok
+npm run build            -> built in 323ms
+npx playwright test      -> 22 passed (V5-01 added 6: 3 profiles x 2 projects)
+git diff --check 88f02f3..HEAD -> clean
+```
+
+## R2 honest limits / residual claim ceiling
+
+- Only the reproducible FDN-008-V5-01 draft-readability regression was repaired.
+  No V1–V7 assertion was relaxed, no fixture claim changed, no WebMCP
+  tool/authority altered, no new dependency added.
+- This is a private candidate; it was not pushed and no remote/visibility/history
+  was changed.
+- Auto-sizing measures `scrollHeight` on initial render; in jsdom (vitest) layout
+  is unavailable so the resize is a no-op there — this is acceptable because the
+  readable-prefill contract is enforced by the real-browser Playwright probe, not
+  the unit tests.
+- The verdict remains illustrative and fixture-bound; it does not verify
+  accessibility, confirm a project impact, state a construction timeline, or
+  represent a DBKL commitment.
