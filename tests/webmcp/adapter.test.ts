@@ -438,4 +438,3 @@ describe("WebMCP adapter — authority boundary", () => {
     expect(agentPort.isApprovalValid(bridge.getState())).toBe(false);
   });
 });
-
