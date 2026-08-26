@@ -48,8 +48,8 @@
   "knownUncertainties": [
     "Exact implementation timing and segment boundaries are unverified",
     "OSM-derived/demo geometry is illustrative and not field-surveyed",
-    "Accessibility retrofit status of Saloma Link is unknown",
-    "Public-release terms for DBKL source references and OSM geometry are pending"
+    "Accessibility retrofit status of Saloma Link is unknown"
   ],
-  "publicReleaseStatus": "excluded"
+  "publicReleaseStatus": "approved",
+  "publicReleaseDecision": "2026-08-26: DBKL resolved as citation-as-reference (title/page/URL only, no copied content); OSM ODbL attribution implemented and verified. See data/THIRD_PARTY_DATA_MANIFEST.md."
 }

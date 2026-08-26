@@ -46,13 +46,12 @@ describe("fixture manifest validation", () => {
     }
   });
 
-  it("data-attribution records mark source data as excluded from public release until terms verified", () => {
-    expect(fixtureManifest.publicReleaseStatus).toBe("excluded");
+  it("data-attribution records show public release approved with the resolution recorded", () => {
+    expect(fixtureManifest.publicReleaseStatus).toBe("approved");
     expect(fixtureManifest.knownUncertainties.length).toBeGreaterThan(0);
-    const attributionNote = fixtureManifest.knownUncertainties.some((u: string) =>
-      u.toLowerCase().includes("public-release") || u.toLowerCase().includes("pending")
-    );
-    expect(attributionNote).toBe(true);
+    // The release decision must document the DBKL citation-as-reference resolution.
+    expect(fixtureManifest.publicReleaseDecision).toMatch(/citation-as-reference/i);
+    expect(fixtureManifest.publicReleaseDecision).toMatch(/DBKL/);
   });
 
   it("source claims do not contain segment-impact fields", () => {

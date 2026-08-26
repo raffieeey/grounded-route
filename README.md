@@ -36,12 +36,41 @@ Grounded Route uses WebMCP tools to let an agent operate on that shared artifact
 ## Attribution and data
 
 - Route geometry and tags are derived from **OpenStreetMap** (ODbL). A visible `© OpenStreetMap contributors` notice appears wherever the map is rendered, with a link to the [OSM copyright page](https://www.openstreetmap.org/copyright). Any exported draft includes the same attribution in machine-readable metadata. The geometry and tags are illustrative local fixture context, not navigation or certified accessibility data.
-- Official source references to the DBKL Kuala Lumpur Development Plan 2040 are used as curated evidence, providing document title, page, and official link — not copied source text. Their public-release terms are unresolved; see [the third-party data manifest](data/THIRD_PARTY_DATA_MANIFEST.md).
+- Official source references to the DBKL Kuala Lumpur Development Plan 2040 are used as curated evidence, providing document title, page, and official link — not copied source text. Citation-as-reference only; see [the third-party data manifest](data/THIRD_PARTY_DATA_MANIFEST.md).
+
+## Getting started
+
+Requirements: Node.js 20+ and npm. No backend, no API keys, no network services — the app is a static build that runs entirely on local fixture data.
+
+```bash
+npm install
+npm run dev        # local dev server
+# or
+npm run build && npm run preview   # production build served locally
+```
+
+### For judges: testing the WebMCP path
+
+The app works fully without WebMCP (human-only flow). To see the human-agent shared workspace, the browser must expose `document.modelContext`:
+
+- **Easiest:** open the app in **ChatGPT's in-app browser**, which supports WebMCP natively — ask ChatGPT to "check the route impact for the wheelchair profile and stage the plan overlay" and watch the shared workspace react.
+- **Chrome:** enable the WebMCP flag (Chrome 146+; see `chrome://flags` — search "WebMCP", and note the flag name can change between releases; see [Chrome's WebMCP docs](https://developer.chrome.com/docs/ai/webmcp)), then use any MCP client against the page.
+
+What to look for: six tools register (`get_route_context`, `find_plan_evidence`, `stage_impact_overlay`, `clear_staged_overlay`, `draft_public_comment`, `get_review_status`). When the agent stages an overlay, the corridor sweeps into a glowing proposed state, an "Agent is acting" banner appears, and the verdict updates — while approve/export stays disabled until you, the human, approve.
+
+### Verify the build
+
+```bash
+npm run test            # 154 unit tests
+npx playwright test     # 22 browser tests (desktop + mobile)
+npm run workflow:check && npm run fixture:check && npm run tdd:check
+npm run typecheck && npm run lint && npm run build
+```
 
 ## Project status
 
-- **Stage:** M0 fixture, human-first workspace, WebMCP adapter, native local-Chrome execution proof, and OSM visible attribution are implemented and verified on private `main`.
-- **Repository visibility:** private; public release is blocked by the unresolved DBKL source-reference rights path. It must not become public until that separate gate is cleared and the user explicitly approves the transition.
+- **Stage:** M0 fixture, human-first workspace, WebMCP adapter, native local-Chrome execution proof, OSM visible attribution, and the FDN-009 visible-agent wow pass are implemented and verified on `main`.
+- **Repository visibility:** public. Third-party terms are resolved — see [the third-party data manifest](data/THIRD_PARTY_DATA_MANIFEST.md) (OSM ODbL attribution implemented; DBKL resolved as citation-as-reference with no copied content).
 - **Canonical design:** [docs/TECHNICAL_DESIGN.md](docs/TECHNICAL_DESIGN.md)
 - **Independent design review:** [docs/reviews/sol-tdd-review.md](docs/reviews/sol-tdd-review.md)
 - **Data contract:** [data/README.md](data/README.md)
@@ -69,4 +98,4 @@ Grounded Route uses WebMCP tools to let an agent operate on that shared artifact
 
 MIT. See [LICENSE](LICENSE). The MIT license covers project-authored code/documentation; third-party data/references are governed by their own documented terms. See [the data manifest](data/THIRD_PARTY_DATA_MANIFEST.md).
 
-**Public-release status:** The repository remains **private** because the DBKL source-reference rights path needs separate resolution. This candidate contains only official source references (document title, page, URL), not direct quotations. OSM attribution is implemented, but that does **not** clear the DBKL gate or authorize public release.
+**Public-release status:** public. Third-party terms are resolved: OSM attribution is implemented in the app and exports (ODbL), and DBKL source references are bibliographic citations only (title/page/URL, no copied content) — see the [release decision](data/THIRD_PARTY_DATA_MANIFEST.md).
