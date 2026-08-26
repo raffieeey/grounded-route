@@ -6,28 +6,37 @@ The MVP uses a deliberately small, versioned fixture. It is not a live city GIS 
 
 ## Authoritative hierarchy
 
-1. **DBKL source documents:** planning assertions must link to the original document URL, title, page, and quoted excerpt.
-2. **OpenStreetMap / Overpass extract:** supplies demonstration geometry and community-mapped tags only.
-3. **Curated scenario mapping:** maps cited plan records to fixture route segments; it is reviewed project data, not government truth.
-4. **User note / model interpretation:** always labelled as such.
+1. **Source claims:** exact, immutable DBKL document excerpts with title, page, URL, and review date. A source claim does not itself assert a route/segment impact.
+2. **Scenario impact mappings:** reviewed project interpretations that connect source claims to the bounded fixture route segments, with rationale and uncertainty.
+3. **OpenStreetMap / Overpass extract:** supplies demonstration geometry and community-mapped tags only.
+4. **User note / model inference:** always labelled with its statement class and never elevated into an official fact.
 
-## Required fixture files
+## Planned fixture files
 
 ```text
 route_segments.geojson
 places.geojson
-plan_claims.json
+source_claims.json
+scenario_impact_mappings.json
 route_profiles.json
 demo_scenarios.json
+fixture_manifest.json
 ```
+
+## Required companion documents
+
+- [M0 Fixture-Freeze Checklist](FIXTURE_FREEZE_CHECKLIST.md)
+- [Third-Party Data and Attribution Manifest](THIRD_PARTY_DATA_MANIFEST.md)
 
 ## Prohibited data
 
 - resident home addresses;
 - personal contact details;
 - uncited planning claims;
+- route-impact assertions disguised as official source quotations;
 - claims that map geometry proves real-world accessibility;
-- complete source PDFs copied into the repository.
+- complete source PDFs copied into the repository;
+- third-party assets with unresolved public-reuse terms.
 
 ## Source documents
 

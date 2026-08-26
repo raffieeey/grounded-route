@@ -1,0 +1,16 @@
+# Sol Focused Verification — Grounded Route TDD v0.2
+
+## Frozen finding verification
+| ID | Result (`CONFIRMED` or `STILL_BROKEN`) | Evidence in updated artifact | Notes |
+|---|---|---|---|
+| SOL-001 | CONFIRMED | `docs/TECHNICAL_DESIGN.md` §§5.2–5.3, 6.1, 9.1; `data/README.md` “Authoritative hierarchy” | `SourceClaim` cannot contain spatial impact assertions; reviewed `ScenarioImpactMapping` records carry segment IDs, rationale, uncertainty, reviewer, and date. Overlay/export statements require visible classes and supporting IDs, and validation/tests block direct source-to-impact promotion. |
+| SOL-002 | CONFIRMED | `docs/TECHNICAL_DESIGN.md` §§6–6.1, 7.2–7.3, 9.1 | Approval is an exact revision/snapshot record, not a boolean. Agent/human edits and evidence, mapping, route, or scenario mutations invalidate it. Export requires current-snapshot approval plus direct resident UI activation and is unreachable from tools/programmatic domain actions. |
+| SOL-003 | CONFIRMED | `docs/TECHNICAL_DESIGN.md` §§2.3, 9.1, 11; `data/FIXTURE_FREEZE_CHECKLIST.md` | M0 explicitly blocks UI/WebMCP implementation until the area/scenario, three distinct profiles/routes, 6–12 claims, reviewed mappings, manifest, and cross-file validation are complete and traceable. The checklist correctly records that M0 is not yet passed. |
+| SOL-004 | CONFIRMED | `docs/TECHNICAL_DESIGN.md` §§7.1, 7.3, 9.1–9.2 | Registration is explicitly discoverability-only. Every handler rechecks current state, allowlists, membership, expected revision, and transition legality; stale/cleared/cross-scenario calls return structured errors with no mutation or misleading success audit event. |
+| SOL-005 | CONFIRMED | `docs/TECHNICAL_DESIGN.md` §§4.2.1, 8.3, 9.1 | The runtime boundary is same-origin-only with bundled map assets, no direct model/data fetches, restrictive CSP, memory or `sessionStorage` only, and complete clear-session behavior. Browser tests must enforce request allowlists and prove route/draft/note data does not leave the browser. |
+| SOL-006 | CONFIRMED | `docs/TECHNICAL_DESIGN.md` §§8.1–8.2, 9.1 | The canonical ordered segment list exposes route order, IDs/names, caveated tags, impacts, certainty/classes, sources, and equivalent actions. Focus behavior and named live-region messages are specified; a keyboard-only, map-hidden flow through export readiness plus automated and manual accessibility evidence is required. |
+| SOL-007 | CONFIRMED | `docs/TECHNICAL_DESIGN.md` §§9.1–9.2 | The committed eval fixture must define prompt, initial state, allowed tools, expected calls/results, exact state/audit delta, required labels, and forbidden effects. EV-01–EV-08 cover unknown evidence, cross-scenario IDs, stale revisions, adversarial text, approval invalidation, and attempted export with deterministic safety oracles. |
+| SOL-008 | CONFIRMED | `docs/TECHNICAL_DESIGN.md` §§5.5, 9.3, 11; `README.md` “License”; `data/THIRD_PARTY_DATA_MANIFEST.md` | The manifest requires per-asset source, retrieval date, transformation, attribution location, terms evidence, and release status. DBKL, OSM, and bundled assets remain excluded while terms are pending; visible attribution and a recorded terms/release review gate M0/M5 and public release. |
+
+## Terminal result
+PASS
