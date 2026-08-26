@@ -382,3 +382,62 @@ describe("domain structured draft + audit actor (FDN-003)", () => {
     expect(ap.requestExport).toBeUndefined();
   });
 });
+
+describe("humanPort", () => {
+  const FIXTURE_SCENARIO_ID = "saloma-link-active-mobility-demo";
+  const FIXTURE_MAPPING_ID = "map-01";
+  const { humanPort } = createGroundedRouteController();
+
+  it("humanPort exposes same actions as agentPort but audits as human", () => {
+    const state = humanPort.createInitialState();
+    const s1 = humanPort.selectScenario(state, FIXTURE_SCENARIO_ID);
+    expect(s1.success).toBe(true);
+    const next = unwrap(s1);
+    expect(next.auditLog[next.auditLog.length - 1].actor).toBe("human");
+  });
+
+  it("humanPort.stageMapping stages and audits as human", () => {
+    let st = unwrap(humanPort.selectScenario(humanPort.createInitialState(), FIXTURE_SCENARIO_ID));
+    st = unwrap(humanPort.stageMapping(st, FIXTURE_MAPPING_ID, st.route.revision));
+    expect(st.route.stagedMappingIds).toContain(FIXTURE_MAPPING_ID);
+    const last = st.auditLog[st.auditLog.length - 1];
+    expect(last.actor).toBe("human");
+    expect(last.action).toBe("stageMapping");
+  });
+
+  it("humanPort.createStructuredDraft creates draft and audits as human", () => {
+    let st = unwrap(humanPort.selectScenario(humanPort.createInitialState(), FIXTURE_SCENARIO_ID));
+    st = unwrap(
+      humanPort.createStructuredDraft(
+        st,
+        {
+          mappingIds: [FIXTURE_MAPPING_ID],
+          sourceClaimIds: ["sc-01"],
+          userPosition: "Resident position",
+          requestedChange: "Add ramps",
+          openQuestions: ["When?"],
+        },
+        st.route.revision
+      )
+    );
+    expect(st.draft).not.toBeNull();
+    const last = st.auditLog[st.auditLog.length - 1];
+    expect(last.actor).toBe("human");
+    expect(last.action).toBe("createStructuredDraft");
+    expect(st.approval).toBeNull();
+  });
+
+  it("humanPort.clearStagedMappings clears and audits as human", () => {
+    let st = unwrap(humanPort.selectScenario(humanPort.createInitialState(), FIXTURE_SCENARIO_ID));
+    st = unwrap(humanPort.stageMapping(st, FIXTURE_MAPPING_ID, st.route.revision));
+    st = unwrap(humanPort.clearStagedMappings(st, st.route.revision));
+    expect(st.route.stagedMappingIds).toEqual([]);
+    expect(st.auditLog[st.auditLog.length - 1].actor).toBe("human");
+  });
+
+  it("humanPort does not expose approveDraft or requestExport", () => {
+    const hp = humanPort as unknown as Record<string, unknown>;
+    expect(hp.approveDraft).toBeUndefined();
+    expect(hp.requestExport).toBeUndefined();
+  });
+});
