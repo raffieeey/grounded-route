@@ -72,4 +72,46 @@ describe("fixture manifest validation", () => {
       expect(m.segmentIds.length).toBeGreaterThan(0);
     }
   });
+
+  it("source claim count is between 6 and 12 inclusive", () => {
+    expect(sourceClaims.length).toBeGreaterThanOrEqual(6);
+    expect(sourceClaims.length).toBeLessThanOrEqual(12);
+  });
+
+  it("fixture manifest reviewDate and fixtureVersion reflect current M0 date", () => {
+    expect(fixtureManifest.reviewDate).toBe("2026-08-26");
+    expect(fixtureManifest.fixtureVersion).toBe("m0-2026-08-26");
+  });
+
+  it("all source claims have required fields", () => {
+    for (const sc of sourceClaims) {
+      expect(sc.id).toBeTruthy();
+      expect(sc.document).toBeTruthy();
+      expect(sc.documentUrl).toBeTruthy();
+      expect(typeof sc.page).toBe("number");
+      expect(sc.quoteMs).toBeTruthy();
+      expect(sc.retrievedDate).toBeTruthy();
+      expect(sc.notes).toBeTruthy();
+    }
+  });
+
+  it("all source claim and mapping dates are valid ISO dates matching fixture reviewDate", () => {
+    const isoDateRe = /^\d{4}-\d{2}-\d{2}$/;
+    expect(fixtureManifest.reviewDate).toMatch(isoDateRe);
+    for (const sc of sourceClaims) {
+      expect(sc.retrievedDate).toMatch(isoDateRe);
+      expect(sc.retrievedDate).toBe(fixtureManifest.reviewDate);
+    }
+    for (const m of mappings) {
+      expect(m.reviewDate).toMatch(isoDateRe);
+      expect(m.reviewDate).toBe(fixtureManifest.reviewDate);
+    }
+  });
+
+  it("manifest sourceClaimIds includes every source claim in the fixture", () => {
+    const manifestScIds = new Set(fixtureManifest.sourceClaimIds);
+    for (const sc of sourceClaims) {
+      expect(manifestScIds.has(sc.id)).toBe(true);
+    }
+  });
 });

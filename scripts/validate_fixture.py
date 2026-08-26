@@ -4,6 +4,7 @@ Validate fixture cross-references, attribution, and schema constraints.
 """
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -40,6 +41,10 @@ def validate() -> int:
     profile_ids = {p["id"] for p in profiles}
     scenario_ids = {s["id"] for s in scenarios}
 
+    # M0 source-claim count rule
+    if not (6 <= len(source_claims) <= 12):
+        errors.append(f"source claim count {len(source_claims)} violates M0 rule: must be 6–12")
+
     # Manifest completeness
     for fid in manifest.get("sourceClaimIds", []):
         if fid not in sc_ids:
@@ -56,6 +61,12 @@ def validate() -> int:
     for fid in manifest.get("placeIds", []):
         if fid not in place_ids:
             errors.append(f"manifest placeId '{fid}' not found in places.geojson")
+
+    # Manifest must reference every source claim
+    manifest_sc_ids = set(manifest.get("sourceClaimIds", []))
+    for sc in source_claims:
+        if sc["id"] not in manifest_sc_ids:
+            errors.append(f"manifest omits source claim '{sc['id']}'")
 
     # Scenario consistency
     for sc in scenarios:
@@ -91,12 +102,30 @@ def validate() -> int:
         if not m.get("reviewDate"):
             errors.append(f"mapping '{m['id']}' missing reviewDate")
 
-    # Source-claim integrity: no segment-impact fields
+    # Source-claim integrity: required fields and forbidden fields
+    iso_date_re = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+    required_sc_fields = {"id", "document", "documentUrl", "page", "quoteMs", "retrievedDate", "notes"}
     for sc in source_claims:
+        missing = required_sc_fields - set(sc.keys())
+        if missing:
+            errors.append(f"source claim '{sc['id']}' missing required fields: {missing}")
         forbidden = {"segmentIds", "impact", "routeEffect", "mappingIds"}
         overlap = forbidden & set(sc.keys())
         if overlap:
             errors.append(f"source claim '{sc['id']}' contains forbidden fields: {overlap}")
+        if not iso_date_re.match(str(sc.get("retrievedDate", ""))):
+            errors.append(f"source claim '{sc['id']}' has invalid retrievedDate")
+
+    # Date consistency across claims, mappings, and manifest
+    review_date = manifest.get("reviewDate", "")
+    if not iso_date_re.match(str(review_date)):
+        errors.append(f"manifest reviewDate '{review_date}' is invalid ISO date")
+    for sc in source_claims:
+        if sc.get("retrievedDate") != review_date:
+            errors.append(f"source claim '{sc['id']}' retrievedDate '{sc.get('retrievedDate')}' inconsistent with manifest reviewDate '{review_date}'")
+    for m in mappings:
+        if m.get("reviewDate") != review_date:
+            errors.append(f"mapping '{m['id']}' reviewDate '{m.get('reviewDate')}' inconsistent with manifest reviewDate '{review_date}'")
 
     # Third-party manifest presence
     tp_manifest_path = Path("data/THIRD_PARTY_DATA_MANIFEST.md")

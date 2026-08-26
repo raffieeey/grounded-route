@@ -15,35 +15,50 @@
       "seg-jalan-ampang-to-demo-school",
       "seg-demo-school-frontage"
     ],
-    "sourceClaimIds": ["sc-01", "sc-02", "sc-03", "sc-04"],
-    "rationale": "Illustrative route-evidence mapping: PTKL2040 active-mobility policy intent is spatially associated with the KL Central–Saloma Link–Demo School corridor. Not an official construction or accessibility finding.",
+    "sourceClaimIds": [
+      "sc-01",
+      "sc-02",
+      "sc-03",
+      "sc-04",
+      "sc-06"
+    ],
+    "rationale": "Illustrative route-evidence mapping: PTKL2040 active-mobility policy intent is spatially associated with the KL Central\u2013Saloma Link\u2013Demo School corridor. Not an official construction or accessibility finding.",
     "uncertainty": "Actual implementation timing, exact segment boundaries, and accessibility retrofit are unverified. Field verification required before any real-world claim.",
     "certaintyLevel": "low",
     "reviewer": "M0 Fixture Reviewer",
-    "reviewDate": "2025-08-26"
+    "reviewDate": "2026-08-26"
   },
   {
     "id": "map-02",
     "mappingType": "curated-interpretation",
     "scenarioId": "saloma-link-active-mobility-demo",
-    "segmentIds": ["seg-saloma-link-bridge", "seg-saloma-elevator-ramp"],
-    "sourceClaimIds": ["sc-05"],
+    "segmentIds": [
+      "seg-saloma-link-bridge",
+      "seg-saloma-elevator-ramp"
+    ],
+    "sourceClaimIds": [
+      "sc-05"
+    ],
     "rationale": "Existing Saloma Link infrastructure is described in PTKL2040 as a pedestrian bridge; accessibility retrofit status is unknown.",
     "uncertainty": "Elevator/ramp operational status and maintenance schedule are not documented in the cited source.",
     "certaintyLevel": "medium",
     "reviewer": "M0 Fixture Reviewer",
-    "reviewDate": "2025-08-26"
+    "reviewDate": "2026-08-26"
   },
   {
     "id": "map-03",
     "mappingType": "curated-interpretation",
     "scenarioId": "saloma-link-active-mobility-demo",
-    "segmentIds": ["seg-wheelchair-alternate"],
-    "sourceClaimIds": ["sc-04"],
+    "segmentIds": [
+      "seg-wheelchair-alternate"
+    ],
+    "sourceClaimIds": [
+      "sc-04"
+    ],
     "rationale": "Accessibility improvement policy is spatially associated with the wheelchair alternate route avoiding steps; this is a curated interpretation, not a verified project plan.",
     "uncertainty": "Specific tactile-paving or ramp upgrades on this alternate path are not confirmed in the source document.",
     "certaintyLevel": "low",
     "reviewer": "M0 Fixture Reviewer",
-    "reviewDate": "2025-08-26"
+    "reviewDate": "2026-08-26"
   }
 ]

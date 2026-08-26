@@ -9,25 +9,25 @@
 - Bootstrap enforcement artifacts:
   - `scripts/workflow_guard.py` — passes in foundation phase
   - `scripts/tdd_guard.py` — 10 exported names covered
-  - `scripts/validate_fixture.py` — cross-file ID and schema validation
-  - `docs/evidence/fdn-001-tdd-evidence.md` — RED→GREEN evidence recorded
+  - `scripts/validate_fixture.py` — cross-file ID, schema, date consistency, and M0 count validation
+  - `docs/evidence/fdn-001-tdd-evidence.md` — RED→GREEN evidence recorded, including honest M0 correction log
 - Strict TypeScript React/Vite project scaffold with all required scripts:
   - `npm run dev`, `npm run test`, `npm run typecheck`, `npm run lint`, `npm run build`, `npm run workflow:check`, `npm run fixture:check`, `npm run tdd:check`
 - Deterministic domain contracts and actions:
   - `src/contracts/types.ts`
   - `src/domain/actions.ts`
   - Immutable `SourceClaim` vs reviewed `ScenarioImpactMapping` vs unknown enforced
-- Behavioral tests (13 passing):
+- Behavioral tests (18 passing):
   - 9 domain action tests in `tests/domain/actions.test.ts`
-  - 4 fixture validation tests in `tests/data/fixture.test.ts`
+  - 9 fixture validation tests in `tests/data/fixture.test.ts`
 - M0 fixture data:
   - `data/route_segments.geojson` (14 segments)
   - `data/places.geojson` (4 places)
-  - `data/source_claims.json` (5 claims)
+  - `data/source_claims.json` (6 claims)
   - `data/scenario_impact_mappings.json` (3 mappings)
   - `data/route_profiles.json` (3 profiles)
   - `data/demo_scenarios.json` (1 scenario)
-  - `data/fixture_manifest.json` (version `m0-2025-08-26`)
+  - `data/fixture_manifest.json` (version `m0-2026-08-26`)
 - Minimal human-only shell:
   - `src/App.tsx` displays scenario, profile choices, disclaimer, and evidence counts
   - `src/main.tsx` bootstraps React
@@ -51,8 +51,8 @@ npm run build
 ### Test summary
 
 - Domain tests: 9 passed
-- Fixture tests: 4 passed
-- Total: 13 passed, 0 failed
+- Fixture tests: 9 passed
+- Total: 18 passed, 0 failed
 
 ### Branch
 
@@ -60,7 +60,8 @@ npm run build
 
 ### Commit SHA
 
-`229df281214ca18bf4b67826fc3a79a1719c9f31`
+Use `git rev-parse HEAD` for the current revision.
+The known foundation feature commit is `957a2e858f9705a1a51deca44b60dfa941f35a83`.
 
 ### Known limitations
 
