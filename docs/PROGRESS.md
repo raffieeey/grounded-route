@@ -2,7 +2,7 @@
 
 ## Current milestone: M4 Browser and integration proof
 
-**Status:** FDN-002 human-first React workspace, local map/list equivalence, resident draft/approval/export controls, and the feature-gated WebMCP host are accepted on a private integration candidate. Merge/push to `main` is pending final integration gates. A real supported browser `document.modelContext` host remains unproven.
+**Status:** M0 fixture, the human-first React workspace, and browser-native WebMCP are accepted and pushed on private `main`. A real native Chrome local-development host has registered and executed all six WebMCP tools against the visible workspace. Public-release terms/attribution and a third-party agent-client or origin-trial deployment demonstration remain future gates.
 
 ### Completed
 
@@ -66,13 +66,13 @@ The known foundation feature commit is `957a2e858f9705a1a51deca44b60dfa941f35a83
 ### Known limitations
 
 - Public release is **excluded** until DBKL excerpt terms and visible OSM attribution are verified and implemented.
-- No real supported browser `document.modelContext` host has executed the registered WebMCP tools; the lifecycle contract is verified with a local fake host.
-- E2E verifies current-approval export readiness and zero external requests, not downloaded Blob bytes.
+- Native registration and all six tool calls are proven in a flag-enabled local Chrome development host; a third-party agent client or origin-trial/public-deployment demonstration remains unproven.
+- Browser-local Blob export readiness is verified, not downloaded Blob bytes.
 
 ### Next tickets
 
-- M4: live supported-browser WebMCP execution proof and any required host-specific compatibility adjustment.
 - M5: DBKL/OSM public-release terms, visible attribution, static deployment, and later user-approved public submission transition.
+- Optional M4 follow-up: third-party agent-client or origin-trial deployment demonstration after an appropriate deployment target exists.
 
 ## Spark frozen-blocker repair (FDN-001 focused)
 
@@ -111,13 +111,13 @@ npm run build
 
 ## WebMCP adapter and structured draft loop (FDN-003)
 
-**Status:** Accepted for private development as a headless browser adapter.
+**Status:** Accepted and exercised in a real local Chrome development host.
 
 ### Completed
 
 - Browser-native, feature-gated `document.modelContext.registerTool(...)` adapter at `src/webmcp/**`.
 - Exactly six narrow tools: context, evidence lookup, stage/clear overlay, structured draft, and review status. No agent approval/export/publication/copy/download tool and no cross-origin exposure.
-- Typed UI bridge for future React state wiring; successful agent mutations are visible state replacements rather than DOM mutations.
+- Typed UI bridge ties successful agent mutations to visible state replacements rather than DOM mutations; React host wiring is verified.
 - Fixture-bound source/mapping authorization, revision-safe handlers, and structured `DraftStatement` provenance classes.
 - Controlled audit actors: direct/resident path actions are `human`; WebMCP actions are `agent-tool`.
 - Deterministic evaluation fixture/test coverage for `EV-01` through `EV-08`.
@@ -128,7 +128,7 @@ npm run build
 
 - 68 tests passed: 27 domain, 23 WebMCP adapter, 9 evaluation, and 9 fixture tests.
 - `workflow:check`, `fixture:check`, `tdd:check`, `typecheck`, `lint`, and `build` all pass.
-- Claim ceiling: React host wiring, deterministic fake-host WebMCP lifecycle, and human-first browser flows are verified; a real browser `document.modelContext` invocation remains unproven.
+- Claim ceiling: React host wiring and all six native tools are proven in a local flag-enabled Chrome development host; a third-party agent-client, origin-trial, or public-deployment proof remains future work.
 
 ## Human-first workspace and visual accessibility (FDN-002)
 
@@ -154,5 +154,23 @@ npm run build
 
 ### Claim ceiling
 
-- The WebMCP tool lifecycle is verified with a local fake `document.modelContext`; a real supported browser host has not yet invoked the registered tools.
+- The WebMCP lifecycle and all six native tools are verified in a local flag-enabled Chrome development host; a third-party agent client or public origin-trial deployment is not yet demonstrated.
 - Export readiness and zero external requests are verified; Blob download bytes are not independently asserted.
+
+## Live Chrome WebMCP host proof (FDN-004)
+
+**Status:** Accepted local development-host proof.
+
+### Completed
+
+- Enabled Chrome's documented local WebMCP testing flag in an isolated headed Chrome profile and relaunched it.
+- The real browser exposed native `document.modelContext` and `navigator.modelContextTesting` on the production build.
+- Native tool discovery returned exactly the six intended tools and no approval/export/copy/download/publication tool.
+- Native execution exercised context, evidence lookup, stage, draft, review status, and clear against the actual rendered workspace state.
+- The stage/clear calls visibly changed the map indicator and controlled `agent-tool` audit trail; the structured draft remained approval-invalid until a direct resident action.
+- Full command/output record: `docs/evidence/fdn-004-live-webmcp-evidence.md`.
+
+### Claim ceiling
+
+- This is a real Chrome local-development proof under the documented testing flag, not a third-party agent-client or public origin-trial/deployment demonstration.
+- The test intentionally did not approve, export, or submit anything through WebMCP; those capabilities remain resident-only.
