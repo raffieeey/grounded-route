@@ -247,7 +247,7 @@ authority boundary. Evidence: `docs/evidence/fdn-008-route-verdict-redesign.md`.
   concern actions replace `Stage`; pre-filled editable draft; visible
   assistant-activity summary from WebMCP mutations; full segments, evidence
   board, and audit trail demoted behind keyboard-operable disclosures.
-- Mobile 390×844 above-fold gate for verdict + next action.
+- Mobile 390×844 above-fold gate: the full verdict card and a real keyboard-accessible `Review N conditions` action fit within the viewport for wheelchair, parent, and cyclist; redundant count/plan card lines removed/relocated (safety qualifier kept); 44px touch-target floor preserved.
 - Honest limits preserved: no backend/network/storage/analytics/map tiles/chat
   runtime/dependency/public release; no claimed live navigation, verified
   accessibility, confirmed impact, construction timeline, DBKL commitment, or

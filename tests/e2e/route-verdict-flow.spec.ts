@@ -17,22 +17,50 @@ test.describe("FDN-008 route-verdict browser contract", () => {
     await expect(page.getByText(/illustrative|not navigation|not a verified/i).first()).toBeVisible();
   });
 
-  test("V4: verdict and next action are visible at 390x844 without opening disclosures", async ({ page }) => {
+  test("V4: full verdict card and resident action fit within 390x844 for every profile", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
+
+    const profiles = ["Wheelchair user", "School-pickup parent", "Cyclist"];
+
+    for (const profileButton of profiles) {
+      await page.goto("/");
+      await page.getByRole("button", { name: "Start a route-impact check" }).click();
+      await page.getByRole("button", { name: profileButton }).click();
+
+      const verdict = page.getByRole("region", { name: "Route impact check" });
+      await expect(verdict).toBeVisible();
+
+      // No scroll: the verdict must fit on the first screen on its own.
+      const scrollY = await page.evaluate(() => window.scrollY);
+      expect(scrollY).toBe(0);
+
+      const cardBox = await verdict.boundingBox();
+      expect(cardBox).not.toBeNull();
+      expect(cardBox!.y + cardBox!.height).toBeLessThanOrEqual(844);
+
+      // A real, keyboard-accessible resident action is fully visible inside the card.
+      const action = verdict.getByRole("button", { name: /Review .* condition/i });
+      await expect(action).toBeVisible();
+      await expect(action).toBeEnabled();
+      const actionBox = await action.boundingBox();
+      expect(actionBox).not.toBeNull();
+      expect(actionBox!.y + actionBox!.height).toBeLessThanOrEqual(844);
+
+      // Exhaustive evidence is not rendered until disclosure.
+      await expect(page.getByRole("region", { name: "Evidence board" })).toHaveCount(0);
+      await expect(page.getByRole("region", { name: "Audit trail" })).toHaveCount(0);
+    }
+
+    // The visible action starts the next resident step: it focuses the
+    // conditions shortlist so the resident can act without guessing.
     await page.goto("/");
     await page.getByRole("button", { name: "Start a route-impact check" }).click();
     await page.getByRole("button", { name: "Wheelchair user" }).click();
-
     const verdict = page.getByRole("region", { name: "Route impact check" });
-    await expect(verdict).toBeVisible();
-    const box = await verdict.boundingBox();
-    expect(box).not.toBeNull();
-    expect(box!.y).toBeLessThan(844);
-    // Next action is within the verdict card.
-    await expect(verdict.getByText(/Next:/i)).toBeVisible();
-    // Exhaustive evidence is not rendered until disclosure.
-    await expect(page.getByRole("region", { name: "Evidence board" })).toHaveCount(0);
-    await expect(page.getByRole("region", { name: "Audit trail" })).toHaveCount(0);
+    const action = verdict.getByRole("button", { name: /Review .* condition/i });
+    const shortlist = page.getByRole("region", { name: "Conditions to review" });
+    await action.click();
+    await expect(shortlist).toBeFocused();
   });
 
   test("V2/V3: profile selection changes the verdict and conditions deterministically", async ({ page }) => {

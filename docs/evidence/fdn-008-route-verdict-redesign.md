@@ -72,23 +72,42 @@ Test Files  15 passed (15)
 
 ### Cluster 3 — browser tests (RED observed)
 
-Added `tests/e2e/route-verdict-flow.spec.ts`. First Playwright run failed the
-V4 above-fold test on both projects:
+Added `tests/e2e/route-verdict-flow.spec.ts`. The first V4 assertion only
+checked the verdict *top* edge (`box.y < 844`). The independent review
+(DeepSeek V4, FDN-008-V4-01) proved with direct Playwright full-bounding-box
+probes at 390×844 (`scrollY=0`) that the verdict card and first resident
+action were clipped below the fold:
 
 ```
-V4: verdict and next action are visible at 390x844 without opening disclosures
-Expected: < 300
-Received:   872.375
-2 failed
+RED (probe, vite preview :4173, 390x844, scrollY=0):
+  Wheelchair user      card_bottom=885.1  first_action_y=1767.6
+  School-pickup parent card_bottom=910.3  first_action_y=1792.8
+  Cyclist              card_bottom=885.1  first_action_y=1767.6
 ```
 
-The verdict was pushed below the 844px fold by the disclaimer + profile banner.
-Fix: removed the redundant profile banner (the verdict already names the
-profile), compacted the disclaimer/value-prop/corridor title on mobile, and
-asserted the verdict top is within the first screen (`< 844`). Final:
+The V4 browser test was strengthened to measure the **full** bounding box of
+both the verdict card and a real keyboard-accessible resident action for all
+three profiles (`box.y + box.height <= 844`, `scrollY === 0`). This stronger
+test failed before the repair (the `Review N conditions` action did not yet
+exist and the card bottom exceeded 844 for every profile).
+
+Repair (information hierarchy, not font shrinking): the redundant
+`.verdict-count` line (which duplicated the headline's condition count) and
+the `.verdict-plan` line were removed from the card; the plan-impact area
+count was relocated into the `Conditions to review` shortlist as a compact
+truthful summary; the verbose `Next:` text was replaced with a real
+`Review N conditions` button that scrolls to and focuses the conditions
+shortlist so the next resident action starts without guessing. The
+illustrative/unverified safety qualifier stays in the card. Mobile card
+padding/margins were compacted; the 44px mobile touch-target floor is
+preserved (`button { min-height: 44px }`).
 
 ```
-16 passed (8.6s)
+GREEN (probe, vite preview :4173, 390x844, scrollY=0):
+  Wheelchair user      card_bottom=789.0  action_bottom=778.0
+  School-pickup parent card_bottom=814.2  action_bottom=803.2
+  Cyclist              card_bottom=789.0  action_bottom=778.0
+npx playwright test -> 16 passed
 ```
 
 ## V1–V7 acceptance mapping
@@ -112,8 +131,13 @@ asserted the verdict top is within the first screen (`< 844`). Final:
   ("Add to my draft" / "Added — remove from draft"; advanced "Show possible
   plan impact"). Default view shows verdict + map + conditions shortlist;
   full route segments, evidence board, and audit trail are behind
-  keyboard-operable disclosures. The 390×844 browser test proves the verdict
-  and next action are visible without opening disclosures.
+  keyboard-operable disclosures. The 390×844 browser test measures the **full**
+  bounding box of the verdict card and a real keyboard-accessible
+  `Review N conditions` action for wheelchair, parent, and cyclist
+  (`box.y + box.height <= 844`, `scrollY === 0`); the action scrolls to and
+  focuses the conditions shortlist. Redundant count/plan card lines were
+  removed/relocated (not the safety qualifier) so the hierarchy fits without
+  shrinking fonts below the mobile target floor.
 - **V5 editable pre-filled draft**: `buildDraftPrefill` builds an editable
   structured draft from the profile + conditions + reviewed mappings/source
   references. The draft separates resident-position, requested-change,
@@ -147,7 +171,7 @@ npm run test             -> 142 passed (15 files)
 npm run typecheck        -> ok
 npm run lint             -> ok
 npm run build            -> built in 274ms
-npx playwright test      -> 16 passed (8.6s)
+npx playwright test      -> 16 passed (V4 now full-bounding-box for 3 profiles)
 git diff --check 88f02f3..HEAD -> clean
 ```
 

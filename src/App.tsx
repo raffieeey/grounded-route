@@ -150,6 +150,13 @@ export default function App() {
     [state, bridge]
   );
 
+  const handleReviewConditions = useCallback(() => {
+    const el = document.getElementById("conditions-shortlist");
+    if (!el) return;
+    el.scrollIntoView({ block: "start" });
+    el.focus({ preventScroll: true });
+  }, []);
+
   const handleCreateDraft = useCallback(
     (position: string, change: string, questions: string) => {
       const openQuestions = questions
@@ -281,7 +288,7 @@ export default function App() {
 
           {verdict && (
             <>
-              <VerdictCard verdict={verdict} />
+              <VerdictCard verdict={verdict} onReviewConditions={handleReviewConditions} />
 
               <div className="workspace-grid">
                 <div className="workspace-main">
@@ -295,6 +302,7 @@ export default function App() {
                     conditions={verdict.conditionsToReview}
                     mappings={scenarioMappings}
                     stagedMappingIds={state.route.stagedMappingIds}
+                    planRelevantMappingIds={verdict.planRelevantMappingIds}
                     onAddConcern={handleAddConcern}
                     onRemoveConcern={handleRemoveConcern}
                   />

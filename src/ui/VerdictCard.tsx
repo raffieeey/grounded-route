@@ -2,10 +2,15 @@ import type { RouteVerdict } from "@/domain/verdict.ts";
 
 interface VerdictCardProps {
   verdict: RouteVerdict;
+  onReviewConditions?: () => void;
 }
 
-export default function VerdictCard({ verdict }: VerdictCardProps) {
+export default function VerdictCard({ verdict, onReviewConditions }: VerdictCardProps) {
   const n = verdict.conditionsToReview.length;
+  const actionLabel =
+    n === 0
+      ? "Review conditions summary"
+      : `Review ${n} condition${n === 1 ? "" : "s"}`;
   return (
     <section
       className="verdict-card"
@@ -14,21 +19,14 @@ export default function VerdictCard({ verdict }: VerdictCardProps) {
     >
       <h2 className="verdict-headline">{verdict.headline}</h2>
       <p className="verdict-qualifier">{verdict.qualifier}</p>
-      <p className="verdict-next-action">
-        <span className="verdict-next-label">Next: </span>
-        {verdict.nextAction}
-      </p>
-      <p className="verdict-count" data-testid="verdict-condition-count">
-        {n === 0
-          ? "No conditions flagged."
-          : `${n} condition${n === 1 ? "" : "s"} to review below.`}
-      </p>
-      {verdict.planRelevantMappingIds.length > 0 && (
-        <p className="verdict-plan">
-          {verdict.planRelevantMappingIds.length} possible plan impact area
-          {verdict.planRelevantMappingIds.length === 1 ? "" : "s"} overlap your route.
-        </p>
-      )}
+      <button
+        type="button"
+        className="verdict-action touch-target"
+        onClick={onReviewConditions}
+        aria-label={`${actionLabel} — go to the conditions shortlist`}
+      >
+        {actionLabel}
+      </button>
     </section>
   );
 }
