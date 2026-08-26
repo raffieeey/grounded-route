@@ -869,6 +869,102 @@ button:disabled {
   align-self: flex-start;
 }
 
+/* FDN-009 WOW-2: agent activity stays visible while the workspace is in view. */
+.assistant-banner {
+  position: sticky;
+  top: 8px;
+  z-index: 5;
+  background: #f2f8ff;
+  border: 1px solid #a8d2fb;
+  border-left: 4px solid var(--accent);
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 66, 128, 0.12);
+  padding: 10px 12px;
+  margin: 8px 0;
+}
+
+.assistant-banner__heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.assistant-banner h2 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.assistant-intro {
+  margin: 1px 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.assistant-pulse {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.assistant-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+}
+
+.assistant-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+
+.assistant-kind {
+  color: #07579f;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.assistant-time {
+  color: var(--muted);
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .assistant-pulse {
+    animation: assistant-ai-pulse 1.8s ease-in-out infinite;
+  }
+
+  .assistant-item--new {
+    animation: assistant-banner-enter 260ms ease-out both;
+  }
+}
+
+@keyframes assistant-ai-pulse {
+  50% { box-shadow: 0 0 0 7px rgba(0, 117, 222, 0); transform: scale(1.04); }
+}
+
+@keyframes assistant-banner-enter {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assistant-pulse,
+  .assistant-item--new { animation: none; }
+}
+
 .assistant-activity {
   background: var(--accent-light);
   border: 1px solid var(--border);
