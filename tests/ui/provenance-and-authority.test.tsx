@@ -8,7 +8,7 @@ import { createGroundedRouteController } from "@/domain/actions.ts";
 const { humanPort, agentPort } = createGroundedRouteController();
 const FIXTURE_SCENARIO = "saloma-link-active-mobility-demo";
 
-describe("FDN-002 provenance and authority", () => {
+describe("FDN-002 provenance and authority (FDN-008 contract)", () => {
   beforeEach(() => {
     // @ts-expect-error removing experimental API
     delete document.modelContext;
@@ -17,15 +17,16 @@ describe("FDN-002 provenance and authority", () => {
   it("source-reference and curated-interpretation cards are visibly separated", async () => {
     const user = userEvent.setup();
     render(<App />);
-    await user.click(screen.getByRole("button", { name: /Load illustrative demo/i }));
+    await user.click(screen.getByRole("button", { name: /Start a route-impact check/i }));
     await user.click(screen.getByRole("button", { name: /Wheelchair user/i }));
 
-    const evidenceBoard = await screen.findByRole("region", { name: /Evidence/i });
+    // Evidence board is behind disclosure.
+    await user.click(screen.getByRole("button", { name: /Show evidence board/i }));
+    const evidenceBoard = await screen.findByRole("region", { name: /Evidence board/i });
     expect(evidenceBoard).toBeInTheDocument();
 
     const sourceRefs = within(evidenceBoard).getAllByText(/source-reference/i);
     expect(sourceRefs.length).toBeGreaterThan(0);
-
     const curated = within(evidenceBoard).getAllByText(/curated-interpretation/i);
     expect(curated.length).toBeGreaterThan(0);
   });
@@ -49,47 +50,37 @@ describe("FDN-002 provenance and authority", () => {
   it("a mutation invalidates approval and disables export", async () => {
     const user = userEvent.setup();
     render(<App />);
-    await user.click(screen.getByRole("button", { name: /Load illustrative demo/i }));
+    await user.click(screen.getByRole("button", { name: /Start a route-impact check/i }));
     await user.click(screen.getByRole("button", { name: /Wheelchair user/i }));
 
-    const segmentList = await screen.findByRole("list", { name: /Route segments/i });
-    const firstSegment = within(segmentList).getAllByRole("listitem")[0];
-    await user.click(within(firstSegment).getByRole("button", { name: /Stage/i }));
+    const conditions = await screen.findByRole("region", { name: /Conditions to review/i });
+    await user.click(within(conditions).getAllByRole("button", { name: /Add .* to my draft/i })[0]);
 
-    await user.click(screen.getByRole("button", { name: /Open draft/i }));
-    const draftPanel = await screen.findByRole("form", { name: /Draft review/i });
-    await user.type(within(draftPanel).getByLabelText(/Your position/i), "p");
-    await user.type(within(draftPanel).getByLabelText(/Requested change/i), "c");
-    await user.click(within(draftPanel).getByRole("button", { name: /Create draft/i }));
+    const draft = screen.getByRole("region", { name: /Draft review/i });
+    await user.click(within(draft).getByRole("button", { name: /Prepare draft/i }));
 
     await user.click(screen.getByRole("button", { name: /Approve current draft/i }));
     const exportBtn = screen.getByRole("button", { name: /Export/i });
     await waitFor(() => expect(exportBtn).not.toBeDisabled());
 
-    // Mutate: select a different profile (this invalidates approval)
+    // Mutate: select a different profile (this invalidates approval).
     await user.click(screen.getByRole("button", { name: /Cyclist/i }));
-
     await waitFor(() => expect(exportBtn).toBeDisabled());
   });
 
   it("clear session removes draft, approval, and audit from workspace", async () => {
     const user = userEvent.setup();
     render(<App />);
-    await user.click(screen.getByRole("button", { name: /Load illustrative demo/i }));
+    await user.click(screen.getByRole("button", { name: /Start a route-impact check/i }));
     await user.click(screen.getByRole("button", { name: /Wheelchair user/i }));
-
-    const segmentList = await screen.findByRole("list", { name: /Route segments/i });
-    const firstSegment = within(segmentList).getAllByRole("listitem")[0];
-    await user.click(within(firstSegment).getByRole("button", { name: /Stage/i }));
-    await user.click(screen.getByRole("button", { name: /Open draft/i }));
-    const draftPanel = await screen.findByRole("form", { name: /Draft review/i });
-    await user.type(within(draftPanel).getByLabelText(/Your position/i), "p");
-    await user.type(within(draftPanel).getByLabelText(/Requested change/i), "c");
-    await user.click(within(draftPanel).getByRole("button", { name: /Create draft/i }));
+    const conditions = await screen.findByRole("region", { name: /Conditions to review/i });
+    await user.click(within(conditions).getAllByRole("button", { name: /Add .* to my draft/i })[0]);
+    const draft = screen.getByRole("region", { name: /Draft review/i });
+    await user.click(within(draft).getByRole("button", { name: /Prepare draft/i }));
     await user.click(screen.getByRole("button", { name: /Approve current draft/i }));
 
     await user.click(screen.getByRole("button", { name: /Clear current session/i }));
-    expect(screen.queryByRole("list", { name: /Route segments/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: /Conditions to review/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Export/i })).not.toBeInTheDocument();
   });
 
@@ -98,7 +89,6 @@ describe("FDN-002 provenance and authority", () => {
     const xhrSpy = vi.spyOn(XMLHttpRequest.prototype, "open").mockImplementation(() => {});
 
     render(<App />);
-    // No fetch/XHR calls expected during render
     expect(fetchSpy).not.toHaveBeenCalled();
     expect(xhrSpy).not.toHaveBeenCalled();
 
@@ -109,18 +99,15 @@ describe("FDN-002 provenance and authority", () => {
   it("local map uses actual fixture segment IDs and staged state", async () => {
     const user = userEvent.setup();
     render(<App />);
-    await user.click(screen.getByRole("button", { name: /Load illustrative demo/i }));
+    await user.click(screen.getByRole("button", { name: /Start a route-impact check/i }));
     await user.click(screen.getByRole("button", { name: /Wheelchair user/i }));
 
     const mapRegion = await screen.findByRole("img", { name: /Illustrative local route diagram/i });
     expect(mapRegion).toBeInTheDocument();
 
-    // After staging, map should reflect staged count visually
-    const segmentList = await screen.findByRole("list", { name: /Route segments/i });
-    const firstSegment = within(segmentList).getAllByRole("listitem")[0];
-    await user.click(within(firstSegment).getByRole("button", { name: /Stage/i }));
+    const conditions = await screen.findByRole("region", { name: /Conditions to review/i });
+    await user.click(within(conditions).getAllByRole("button", { name: /Add .* to my draft/i })[0]);
 
-    // Map region should still be present after staging
     expect(screen.getByRole("img", { name: /Illustrative local route diagram/i })).toBeInTheDocument();
   });
 });

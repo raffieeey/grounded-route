@@ -110,18 +110,14 @@ describe("FDN-006 OSM attribution — export through UI", () => {
     });
 
     render(<App />);
-    await user.click(screen.getByRole("button", { name: /Load illustrative demo/i }));
+    await user.click(screen.getByRole("button", { name: /Start a route-impact check/i }));
     await user.click(screen.getByRole("button", { name: /Wheelchair user/i }));
 
-    const segmentList = await screen.findByRole("list", { name: /Route segments/i });
-    const firstSegment = within(segmentList).getAllByRole("listitem")[0];
-    await user.click(within(firstSegment).getByRole("button", { name: /Stage/i }));
+    const conditions = await screen.findByRole("region", { name: /Conditions to review/i });
+    await user.click(within(conditions).getAllByRole("button", { name: /Add .* to my draft/i })[0]);
 
-    await user.click(screen.getByRole("button", { name: /Open draft/i }));
-    const draftPanel = await screen.findByRole("form", { name: /Draft review/i });
-    await user.type(within(draftPanel).getByLabelText(/Your position/i), "Concerned resident");
-    await user.type(within(draftPanel).getByLabelText(/Requested change/i), "Install tactile paving");
-    await user.click(within(draftPanel).getByRole("button", { name: /Create draft/i }));
+    const draft = screen.getByRole("region", { name: /Draft review/i });
+    await user.click(within(draft).getByRole("button", { name: /Prepare draft/i }));
 
     await user.click(screen.getByRole("button", { name: /Approve current draft/i }));
 

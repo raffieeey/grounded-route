@@ -71,16 +71,16 @@ describe("FDN-002 visual layout — workspace control semantics on small screens
   it("profile selectors keep full readable labels and toggle semantics", () => {
     render(
       <WorkspaceControls
-        loaded
+        started
         activeProfileId="profile-wheelchair"
         profiles={typedProfiles}
-        onLoad={() => {}}
+        onStart={() => {}}
         onClear={() => {}}
         onSelectProfile={() => {}}
       />,
     );
 
-    const group = screen.getByRole("group", { name: /Select a profile/i });
+    const group = screen.getByRole("group", { name: /Select a.*profile/i });
     for (const p of typedProfiles) {
       const btn = within(group).getByRole("button", { name: new RegExp(p.label) });
       expect(btn).toHaveAttribute("aria-label", p.label);
@@ -97,10 +97,10 @@ describe("FDN-002 visual layout — workspace control semantics on small screens
   it("clear-session control is a labelled, touch-friendly secondary action", () => {
     render(
       <WorkspaceControls
-        loaded
+        started
         activeProfileId={null}
         profiles={typedProfiles}
-        onLoad={() => {}}
+        onStart={() => {}}
         onClear={() => {}}
         onSelectProfile={() => {}}
       />,

@@ -56,6 +56,12 @@ export interface RouteProfile {
   label: string;
   description: string;
   constraints: string[];
+  /**
+   * Deterministic, illustrative profile-relevant route segment set (FDN-008).
+   * Project-authored fixture metadata; explicitly illustrative and validated
+   * against the segment fixture. Not a real-world route or accessibility finding.
+   */
+  routeSegmentIds: string[];
 }
 
 export interface PlaceFeature extends GeoJsonFeature {

@@ -14,6 +14,7 @@ import type {
 } from "@/contracts/types.ts";
 
 import scenarioImpactMappings from "../../data/scenario_impact_mappings.json";
+import { profileRouteSegmentIds } from "@/domain/verdict.ts";
 import sourceClaimsData from "../../data/source_claims.json";
 
 interface GroundedRouteController {
@@ -184,6 +185,11 @@ export function selectProfile(
   }
   const next = writeAudit(state, "selectProfile", { profileId }, actor);
   next.route.profileId = profileId;
+  // FDN-008: profile selection materially changes the active route, not just a
+  // banner. The deterministic profile-relevant segment set comes from checked-in
+  // illustrative fixture metadata (see src/domain/verdict.ts). An unknown
+  // profile id clears the active route rather than inventing one.
+  next.route.activeSegmentIds = profileRouteSegmentIds(profileId);
   next.approval = null;
   return ok(next, next.route.revision);
 }

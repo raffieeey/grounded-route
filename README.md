@@ -2,9 +2,9 @@
 
 > **See how a city plan changes the route you actually live — and speak with evidence, not guesswork.**
 
-Grounded Route is a WebMCP-native civic planning workspace for the OpenAI WebMCP Challenge.
+Grounded Route is a WebMCP-native civic planning workspace for the OpenMCP Challenge.
 
-A resident selects a route and a mobility profile, then explores how a narrowly scoped Kuala Lumpur planning scenario may affect that route. An agent can inspect the same live map and evidence board, stage reversible route-impact overlays, and prepare a source-linked public-comment draft. The resident sees every proposed change, corrects it, and alone chooses whether to export it.
+A resident starts a 30-second **route-impact check**: they select a mobility profile and immediately see a deterministic, illustrative verdict on whether a narrowly scoped Kuala Lumpur planning scenario raises route conditions they should investigate, why, and what is unknown. They review a plain-language conditions shortlist, add the ones that matter to an editable pre-filled civic comment, and alone approve and export it. A browser assistant using WebMCP can inspect, stage reversible overlays, and draft in the same shared workspace; the resident sees every proposed change as a concise assistant-activity summary and remains the sole approver/exporter. The verdict is a fixture-bound planning/review prompt — not navigation, verified accessibility, a confirmed project impact, a construction timeline, or a DBKL commitment.
 
 ## What we are building
 
@@ -15,10 +15,11 @@ The first MVP is:
 - one small Kuala Lumpur demonstration area;
 - one carefully curated scenario based on public DBKL Kuala Lumpur Development Plan 2040 material;
 - route geometry from OpenStreetMap;
-- a source-linked evidence board;
-- three demo profiles: wheelchair user, school-pickup parent, and cyclist;
-- browser-native WebMCP tools that update the shared map state visibly and reversibly;
-- an explicit, human-only export step for a public-comment draft.
+- a resident-first route-impact verdict and conditions shortlist (illustrative, not a verified impact);
+- a source-linked evidence board (disclosed, not the default view);
+- three demo profiles — wheelchair user, school-pickup parent, and cyclist — each with a deterministic, materially different illustrative route and verdict;
+- browser-native WebMCP tools that update the shared map state visibly and reversibly, surfaced as concise assistant-activity summaries;
+- a pre-filled, editable public-comment draft with an explicit, human-only approve/export step.
 
 ## Why WebMCP is essential
 

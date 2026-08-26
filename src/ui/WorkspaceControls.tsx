@@ -1,44 +1,48 @@
 import type { RouteProfile } from "@/contracts/types.ts";
 
 interface WorkspaceControlsProps {
-  loaded: boolean;
+  started: boolean;
   activeProfileId: string | null;
   profiles: RouteProfile[];
-  onLoad: () => void;
+  onStart: () => void;
   onClear: () => void;
   onSelectProfile: (id: string) => void;
 }
 
 export default function WorkspaceControls({
-  loaded,
+  started,
   activeProfileId,
   profiles,
-  onLoad,
+  onStart,
   onClear,
   onSelectProfile,
 }: WorkspaceControlsProps) {
   return (
     <section aria-label="Session controls">
-      {!loaded ? (
+      {!started ? (
         <button
-          className="btn-primary touch-target"
-          onClick={onLoad}
-          aria-label="Load illustrative demo"
+          className="btn-primary touch-target cta-start"
+          onClick={onStart}
+          aria-label="Start a route-impact check"
         >
-          Load illustrative demo
+          Start a route-impact check
         </button>
       ) : (
-        <button
-          className="btn-secondary touch-target"
-          onClick={onClear}
-          aria-label="Clear current session"
-        >
-          Clear current session
-        </button>
+        <div className="session-actions">
+          <span className="session-label">Illustrative corridor loaded.</span>
+          <button
+            className="btn-secondary touch-target"
+            onClick={onClear}
+            aria-label="Clear current session"
+          >
+            Clear current session
+          </button>
+        </div>
       )}
 
-      {loaded && (
-        <div className="profiles" role="group" aria-label="Select a profile">
+      {started && (
+        <div className="profiles" role="group" aria-label="Select a mobility profile">
+          <p className="profiles-prompt">Select a mobility profile to see your route-impact check.</p>
           {profiles.map((p) => (
             <button
               key={p.id}

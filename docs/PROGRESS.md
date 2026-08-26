@@ -227,3 +227,46 @@ Private quotation-bearing review and evidence history has been intentionally exc
 - No approval/export/copy/download/publish capability was added.
 - Six WebMCP tool names preserved exactly. Human-only authority boundaries preserved.
 - OSM attribution intact. No runtime egress.
+
+## FDN-008 — Route Verdict redesign (private candidate)
+
+**Status:** Implemented on `feat/route-verdict-redesign`; not pushed. The product
+is transformed from a feature checklist into a resident-first, 30-second
+route-impact verdict flow while preserving every truthful limitation and
+authority boundary. Evidence: `docs/evidence/fdn-008-route-verdict-redesign.md`.
+
+### Completed
+
+- Deterministic verdict view-model (`src/domain/verdict.ts`): profile route
+  rules, condition derivation from fixture segment tags + profile constraints +
+  reviewed mappings, draft prefill, and typed agent-activity summaries.
+- `selectProfile` now materially changes `activeSegmentIds` (not just a banner).
+- Resident-first first screen: value proposition + `Start a route-impact check`
+  CTA; illustrative limitation kept but compact.
+- Verdict card + conditions shortlist before the dossier; plain-language
+  concern actions replace `Stage`; pre-filled editable draft; visible
+  assistant-activity summary from WebMCP mutations; full segments, evidence
+  board, and audit trail demoted behind keyboard-operable disclosures.
+- Mobile 390×844 above-fold gate: the full verdict card and a real keyboard-accessible `Review N conditions` action fit within the viewport for wheelchair, parent, and cyclist; redundant count/plan card lines removed/relocated (safety qualifier kept); 44px touch-target floor preserved.
+- Honest limits preserved: no backend/network/storage/analytics/map tiles/chat
+  runtime/dependency/public release; no claimed live navigation, verified
+  accessibility, confirmed impact, construction timeline, DBKL commitment, or
+  personal experience. OSM credit, source-reference vs curated-interpretation,
+  six-tool invariant, revision invalidation, human-only approve/export, and
+  no-egress are all intact.
+
+### Acceptance evidence
+
+- 142 vitest tests across 15 files pass; 16 Playwright tests pass (desktop +
+  Mobile Chrome), including the new 390×844 above-fold, profile-driven
+  differences, agent-activity, and six-tools browser tests.
+- `workflow:check`, `fixture:check`, `tdd:check`, typecheck, lint, build all
+  pass; `git diff --check 88f02f3..HEAD` clean.
+
+### Not done
+
+- No push, no public release, no manual visual QA pass, no re-run of a real
+  local Chrome native WebMCP invocation (adapter tool surface unchanged; the
+  browser test drives the real adapter via an injected fake `modelContext`).
+- DBKL source-reference rights path remains unresolved; repository stays
+  private.

@@ -77,6 +77,22 @@ describe("fixture manifest validation", () => {
     }
   });
 
+  it("profile routeSegmentIds reference known segments only (FDN-008)", () => {
+    const segIds = new Set(
+      (segmentsGeo.features as Array<{ properties: { id: string } }>).map((f) => f.properties.id)
+    );
+    for (const prof of profiles) {
+      expect(Array.isArray(prof.routeSegmentIds)).toBe(true);
+      expect(prof.routeSegmentIds.length).toBeGreaterThan(0);
+      for (const sid of prof.routeSegmentIds) {
+        expect(segIds.has(sid)).toBe(true);
+      }
+    }
+    // The three profiles must have materially different route sets.
+    const sets = profiles.map((p: { routeSegmentIds: string[] }) => p.routeSegmentIds.join("|"));
+    expect(new Set(sets).size).toBe(3);
+  });
+
   it("source claim count is between 6 and 12 inclusive", () => {
     expect(sourceClaims.length).toBeGreaterThanOrEqual(6);
     expect(sourceClaims.length).toBeLessThanOrEqual(12);

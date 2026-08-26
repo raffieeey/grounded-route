@@ -16,8 +16,12 @@ export default function RouteSegmentList({
   onClearMapping,
 }: RouteSegmentListProps) {
   return (
-    <section aria-label="Route segments">
-      <h2>Route segments</h2>
+    <section aria-label="Route segments" role="region">
+      <h2>Full route segments</h2>
+      <p className="segment-list-intro">
+        Advanced view of every illustrative segment on this corridor, with the
+        reviewed plan-impact overlays. Mapping IDs are shown here for provenance.
+      </p>
       <ul className="segment-list" role="list" aria-label="Route segments">
         {segments.map((seg) => {
           const segMappings = mappings.filter((m) =>
@@ -44,22 +48,25 @@ export default function RouteSegmentList({
                     const isStaged = stagedMappingIds.includes(m.id);
                     return (
                       <div key={m.id} className="mapping-row">
-                        <span className="mapping-id">{m.id}</span>
+                        <details className="mapping-advanced">
+                          <summary className="mapping-id">mapping {m.id}</summary>
+                          <p className="mapping-rationale">{m.rationale}</p>
+                        </details>
                         {isStaged ? (
                           <button
-                            className="btn-small btn-secondary"
+                            className="btn-small btn-secondary touch-target"
                             onClick={() => onClearMapping(m.id)}
-                            aria-label={`Clear ${m.id}`}
+                            aria-label={`Hide possible plan impact ${m.id}`}
                           >
-                            Clear
+                            Hide plan impact
                           </button>
                         ) : (
                           <button
-                            className="btn-small btn-primary"
+                            className="btn-small btn-primary touch-target"
                             onClick={() => onStageMapping(m.id)}
-                            aria-label={`Stage ${m.id}`}
+                            aria-label={`Show possible plan impact ${m.id}`}
                           >
-                            Stage
+                            Show possible plan impact
                           </button>
                         )}
                       </div>
@@ -68,7 +75,7 @@ export default function RouteSegmentList({
                 </div>
               )}
               {stagedForSegment.length > 0 && (
-                <div className="staged-badge">Staged: {stagedForSegment.map((m) => m.id).join(", ")}</div>
+                <div className="staged-badge">Plan impact shown</div>
               )}
             </li>
           );

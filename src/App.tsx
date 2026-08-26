@@ -10,6 +10,12 @@ import segmentsGeoRaw from "../data/route_segments.geojson?raw";
 import { useWorkspaceBridge } from "@/ui/useWorkspaceBridge.ts";
 import { createGroundedRouteController } from "@/domain/actions.ts";
 import { registerWebMcpTools } from "@/webmcp/index.ts";
+import {
+  computeRouteVerdict,
+  buildDraftPrefill,
+  summarizeAgentActivity,
+  type ConditionToReview,
+} from "@/domain/verdict.ts";
 import type { RouteSegmentFeature, DemoScenario, RouteProfile, SourceClaim, ScenarioImpactMapping } from "@/contracts/types.ts";
 
 import WorkspaceControls from "@/ui/WorkspaceControls.tsx";
@@ -18,6 +24,9 @@ import EvidenceBoard from "@/ui/EvidenceBoard.tsx";
 import DraftReviewPanel from "@/ui/DraftReviewPanel.tsx";
 import AuditConsentStrip from "@/ui/AuditConsentStrip.tsx";
 import LocalRouteMap from "@/ui/LocalRouteMap.tsx";
+import VerdictCard from "@/ui/VerdictCard.tsx";
+import ConditionsShortlist from "@/ui/ConditionsShortlist.tsx";
+import AssistantActivity from "@/ui/AssistantActivity.tsx";
 
 const { humanPort, residentPort } = createGroundedRouteController();
 
@@ -29,16 +38,10 @@ const allSegments = (JSON.parse(segmentsGeoRaw) as { features: RouteSegmentFeatu
 
 export default function App() {
   const { state, bridge } = useWorkspaceBridge(humanPort.createInitialState());
-  const [loaded, setLoaded] = useState(false);
-  const [draftOpen, setDraftOpen] = useState(false);
+  const [started, setStarted] = useState(false);
+  const [showFullSegments, setShowFullSegments] = useState(false);
+  const [showEvidence, setShowEvidence] = useState(false);
 
-  // Feature-gated WebMCP registration. The bridge identity is stable across
-  // state changes (see useWorkspaceBridge), so this effect runs once per mount.
-  // Registration is deferred to a task so the first StrictMode setup can be
-  // cancelled in its cleanup before it ever invokes registerWebMcpTools; the
-  // settled setup then emits exactly one six-tool batch. An AbortController
-  // cancels in-flight registration on remount and unregisters the tool batch
-  // on real unmount via the documented { signal } option.
   useEffect(() => {
     const mc = (document as unknown as Record<string, unknown>).modelContext;
     if (!mc) return;
@@ -59,30 +62,24 @@ export default function App() {
     };
   }, [bridge]);
 
-  const orderedSegments = useMemo(() => {
-    const order = scenario.defaultSegmentIds;
-    return order
-      .map((id) => allSegments.find((s) => s.properties.id === id))
-      .filter(Boolean) as RouteSegmentFeature[];
-  }, []);
-
   const scenarioMappings = useMemo(
     () => typedMappings.filter((m) => m.scenarioId === scenario.id),
     []
   );
 
-  const handleLoad = useCallback(() => {
+  const handleStart = useCallback(() => {
     const next = humanPort.selectScenario(state, scenario.id);
     if (next.success) {
-      bridge.replaceState(next.data, "Demo loaded");
-      setLoaded(true);
+      bridge.replaceState(next.data, "Illustrative corridor loaded");
+      setStarted(true);
     }
   }, [state, bridge]);
 
   const handleClear = useCallback(() => {
     bridge.replaceState(humanPort.createInitialState(), "Session cleared");
-    setLoaded(false);
-    setDraftOpen(false);
+    setStarted(false);
+    setShowFullSegments(false);
+    setShowEvidence(false);
   }, [bridge]);
 
   const handleSelectProfile = useCallback(
@@ -115,21 +112,78 @@ export default function App() {
     [state, bridge]
   );
 
+  const handleAddConcern = useCallback(
+    (condition: ConditionToReview) => {
+      let current = state;
+      let rev = state.route.revision;
+      for (const mappingId of condition.mappingIds) {
+        if (current.route.stagedMappingIds.includes(mappingId)) continue;
+        const next = humanPort.stageMapping(current, mappingId, rev);
+        if (next.success) {
+          current = next.data;
+          rev = next.revision;
+        }
+      }
+      if (current !== state) {
+        bridge.replaceState(current, `Added concern: ${condition.segmentName}`);
+      }
+    },
+    [state, bridge]
+  );
+
+  const handleRemoveConcern = useCallback(
+    (condition: ConditionToReview) => {
+      let current = state;
+      let rev = state.route.revision;
+      for (const mappingId of condition.mappingIds) {
+        if (!current.route.stagedMappingIds.includes(mappingId)) continue;
+        const next = humanPort.removeStagedMapping(current, mappingId, rev);
+        if (next.success) {
+          current = next.data;
+          rev = next.revision;
+        }
+      }
+      if (current !== state) {
+        bridge.replaceState(current, `Removed concern: ${condition.segmentName}`);
+      }
+    },
+    [state, bridge]
+  );
+
+  const handleReviewConditions = useCallback(() => {
+    const el = document.getElementById("conditions-shortlist");
+    if (!el) return;
+    el.scrollIntoView({ block: "start" });
+    el.focus({ preventScroll: true });
+  }, []);
+
   const handleCreateDraft = useCallback(
     (position: string, change: string, questions: string) => {
       const openQuestions = questions
         .split(",")
         .map((q) => q.trim())
         .filter((q) => q.length > 0);
-      const next = humanPort.createStructuredDraft(state, {
-        mappingIds: state.route.stagedMappingIds,
-        sourceClaimIds: scenarioMappings.flatMap((m) => m.sourceClaimIds),
-        userPosition: position,
-        requestedChange: change,
-        openQuestions,
-      }, state.route.revision);
+      const stagedIds = state.route.stagedMappingIds;
+      const activeSet = new Set(state.route.activeSegmentIds);
+      const planRelevant = scenarioMappings
+        .filter((m) => m.segmentIds.some((id) => activeSet.has(id)))
+        .map((m) => m.id);
+      const mappingIds = stagedIds.length > 0 ? stagedIds : planRelevant;
+      const sourceClaimIds = Array.from(
+        new Set(
+          mappingIds
+            .map((id) => scenarioMappings.find((m) => m.id === id))
+            .filter(Boolean)
+            .flatMap((m) => m!.sourceClaimIds)
+        )
+      );
+      const next = humanPort.createStructuredDraft(
+        state,
+        { mappingIds, sourceClaimIds, userPosition: position, requestedChange: change, openQuestions },
+        state.route.revision
+      );
       if (next.success) {
-        bridge.replaceState(next.data, "Draft created");
+        bridge.replaceState(next.data, "Draft prepared");
       }
     },
     [state, bridge, scenarioMappings]
@@ -160,9 +214,38 @@ export default function App() {
     }
   }, [state]);
 
-  const activeProfile = state.route.profileId
-    ? typedProfiles.find((p) => p.id === state.route.profileId) || null
-    : null;
+  const activeSegmentIds = state.route.profileId && state.route.activeSegmentIds.length > 0
+    ? state.route.activeSegmentIds
+    : scenario.defaultSegmentIds;
+
+  const orderedSegments = useMemo(() => {
+    const order = activeSegmentIds;
+    return order
+      .map((id) => allSegments.find((s) => s.properties.id === id))
+      .filter(Boolean) as RouteSegmentFeature[];
+  }, [activeSegmentIds]);
+
+  const verdict = useMemo(() => {
+    if (!state.route.profileId || state.route.activeSegmentIds.length === 0) return null;
+    return computeRouteVerdict({
+      profileId: state.route.profileId,
+      profiles: typedProfiles,
+      activeSegmentIds: state.route.activeSegmentIds,
+      segments: allSegments,
+      mappings: scenarioMappings,
+      scenarioTitle: scenario.title,
+    });
+  }, [state.route.profileId, state.route.activeSegmentIds, scenarioMappings]);
+
+  const prefill = useMemo(
+    () => (verdict ? buildDraftPrefill({ verdict, mappings: scenarioMappings }) : null),
+    [verdict, scenarioMappings]
+  );
+
+  const assistantActivity = useMemo(
+    () => summarizeAgentActivity(state, scenarioMappings),
+    [state, scenarioMappings]
+  );
 
   return (
     <div>
@@ -172,12 +255,14 @@ export default function App() {
         aria-live="polite"
         aria-atomic="true"
         className="sr-only"
-      >
-        </div>
+      />
 
       <header>
-        <h1>{scenario.title}</h1>
-        <p className="scenario-meta">{scenario.areaBoundsDescription}</p>
+        <h1>Will a city plan change your route?</h1>
+        <p className="value-prop">
+          Get a 30-second, source-linked route-impact check for one Kuala Lumpur
+          corridor — and turn it into an editable civic comment you control.
+        </p>
       </header>
 
       <section className="disclaimer" role="note">
@@ -185,57 +270,98 @@ export default function App() {
       </section>
 
       <WorkspaceControls
-        loaded={loaded}
+        started={started}
         activeProfileId={state.route.profileId}
         profiles={typedProfiles}
-        onLoad={handleLoad}
+        onStart={handleStart}
         onClear={handleClear}
         onSelectProfile={handleSelectProfile}
       />
 
-      {loaded && (
+      {started && (
         <div role="region" aria-label="Workspace">
-          {activeProfile && (
-            <div className="profile-info">
-              <strong>{activeProfile.label}</strong> — {activeProfile.description}
-            </div>
+          <h2 className="corridor-title">
+            Illustrative corridor: {scenario.title.replace(/ — Illustrative Demo$/, "")}
+          </h2>
+
+          <AssistantActivity activity={assistantActivity} />
+
+          {verdict && (
+            <>
+              <VerdictCard verdict={verdict} onReviewConditions={handleReviewConditions} />
+
+              <div className="workspace-grid">
+                <div className="workspace-main">
+                  <LocalRouteMap
+                    defaultSegmentIds={activeSegmentIds}
+                    stagedMappingIds={state.route.stagedMappingIds}
+                    mappings={scenarioMappings}
+                  />
+
+                  <ConditionsShortlist
+                    conditions={verdict.conditionsToReview}
+                    mappings={scenarioMappings}
+                    stagedMappingIds={state.route.stagedMappingIds}
+                    planRelevantMappingIds={verdict.planRelevantMappingIds}
+                    onAddConcern={handleAddConcern}
+                    onRemoveConcern={handleRemoveConcern}
+                  />
+
+                  <DraftReviewPanel
+                    draft={state.draft}
+                    prefill={prefill}
+                    profileId={state.route.profileId}
+                    onCreateDraft={handleCreateDraft}
+                  />
+
+                  <AuditConsentStrip
+                    state={state}
+                    onApprove={handleApprove}
+                    onExport={handleExport}
+                  />
+
+                  <div className="disclosures">
+                    <button
+                      className="btn-link"
+                      onClick={() => setShowFullSegments((v) => !v)}
+                      aria-expanded={showFullSegments}
+                      aria-controls="full-segments-details"
+                    >
+                      {showFullSegments ? "Hide full route segments" : "Show full route segments"}
+                    </button>
+                    {showFullSegments && (
+                      <div id="full-segments-details">
+                        <RouteSegmentList
+                          segments={orderedSegments}
+                          stagedMappingIds={state.route.stagedMappingIds}
+                          mappings={scenarioMappings}
+                          onStageMapping={handleStageMapping}
+                          onClearMapping={handleClearMapping}
+                        />
+                      </div>
+                    )}
+
+                    <button
+                      className="btn-link"
+                      onClick={() => setShowEvidence((v) => !v)}
+                      aria-expanded={showEvidence}
+                      aria-controls="evidence-board-details"
+                    >
+                      {showEvidence ? "Hide evidence board" : "Show evidence board"}
+                    </button>
+                    {showEvidence && (
+                      <div id="evidence-board-details">
+                        <EvidenceBoard
+                          sourceClaims={typedSourceClaims}
+                          mappings={scenarioMappings}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </>
           )}
-
-          <div className="workspace-grid">
-            <div className="workspace-main">
-              <LocalRouteMap
-                defaultSegmentIds={scenario.defaultSegmentIds}
-                stagedMappingIds={state.route.stagedMappingIds}
-                mappings={scenarioMappings}
-              />
-
-              <RouteSegmentList
-                segments={orderedSegments}
-                stagedMappingIds={state.route.stagedMappingIds}
-                mappings={scenarioMappings}
-                onStageMapping={handleStageMapping}
-                onClearMapping={handleClearMapping}
-              />
-
-              <EvidenceBoard
-                sourceClaims={typedSourceClaims}
-                mappings={scenarioMappings}
-              />
-
-              <DraftReviewPanel
-                draft={state.draft}
-                onCreateDraft={handleCreateDraft}
-                onOpen={() => setDraftOpen(true)}
-                isOpen={draftOpen}
-              />
-
-              <AuditConsentStrip
-                state={state}
-                onApprove={handleApprove}
-                onExport={handleExport}
-              />
-            </div>
-          </div>
         </div>
       )}
     </div>

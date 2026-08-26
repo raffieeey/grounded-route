@@ -81,6 +81,13 @@ def validate() -> int:
         if sc.get("destinationPlaceId") not in place_ids:
             errors.append(f"scenario '{sc['id']}' destinationPlaceId missing")
 
+    # FDN-008: profile route segment sets are illustrative fixture metadata
+    # and must reference known segments only.
+    for prof in profiles:
+        for sid in prof.get("routeSegmentIds", []):
+            if sid not in seg_ids:
+                errors.append(f"profile '{prof['id']}' routeSegmentId '{sid}' not found in route_segments.geojson")
+
     # Mapping consistency
     for m in mappings:
         for sid in m.get("segmentIds", []):
