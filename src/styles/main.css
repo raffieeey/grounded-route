@@ -491,8 +491,7 @@ button:disabled {
 
 /* Touch targets — WCAG 2.2 Target Size (Minimum) on small screens. */
 @media (max-width: 600px) {
-  button.touch-target,
-  .btn-small {
+  button {
     min-height: 44px;
     box-sizing: border-box;
   }
