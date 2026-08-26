@@ -33,18 +33,30 @@ export default function LocalRouteMap({
     const minLat = Math.min(...lats);
     const maxLat = Math.max(...lats);
 
-    const pad = 0.0005;
-    const viewMinLng = minLng - pad;
-    const viewMaxLng = maxLng + pad;
-    const viewMinLat = minLat - pad;
-    const viewMaxLat = maxLat + pad;
+    // Uniform scale keeps the fixture geometry truthful. Extra vertical headroom
+    // (padY > padX) leaves room for staggered labels above/below the corridor
+    // instead of piled on the route line, and gives the mobile diagram more
+    // useful vertical space inside a taller viewBox.
+    const padX = 0.0005;
+    const padY = 0.0016;
+    const viewMinLng = minLng - padX;
+    const viewMaxLng = maxLng + padX;
+    const viewMinLat = minLat - padY;
+    const viewMaxLat = maxLat + padY;
 
-    const scaleX = (lng: number) =>
-      ((lng - viewMinLng) / (viewMaxLng - viewMinLng)) * 800;
+    const VB_W = 800;
+    const VB_H = 1000;
+    const rangeX = viewMaxLng - viewMinLng;
+    const rangeY = viewMaxLat - viewMinLat;
+    const scale = VB_W / rangeX;
+    const routeHeightPx = rangeY * scale;
+    const offsetY = (VB_H - routeHeightPx) / 2;
+
+    const scaleX = (lng: number) => ((lng - viewMinLng) / rangeX) * VB_W;
     const scaleY = (lat: number) =>
-      800 - ((lat - viewMinLat) / (viewMaxLat - viewMinLat)) * 800;
+      offsetY + (1 - (lat - viewMinLat) / rangeY) * routeHeightPx;
 
-    const segmentPaths = features.map((f) => {
+    const segmentPaths = features.map((f, idx) => {
       const coords = f.geometry.coordinates as number[][];
       const d = coords
         .map((c, i) => `${i === 0 ? "M" : "L"}${scaleX(c[0]).toFixed(1)},${scaleY(c[1]).toFixed(1)}`)
@@ -57,13 +69,19 @@ export default function LocalRouteMap({
       const midIdx = Math.floor(coords.length / 2);
       const midLng = coords[midIdx][0];
       const midLat = coords[midIdx][1];
+      const baseY = scaleY(midLat);
+      // Alternate long labels away from the route line so adjacent corridor
+      // labels never share the same vertical band.
+      const stagger = idx % 2 === 0 ? "up" : "down";
+      const labelY = stagger === "up" ? baseY - 22 : baseY + 26;
       return {
         id: f.properties.id,
         d,
         isDefault,
         isStaged,
         labelX: scaleX(midLng),
-        labelY: scaleY(midLat),
+        labelY,
+        stagger,
         name: f.properties.segmentName,
       };
     });
@@ -93,14 +111,18 @@ export default function LocalRouteMap({
       <svg
         role="img"
         aria-label="Illustrative local route diagram"
-        viewBox="0 0 800 800"
+        viewBox="0 0 800 1000"
         className="local-route-map"
       >
-        <rect x="0" y="0" width="800" height="800" fill="#f6f5f4" />
+        <rect x="0" y="0" width="800" height="1000" fill="#f6f5f4" />
         {/* Grid lines for reference */}
         {[0, 200, 400, 600, 800].map((n) => (
-          <g key={n}>
-            <line x1={n} y1={0} x2={n} y2={800} stroke="rgba(0,0,0,0.05)" strokeWidth={1} />
+          <g key={`v${n}`}>
+            <line x1={n} y1={0} x2={n} y2={1000} stroke="rgba(0,0,0,0.05)" strokeWidth={1} />
+          </g>
+        ))}
+        {[0, 250, 500, 750, 1000].map((n) => (
+          <g key={`h${n}`}>
             <line x1={0} y1={n} x2={800} y2={n} stroke="rgba(0,0,0,0.05)" strokeWidth={1} />
           </g>
         ))}
@@ -115,10 +137,15 @@ export default function LocalRouteMap({
               opacity={p.isDefault ? 1 : 0.6}
             />
             <text
+              className="segment-label"
+              data-stagger={p.stagger}
               x={p.labelX}
-              y={p.labelY - 6}
-              fontSize={10}
-              fill="#333"
+              y={p.labelY}
+              fontSize={11}
+              fill="#1a1a1a"
+              stroke="#ffffff"
+              strokeWidth={3}
+              paintOrder="stroke fill"
               textAnchor="middle"
               style={{ fontFamily: "Inter, system-ui, sans-serif" }}
             >
@@ -141,6 +168,9 @@ export default function LocalRouteMap({
               y={pl.y - 10}
               fontSize={11}
               fill="#1a1a1a"
+              stroke="#ffffff"
+              strokeWidth={3}
+              paintOrder="stroke fill"
               textAnchor="middle"
               fontWeight={600}
               style={{ fontFamily: "Inter, system-ui, sans-serif" }}

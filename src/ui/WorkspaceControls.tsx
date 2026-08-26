@@ -21,7 +21,7 @@ export default function WorkspaceControls({
     <section aria-label="Session controls">
       {!loaded ? (
         <button
-          className="btn-primary"
+          className="btn-primary touch-target"
           onClick={onLoad}
           aria-label="Load illustrative demo"
         >
@@ -29,7 +29,7 @@ export default function WorkspaceControls({
         </button>
       ) : (
         <button
-          className="btn-secondary"
+          className="btn-secondary touch-target"
           onClick={onClear}
           aria-label="Clear current session"
         >
@@ -42,7 +42,7 @@ export default function WorkspaceControls({
           {profiles.map((p) => (
             <button
               key={p.id}
-              className={activeProfileId === p.id ? "active" : ""}
+              className={`profile-button touch-target${activeProfileId === p.id ? " active" : ""}`}
               onClick={() => onSelectProfile(p.id)}
               aria-pressed={activeProfileId === p.id}
               aria-label={p.label}

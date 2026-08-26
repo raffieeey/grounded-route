@@ -417,11 +417,24 @@ button:disabled {
   border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
+.audit-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.audit-row-text {
+  flex: 1 1 auto;
+}
+
 /* Map */
 .map-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
   margin-bottom: 8px;
 }
 
@@ -443,6 +456,23 @@ button:disabled {
   border: 1px solid var(--border);
   border-radius: 8px;
   background: #f6f5f4;
+  display: block;
+}
+
+/* Mobile: give the diagram more useful vertical space and keep labels legible. */
+@media (max-width: 600px) {
+  #root {
+    padding: 16px;
+  }
+
+  .local-route-map {
+    min-height: 420px;
+  }
+
+  .map-disclaimer,
+  .map-staged-badge {
+    white-space: normal;
+  }
 }
 
 /* Screen reader only */
@@ -456,4 +486,34 @@ button:disabled {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+
+/* Touch targets — WCAG 2.2 Target Size (Minimum) on small screens. */
+@media (max-width: 600px) {
+  button.touch-target,
+  .btn-small {
+    min-height: 44px;
+    box-sizing: border-box;
+  }
+
+  .profiles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .profiles .profile-button {
+    width: 100%;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .consent-actions {
+    flex-wrap: wrap;
+  }
+
+  .consent-actions .touch-target {
+    flex: 1 1 auto;
+  }
 }

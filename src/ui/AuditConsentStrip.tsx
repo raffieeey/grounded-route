@@ -37,7 +37,7 @@ export default function AuditConsentStrip({
         {hasDraft && (
           <div className="consent-actions">
             <button
-              className="btn-primary"
+              className="btn-primary touch-target"
               onClick={onApprove}
               disabled={approvalValid}
               aria-label="Approve current draft"
@@ -46,7 +46,7 @@ export default function AuditConsentStrip({
             </button>
 
             <button
-              className="btn-primary"
+              className="btn-primary touch-target"
               onClick={onExport}
               disabled={!approvalValid}
               aria-label="Export"
@@ -61,10 +61,11 @@ export default function AuditConsentStrip({
             <h4>Audit trail</h4>
             <ul>
               {state.auditLog.slice(-5).map((evt) => (
-                <li key={evt.eventId}>
+                <li key={evt.eventId} className="audit-row">
                   <span className={`badge actor-${evt.actor}`}>{evt.actor}</span>
-                  {" "}
-                  {evt.action} (r{evt.revisionBefore} → r{evt.revisionAfter})
+                  <span className="audit-row-text">
+                    {evt.action} (r{evt.revisionBefore} → r{evt.revisionAfter})
+                  </span>
                 </li>
               ))}
             </ul>
