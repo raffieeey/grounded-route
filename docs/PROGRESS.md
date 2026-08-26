@@ -2,7 +2,7 @@
 
 ## Current milestone: M4 Browser and integration proof
 
-**Status:** M0 fixture, the human-first React workspace, browser-native WebMCP, and visible OSM attribution are accepted on private `main`. A real native Chrome local-development host has registered and executed all six WebMCP tools against the visible workspace. The DBKL excerpt rights path, final public-distribution scope review, and any public-release transition remain future gates.
+**Status:** M0 fixture, the human-first React workspace, browser-native WebMCP, and visible OSM attribution are accepted on private `main`. A real native Chrome local-development host has registered and executed all six WebMCP tools against the visible workspace. The DBKL source-reference rights path, final public-distribution scope review, and any public-release transition remain future gates.
 
 ### Completed
 
@@ -64,14 +64,14 @@ The known foundation feature commit is `957a2e858f9705a1a51deca44b60dfa941f35a83
 
 ### Known limitations
 
-- Public release is **excluded** until the DBKL exact-excerpt permission/removal/legal path is resolved and the user explicitly approves a visibility change.
+- Public release is **excluded** until the DBKL source-reference rights path is resolved and the user explicitly approves a visibility change.
 - OSM visible UI/export attribution is implemented; a final ODbL/public-distribution scope review remains required before public distribution of the GeoJSON subset.
 - Native registration and all six tool calls are proven in a flag-enabled local Chrome development host; a third-party agent client or origin-trial/public-deployment demonstration remains unproven.
 - Browser-local Blob export readiness is verified, not downloaded Blob bytes.
 
 ### Next tickets
 
-- M5: resolve the DBKL excerpt rights path, complete final public-distribution/ODbL scope review, set up static deployment, and ask the user for explicit public-release approval only when all gates are cleared.
+- M5: resolve the DBKL source-reference rights path, complete final public-distribution/ODbL scope review, set up static deployment, and ask the user for explicit public-release approval only when all gates are cleared.
 - Optional M4 follow-up: third-party agent-client or origin-trial deployment demonstration after an appropriate deployment target exists.
 
 ## Spark frozen-blocker repair (FDN-001 focused)
@@ -171,7 +171,7 @@ npm run build
 
 ## Visible OSM attribution and local-export metadata (FDN-006)
 
-**Status:** Accepted on a private candidate; repository remains private because the DBKL excerpt gate is separate and unresolved.
+**Status:** Accepted on a private candidate; repository remains private because the DBKL source-reference gate is separate and unresolved.
 
 ### Completed
 
@@ -190,7 +190,7 @@ npm run build
 
 ### Claim ceiling
 
-- Visible OSM attribution is implemented, but it does not settle every ODbL public-distribution question and does not clear the independent DBKL source-excerpt gate.
+- Visible OSM attribution is implemented, but it does not settle every ODbL public-distribution question and does not clear the independent DBKL source-reference gate.
 - The overall repository remains private until the DBKL rights path is resolved and the user explicitly authorizes a visibility change.
 
 
@@ -222,7 +222,7 @@ Private quotation-bearing review and evidence history has been intentionally exc
 
 ### Branch boundary
 
-- This is a private candidate. The DBKL exact-excerpt gate is not cleared.
+- This is a private candidate. The DBKL source-reference gate is not cleared.
 - This candidate contains only official source references (document title, page, URL), not direct quotations.
 - No approval/export/copy/download/publish capability was added.
 - Six WebMCP tool names preserved exactly. Human-only authority boundaries preserved.

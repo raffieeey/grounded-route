@@ -49,7 +49,7 @@
     "Exact implementation timing and segment boundaries are unverified",
     "OSM-derived/demo geometry is illustrative and not field-surveyed",
     "Accessibility retrofit status of Saloma Link is unknown",
-    "Public-release terms for DBKL excerpts and OSM geometry are pending"
+    "Public-release terms for DBKL source references and OSM geometry are pending"
   ],
   "publicReleaseStatus": "excluded"
 }
