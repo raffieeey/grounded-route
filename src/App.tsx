@@ -288,7 +288,11 @@ export default function App() {
 
           {verdict && (
             <>
-              <VerdictCard verdict={verdict} onReviewConditions={handleReviewConditions} />
+              <VerdictCard
+                verdict={verdict}
+                stagedMappingIds={state.route.stagedMappingIds}
+                onReviewConditions={handleReviewConditions}
+              />
 
               <div className="workspace-grid">
                 <div className="workspace-main">

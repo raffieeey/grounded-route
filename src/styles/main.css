@@ -683,6 +683,31 @@ button:disabled {
   margin: 0 0 8px;
 }
 
+.verdict-overlay-delta {
+  margin: 8px 0;
+  padding: 7px 9px;
+  border-radius: 6px;
+  background: var(--accent-light);
+  color: #07579f;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .verdict-overlay-delta {
+    animation: verdict-overlay-flash 520ms ease-out both;
+  }
+}
+
+@keyframes verdict-overlay-flash {
+  from { background: #bde0ff; transform: translateY(-2px); }
+  to { background: var(--accent-light); transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .verdict-overlay-delta { animation: none; }
+}
+
 .verdict-action {
   display: block;
   width: 100%;

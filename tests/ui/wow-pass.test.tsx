@@ -8,7 +8,8 @@ import "@testing-library/jest-dom";
 import LocalRouteMap from "@/ui/LocalRouteMap.tsx";
 import AssistantActivity from "@/ui/AssistantActivity.tsx";
 import VerdictCard from "@/ui/VerdictCard.tsx";
-import type { ScenarioImpactMapping, RouteVerdict } from "@/contracts/types.ts";
+import type { ScenarioImpactMapping } from "@/contracts/types.ts";
+import type { RouteVerdict } from "@/domain/verdict.ts";
 import scenarios from "../../data/demo_scenarios.json";
 import mappings from "../../data/scenario_impact_mappings.json";
 
@@ -223,12 +224,14 @@ describe("WOW-3 — verdict delta on staged overlays", () => {
   });
 
   it("does not show a delta line when stagedMappingIds is empty", () => {
-    render(
+    const { rerender } = render(
       <VerdictCard
         verdict={baseVerdict}
-        stagedMappingIds={[]}
+        stagedMappingIds={["map-01"]}
       />,
     );
+    expect(screen.getByText(/With the staged plan overlay/i)).toBeInTheDocument();
+    rerender(<VerdictCard verdict={baseVerdict} stagedMappingIds={[]} />);
     expect(
       screen.queryByText(/With the staged plan overlay/i),
     ).not.toBeInTheDocument();
