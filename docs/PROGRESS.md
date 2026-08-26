@@ -270,3 +270,26 @@ authority boundary. Evidence: `docs/evidence/fdn-008-route-verdict-redesign.md`.
   browser test drives the real adapter via an injected fake `modelContext`).
 - DBKL source-reference rights path remains unresolved; repository stays
   private.
+
+## FDN-009 — WOW pass (private candidate)
+
+**Status:** Implemented on `feat/wow-pass`; not pushed. Evidence:
+`docs/evidence/fdn-009-wow-pass.md`.
+
+### Completed
+
+- Staged route overlays now use a glow-backed, reduced-motion-safe 600ms sweep
+  and an accessible `Staged — awaiting your review` map chip.
+- WebMCP activity now appears as a concise sticky/floating mobile `Agent is
+  acting` banner with relative time and motion-safe presence treatment.
+- Staging now produces a qualified, fixture-linked verdict delta without
+  modifying verdict derivation semantics or human authority boundaries.
+- The landing page has a static hand-rolled SVG route motif and stronger CTA;
+  the started mobile workspace compacts that hero to preserve the 390×844
+  verdict first-screen contract.
+
+### Acceptance evidence
+
+- 154 Vitest tests and 22 desktop/mobile Playwright checks pass.
+- `workflow:check`, `fixture:check`, `tdd:check`, typecheck, lint, and build
+  pass.

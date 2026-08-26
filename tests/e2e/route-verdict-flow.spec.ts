@@ -122,6 +122,7 @@ test.describe("FDN-008 route-verdict browser contract", () => {
       };
     });
 
+    await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/");
     // Six raw tools register, with no human-authority capability.
     await expect.poll(async () => {
@@ -153,6 +154,13 @@ test.describe("FDN-008 route-verdict browser contract", () => {
     await expect(activity).toBeVisible();
     await expect(activity).toContainText(/staged a possible plan impact/i);
     await expect(activity).not.toContainText(/revisionBefore|evt-\d/);
+
+    // The agent's work is visible on the 390px first screen without a scroll.
+    expect(await page.evaluate(() => window.scrollY)).toBe(0);
+    const activityBox = await activity.boundingBox();
+    expect(activityBox).not.toBeNull();
+    expect(activityBox!.y + activityBox!.height).toBeLessThanOrEqual(844);
+    await expect(page.getByText(/With the staged plan overlay/i)).toBeVisible();
   });
 
   test("V6: absent modelContext human flow shows no assistant activity", async ({ page }) => {

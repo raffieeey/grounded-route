@@ -30,6 +30,82 @@ header {
   margin-bottom: 20px;
 }
 
+.landing-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 20px;
+  border: 1px solid #cfe5fa;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%);
+}
+
+.landing-hero h1 {
+  font-size: clamp(1.7rem, 4vw, 2.35rem);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+}
+
+.landing-hero--compact {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.landing-hero--compact .landing-eyebrow,
+.landing-hero--compact .landing-route-motif {
+  display: none;
+}
+
+.landing-hero--compact h1 {
+  font-size: 1.5rem;
+  line-height: 1.2;
+  letter-spacing: normal;
+}
+
+.landing-eyebrow {
+  margin: 0 0 6px;
+  color: #07579f;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.landing-route-motif {
+  width: 150px;
+  flex: 0 0 150px;
+  overflow: visible;
+}
+
+.landing-route-motif__halo {
+  fill: none;
+  stroke: #bde0ff;
+  stroke-linecap: round;
+  stroke-width: 16;
+}
+
+.landing-route-motif__line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-linecap: round;
+  stroke-width: 5;
+}
+
+.landing-route-motif__point {
+  fill: var(--accent);
+  stroke: #fff;
+  stroke-width: 4;
+}
+
+.landing-route-motif__waypoint {
+  fill: #fff;
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
 h1 {
   font-size: 1.5rem;
   margin: 0 0 8px;
@@ -451,10 +527,60 @@ button:disabled {
   font-style: italic;
 }
 
-.map-staged-badge {
-  font-size: 0.85rem;
-  color: var(--accent);
-  font-weight: 600;
+.map-staged-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #8dc6ff;
+  border-radius: 999px;
+  background: #e6f2ff;
+  color: #07579f;
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.map-staged-chip__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 117, 222, 0.16);
+}
+
+.segment-path__glow {
+  filter: drop-shadow(0 0 3px rgba(0, 117, 222, 0.55));
+}
+
+.segment-path--staged {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: staged-overlay-sweep 600ms ease-out forwards;
+}
+
+.segment-path--staged-reduced {
+  stroke-dasharray: none;
+}
+
+@keyframes staged-overlay-sweep {
+  to { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .map-staged-chip__dot {
+    animation: staged-chip-pulse 1.8s ease-in-out infinite;
+  }
+}
+
+@keyframes staged-chip-pulse {
+  50% { transform: scale(1.22); box-shadow: 0 0 0 6px rgba(0, 117, 222, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .segment-path--staged,
+  .map-staged-chip__dot {
+    animation: none;
+  }
 }
 
 .local-route-map {
@@ -477,7 +603,7 @@ button:disabled {
   }
 
   .map-disclaimer,
-  .map-staged-badge {
+  .map-staged-chip {
     white-space: normal;
   }
 }
@@ -587,6 +713,18 @@ button:disabled {
   padding: 12px 20px;
 }
 
+.landing-cta {
+  min-height: 48px;
+  padding-inline: 22px;
+  font-weight: 750;
+  box-shadow: 0 7px 15px rgba(0, 117, 222, 0.25);
+}
+
+.landing-cta:hover:not(:disabled) {
+  box-shadow: 0 9px 20px rgba(0, 117, 222, 0.34);
+  transform: translateY(-1px);
+}
+
 .session-actions {
   display: flex;
   align-items: center;
@@ -631,6 +769,31 @@ button:disabled {
   font-size: 0.9rem;
   color: var(--muted);
   margin: 0 0 8px;
+}
+
+.verdict-overlay-delta {
+  margin: 8px 0;
+  padding: 7px 9px;
+  border-radius: 6px;
+  background: var(--accent-light);
+  color: #07579f;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .verdict-overlay-delta {
+    animation: verdict-overlay-flash 520ms ease-out both;
+  }
+}
+
+@keyframes verdict-overlay-flash {
+  from { background: #bde0ff; transform: translateY(-2px); }
+  to { background: var(--accent-light); transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .verdict-overlay-delta { animation: none; }
 }
 
 .verdict-action {
@@ -819,6 +982,108 @@ button:disabled {
   align-self: flex-start;
 }
 
+/* FDN-009 WOW-2: agent activity stays visible while the workspace is in view. */
+.assistant-banner {
+  position: sticky;
+  top: 8px;
+  z-index: 5;
+  background: #f2f8ff;
+  border: 1px solid #a8d2fb;
+  border-left: 4px solid var(--accent);
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 66, 128, 0.12);
+  padding: 10px 12px;
+  margin: 8px 0;
+}
+
+.assistant-banner__heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.assistant-banner h2 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.assistant-intro {
+  margin: 1px 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.assistant-pulse {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.assistant-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+}
+
+.assistant-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+
+.assistant-kind {
+  color: #07579f;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.assistant-time {
+  color: var(--muted);
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .assistant-pulse {
+    animation: assistant-ai-pulse 1.8s ease-in-out infinite;
+  }
+
+  .assistant-item--new {
+    animation: assistant-banner-enter 260ms ease-out both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assistant-banner--sticky {
+    transition: none;
+  }
+}
+
+@keyframes assistant-ai-pulse {
+  50% { box-shadow: 0 0 0 7px rgba(0, 117, 222, 0); transform: scale(1.04); }
+}
+
+@keyframes assistant-banner-enter {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assistant-pulse,
+  .assistant-item--new { animation: none; }
+}
+
 .assistant-activity {
   background: var(--accent-light);
   border: 1px solid var(--border);
@@ -896,6 +1161,45 @@ button:disabled {
   #root {
     padding: 12px;
   }
+  .landing-hero {
+    gap: 10px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .landing-hero h1 {
+    font-size: 1.45rem;
+  }
+  .landing-route-motif {
+    width: 94px;
+    flex-basis: 94px;
+  }
+  .landing-hero--compact {
+    margin-bottom: 16px;
+  }
+  .landing-hero--compact h1 {
+    font-size: 1.3rem;
+  }
+  .landing-hero--compact .value-prop {
+    display: none;
+  }
+  .assistant-banner--sticky {
+    position: fixed;
+    top: 8px;
+    right: 12px;
+    left: 12px;
+    margin: 0;
+    /* Collapsed by default: agent presence stays visible without stealing the fold. */
+    max-height: 64px;
+    overflow: hidden;
+    transition: max-height 240ms ease;
+  }
+  .assistant-banner--sticky:hover,
+  .assistant-banner--sticky:focus-within {
+    max-height: 70vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  }
+  /* Compensate for the fixed banner so it never covers workspace content. */
   h1 {
     font-size: 1.3rem;
   }

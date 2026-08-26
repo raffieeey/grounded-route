@@ -21,7 +21,7 @@ export default function WorkspaceControls({
     <section aria-label="Session controls">
       {!started ? (
         <button
-          className="btn-primary touch-target cta-start"
+          className="btn-primary touch-target cta-start landing-cta"
           onClick={onStart}
           aria-label="Start a route-impact check"
         >
