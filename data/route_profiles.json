@@ -3,18 +3,50 @@
     "id": "profile-wheelchair",
     "label": "Wheelchair user",
     "description": "Requires step-free surfaces, tactile paving, and ramp or elevator access at grade changes.",
-    "constraints": ["no-steps", "min-width-90cm", "tactile-paving-preferred", "ramp-or-elevator-required"]
+    "constraints": ["no-steps", "min-width-90cm", "tactile-paving-preferred", "ramp-or-elevator-required"],
+    "routeSegmentIds": [
+      "seg-kl-central-to-jalan-travers",
+      "seg-jalan-travers-crossing",
+      "seg-parent-stroller-route",
+      "seg-tun-sambanthan-plaza-crossing",
+      "seg-plaza-to-saloma-south",
+      "seg-saloma-elevator-ramp",
+      "seg-wheelchair-alternate",
+      "seg-saloma-north-to-jalan-ampang",
+      "seg-jalan-ampang-crossing-east",
+      "seg-jalan-ampang-to-demo-school",
+      "seg-demo-school-frontage"
+    ]
   },
   {
     "id": "profile-parent",
     "label": "School-pickup parent",
     "description": "Needs wide sidewalks, safe crossings, and manageable distances with a stroller or walking with a child.",
-    "constraints": ["wide-sidewalk", "signalised-crossing-preferred", "drop-off-zone-awareness", "max-gradient-5-percent"]
+    "constraints": ["wide-sidewalk", "signalised-crossing-preferred", "drop-off-zone-awareness", "max-gradient-5-percent"],
+    "routeSegmentIds": [
+      "seg-kl-central-to-jalan-travers",
+      "seg-jalan-travers-crossing",
+      "seg-parent-stroller-route",
+      "seg-tun-sambanthan-plaza-crossing",
+      "seg-plaza-to-saloma-south",
+      "seg-saloma-link-bridge",
+      "seg-saloma-north-to-jalan-ampang",
+      "seg-jalan-ampang-crossing-east",
+      "seg-jalan-ampang-to-demo-school",
+      "seg-demo-school-frontage"
+    ]
   },
   {
     "id": "profile-cyclist",
     "label": "Cyclist",
     "description": "Prefers dedicated or shared cycle paths and avoids dismount points.",
-    "constraints": ["cycleway-or-shared-path", "no-dismount-required", "min-width-120cm"]
+    "constraints": ["cycleway-or-shared-path", "no-dismount-required", "min-width-120cm"],
+    "routeSegmentIds": [
+      "seg-kl-central-to-jalan-travers",
+      "seg-jalan-travers-crossing",
+      "seg-cyclist-bypass-west",
+      "seg-jalan-ampang-to-demo-school",
+      "seg-demo-school-frontage"
+    ]
   }
 ]

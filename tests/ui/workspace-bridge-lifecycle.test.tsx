@@ -78,7 +78,7 @@ describe("WebMCP registration lifecycle (DSK-UI-001)", () => {
     expect(callsAfterMount).toBe(6);
 
     // Resident load — UI state mutation through the same bridge.
-    await user.click(screen.getByRole("button", { name: /Load illustrative demo/i }));
+    await user.click(screen.getByRole("button", { name: /Start a route-impact check/i }));
     await screen.findByRole("region", { name: /Workspace/i });
 
     // No new registrations after a state change.
@@ -113,7 +113,7 @@ describe("WebMCP registration lifecycle (DSK-UI-001)", () => {
         </StrictMode>
       )
     ).not.toThrow();
-    expect(screen.getByRole("button", { name: /Load illustrative demo/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Start a route-impact check/i })).toBeInTheDocument();
     cleanup();
   });
 });

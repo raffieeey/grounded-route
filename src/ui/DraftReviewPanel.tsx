@@ -1,74 +1,76 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { DraftComment, DraftStatement } from "@/contracts/types.ts";
+
+export interface DraftPrefill {
+  userPosition: string;
+  requestedChange: string;
+  openQuestions: string[];
+}
 
 interface DraftReviewPanelProps {
   draft: DraftComment | null;
+  prefill: DraftPrefill | null;
+  profileId: string | null;
   onCreateDraft: (position: string, change: string, questions: string) => void;
-  onOpen: () => void;
-  isOpen: boolean;
 }
 
 export default function DraftReviewPanel({
   draft,
+  prefill,
+  profileId,
   onCreateDraft,
-  onOpen,
-  isOpen,
 }: DraftReviewPanelProps) {
   const [position, setPosition] = useState("");
   const [change, setChange] = useState("");
   const [questions, setQuestions] = useState("");
+
+  // Seed the editable draft from the deterministic verdict prefill whenever the
+  // selected profile changes. Staging concerns does not change the profile, so a
+  // resident mid-edit is not clobbered by overlay toggles.
+  useEffect(() => {
+    if (prefill) {
+      setPosition(prefill.userPosition);
+      setChange(prefill.requestedChange);
+      setQuestions(prefill.openQuestions.join(", "));
+    } else {
+      setPosition("");
+      setChange("");
+      setQuestions("");
+    }
+  }, [profileId, prefill]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onCreateDraft(position, change, questions);
   };
 
-  if (!isOpen) {
-    return (
-      <section aria-label="Draft review">
-        <button className="btn-primary" onClick={onOpen} aria-label="Open draft">
-          Open draft panel
-        </button>
-        {draft && (
-          <div className="draft-summary">
-            <strong>Current draft present</strong> — Revision {draft.revision}
-          </div>
-        )}
-      </section>
-    );
-  }
-
   return (
-    <section aria-label="Draft review">
-      <form
-        onSubmit={handleSubmit}
-        aria-label="Draft review"
-        className="draft-form"
-      >
-        <h3>Draft / Review</h3>
-
+    <section className="draft-panel" aria-label="Draft review" role="region">
+      <h2>Draft review</h2>
+      <p className="draft-intro">
+        Pre-filled from your profile and the reviewed conditions. Edit anything before preparing your comment.
+      </p>
+      <form onSubmit={handleSubmit} aria-label="Draft review" className="draft-form">
         <label>
           Your position
-          <input
-            type="text"
+          <textarea
             value={position}
             onChange={(e) => setPosition(e.target.value)}
             aria-label="Your position"
             required
+            rows={2}
           />
         </label>
-
         <label>
           Requested change
-          <input
-            type="text"
+          <textarea
             value={change}
             onChange={(e) => setChange(e.target.value)}
             aria-label="Requested change"
             required
+            rows={2}
           />
         </label>
-
         <label>
           Open questions
           <input
@@ -78,29 +80,19 @@ export default function DraftReviewPanel({
             aria-label="Open questions"
           />
         </label>
-
-        <button type="submit" className="btn-primary" aria-label="Create draft">
-          Create draft
+        <button type="submit" className="btn-primary touch-target" aria-label="Prepare draft">
+          Prepare draft
         </button>
       </form>
 
       {draft && draft.statements.length > 0 && (
-        <div className="draft-statements">
-          <h4>Stored statements</h4>
-          <ul>
+        <div className="draft-statements" aria-label="Draft statements">
+          <h3>Prepared draft</h3>
+          <ul role="list">
             {draft.statements.map((stmt: DraftStatement) => (
               <li key={stmt.id} className={`statement ${stmt.statementClass}`}>
                 <span className="badge">{stmt.statementClass}</span>
                 <p>{stmt.text}</p>
-                {"mappingId" in stmt && stmt.mappingId && (
-                  <div className="stmt-meta">Mapping: {stmt.mappingId}</div>
-                )}
-                {"sourceClaimId" in stmt && stmt.sourceClaimId && (
-                  <div className="stmt-meta">Source reference: {stmt.sourceClaimId}</div>
-                )}
-                {"requestedChange" in stmt && (
-                  <div className="stmt-meta">Change: {stmt.requestedChange}</div>
-                )}
               </li>
             ))}
           </ul>
