@@ -101,3 +101,85 @@ npm run typecheck        # clean
 npm run lint             # clean
 npm run build            # dist produced
 ```
+
+## Spark frozen-blocker RED→GREEN (2026-08-26)
+
+**Problem:** Independent Spark review identified two acceptance-critical blockers in the domain boundary:
+- **SPK-FND-001:** `stageMapping` and `createDraft` accept arbitrary IDs, allowing source-claim IDs to bypass the reviewed-mapping allowlist.
+- **SPK-FND-002:** `approveDraft` and `requestExport` are exposed to arbitrary callers; a boolean `humanConfirmed` parameter lets non-UI code satisfy export preconditions.
+
+**Regression tests added to `tests/domain/actions.test.ts`:**
+1. `stageMapping rejects a source-claim ID without mutation or audit success`
+2. `createDraft rejects a mapping ID outside the selected scenario without mutation`
+3. `agent port has no approval/export/copy/download capability`
+4. `resident UI port can approve only the exact current draft revision, and mutation invalidates it`
+5. `resident export payload cannot be obtained before current-revision approval`
+
+### RED run — before fix
+
+Command: `npm run test`
+
+Result: 8 failed / 23 total
+
+```
+ ❯ tests/domain/actions.test.ts (14 tests | 8 failed)
+   × any route/scenario/evidence/mapping/draft mutation invalidates exact-revision approval
+     → Cannot read properties of undefined (reading 'approveDraft')
+   × no local domain action can enable export without explicit direct-human approval API
+     → Cannot read properties of undefined (reading 'requestExport')
+   × export succeeds only with human confirmation and matching revision
+     → Cannot read properties of undefined (reading 'approveDraft')
+   × stageMapping rejects a source-claim ID without mutation or audit success
+     → expected true to be false // Object.is equality
+   × createDraft rejects a mapping ID outside the selected scenario without mutation
+     → expected true to be false // Object.is equality
+   × agent port has no approval/export/copy/download capability
+     → Cannot read properties of undefined (reading 'approveDraft')
+   × resident UI port can approve only the exact current draft revision, and mutation invalidates it
+     → Cannot read properties of undefined (reading 'stageMapping')
+   × resident export payload cannot be obtained before current-revision approval
+     → Cannot read properties of undefined (reading 'createDraft')
+```
+
+### Fix applied
+
+**SPK-FND-001 — Fixture-aware mapping validation:**
+- Added `scenarioMappings: ScenarioImpactMapping[]` parameter to `stageMapping` and `createDraft`.
+- `stageMapping` now validates `mappingId` exists in the selected scenario’s reviewed `ScenarioImpactMapping` allowlist before mutating state or writing audit.
+- `createDraft` validates every `mappingIds` entry against the active scenario’s reviewed allowlist.
+- Rejections return structured `PRECONDITION_FAILED` with no mutation and no successful audit event.
+- Preserved existing stale-revision and cross-scenario checks.
+
+**SPK-FND-002 — Capability-separated ports:**
+- Added `AgentPort` and `ResidentPort` interfaces to `src/contracts/types.ts`.
+- Added `agentPort` const in `src/domain/actions.ts` exposing only read and reversible actions (`createInitialState`, `selectScenario`, `selectProfile`, `setActiveSegments`, `stageMapping`, `removeStagedMapping`, `createDraft`, `isApprovalValid`). No approval, export, copy, or download methods.
+- Added `residentPort` const in `src/domain/actions.ts` owning `approveDraft` and a new `requestExport` that takes only `state: DomainState` — no `humanConfirmed` boolean parameter.
+- Removed the old `requestExport(state, req: ExportRequest)` function and the `ExportRequest` contract type.
+- `residentRequestExport` validates current approval snapshot and exact draft revision; it returns a local payload placeholder and never calls browser clipboard/download APIs.
+- Preserved revision/snapshot invalidation semantics.
+
+### GREEN run — after fix
+
+Command: `npm run test`
+
+Result:
+
+```
+ RUN  v3.2.7
+ ✓ tests/domain/actions.test.ts (14 tests)
+ ✓ tests/data/fixture.test.ts (9 tests)
+ Test Files  2 passed (2)
+      Tests  23 passed (23)
+```
+
+All acceptance commands exit 0:
+
+```
+npm run workflow:check   # WORKFLOW GUARD PASS
+npm run fixture:check    # FIXTURE VALIDATION PASS
+npm run tdd:check        # TDD GUARD PASS
+npm run test             # 23 passed
+npm run typecheck        # clean
+npm run lint             # clean
+npm run build            # dist produced
+```

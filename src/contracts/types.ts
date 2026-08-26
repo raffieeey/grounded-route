@@ -168,9 +168,52 @@ export interface FailureResult {
 
 export type Result<T> = SuccessResult<T> | FailureResult;
 
-export interface ExportRequest {
-  draftId: string;
-  currentRevision: number;
-  humanConfirmed: boolean;
-  confirmedAt: string;
+/* ---------- Capability-separated ports ---------- */
+
+/**
+ * Agent / WebMCP-facing port.
+ * Exposes only read and reversible actions. No approval, export, copy, or download.
+ */
+export interface AgentPort {
+  createInitialState: () => DomainState;
+  selectScenario: (state: DomainState, scenarioId: string) => Result<DomainState>;
+  selectProfile: (state: DomainState, profileId: string) => Result<DomainState>;
+  setActiveSegments: (
+    state: DomainState,
+    segmentIds: string[],
+    expectedRevision: number
+  ) => Result<DomainState>;
+  stageMapping: (
+    state: DomainState,
+    mappingId: string,
+    scenarioId: string,
+    expectedRevision: number,
+    scenarioMappings: ScenarioImpactMapping[]
+  ) => Result<DomainState>;
+  removeStagedMapping: (
+    state: DomainState,
+    mappingId: string,
+    expectedRevision: number
+  ) => Result<DomainState>;
+  createDraft: (
+    state: DomainState,
+    text: string,
+    mappingIds: string[],
+    expectedRevision: number,
+    scenarioMappings: ScenarioImpactMapping[]
+  ) => Result<DomainState>;
+  isApprovalValid: (state: DomainState) => boolean;
+}
+
+/**
+ * Resident-UI-facing port.
+ * Owns explicit current-revision review transition and local export payload.
+ */
+export interface ResidentPort {
+  approveDraft: (
+    state: DomainState,
+    draftId: string,
+    expectedRevision: number
+  ) => Result<DomainState>;
+  requestExport: (state: DomainState) => Result<{ url: string }>;
 }

@@ -3,7 +3,9 @@ import type {
   AuditEvent,
   Result,
   ErrorCode,
-  ExportRequest,
+  ScenarioImpactMapping,
+  AgentPort,
+  ResidentPort,
 } from "@/contracts/types.ts";
 
 let _eventCounter = 0;
@@ -101,7 +103,8 @@ export function stageMapping(
   state: DomainState,
   mappingId: string,
   scenarioId: string,
-  expectedRevision: number
+  expectedRevision: number,
+  scenarioMappings: ScenarioImpactMapping[]
 ): Result<DomainState> {
   if (state.route.revision !== expectedRevision) {
     return fail("STALE_CONTEXT", "stageMapping rejected: stale revision");
@@ -110,6 +113,17 @@ export function stageMapping(
     return fail(
       "PRECONDITION_FAILED",
       "stageMapping rejected: mapping does not belong to active scenario"
+    );
+  }
+  const allowed = new Set(
+    scenarioMappings
+      .filter((m) => m.scenarioId === scenarioId)
+      .map((m) => m.id)
+  );
+  if (!allowed.has(mappingId)) {
+    return fail(
+      "PRECONDITION_FAILED",
+      "stageMapping rejected: mappingId is not in the scenario reviewed allowlist"
     );
   }
   if (state.route.stagedMappingIds.includes(mappingId)) {
@@ -144,10 +158,27 @@ export function createDraft(
   state: DomainState,
   text: string,
   mappingIds: string[],
-  expectedRevision: number
+  expectedRevision: number,
+  scenarioMappings: ScenarioImpactMapping[]
 ): Result<DomainState> {
   if (state.route.revision !== expectedRevision) {
     return fail("STALE_CONTEXT", "createDraft rejected: stale revision");
+  }
+  if (state.route.scenarioId == null) {
+    return fail("PRECONDITION_FAILED", "createDraft rejected: no scenario selected");
+  }
+  const allowed = new Set(
+    scenarioMappings
+      .filter((m) => m.scenarioId === state.route.scenarioId)
+      .map((m) => m.id)
+  );
+  for (const id of mappingIds) {
+    if (!allowed.has(id)) {
+      return fail(
+        "PRECONDITION_FAILED",
+        `createDraft rejected: mappingId ${id} is not in the scenario reviewed allowlist`
+      );
+    }
   }
   const draft = {
     id: `draft-${Date.now()}`,
@@ -184,32 +215,44 @@ export function approveDraft(
   return ok(next, next.route.revision);
 }
 
-/**
- * Export is explicitly blocked from all domain actions unless
- * a direct human confirmation API validates the current snapshot.
- */
-export function requestExport(
-  state: DomainState,
-  req: ExportRequest
-): Result<{ url: string }> {
-  if (!req.humanConfirmed) {
-    return fail("EXPORT_BLOCKED", "export requires explicit human confirmation");
-  }
-  if (!state.approval || state.approval.invalidated) {
-    return fail("PRECONDITION_FAILED", "no valid approval snapshot");
-  }
-  if (state.approval.validForRevision !== req.currentRevision) {
-    return fail("STALE_CONTEXT", "approval snapshot is stale");
-  }
-  if (state.draft?.id !== req.draftId) {
-    return fail("PRECONDITION_FAILED", "draft mismatch");
-  }
-  // In a real app, this would generate a blob URL. Here we return a placeholder.
-  return ok({ url: "blob:internal/export.txt" }, state.route.revision);
-}
-
 export function isApprovalValid(state: DomainState): boolean {
   if (!state.approval) return false;
   if (state.approval.invalidated) return false;
   return state.approval.validForRevision === state.route.revision;
 }
+
+/**
+ * Resident-only export request.
+ * The domain layer never calls browser clipboard/download APIs.
+ */
+export function residentRequestExport(state: DomainState): Result<{ url: string }> {
+  if (!state.approval || state.approval.invalidated) {
+    return fail("PRECONDITION_FAILED", "no valid approval snapshot");
+  }
+  if (state.approval.validForRevision !== state.route.revision) {
+    return fail("STALE_CONTEXT", "approval snapshot is stale");
+  }
+  if (!state.draft) {
+    return fail("PRECONDITION_FAILED", "no draft to export");
+  }
+  if (state.approval.draftId !== state.draft.id) {
+    return fail("PRECONDITION_FAILED", "approval draft mismatch");
+  }
+  return ok({ url: "blob:internal/export.txt" }, state.route.revision);
+}
+
+export const agentPort: AgentPort = {
+  createInitialState,
+  selectScenario,
+  selectProfile,
+  setActiveSegments,
+  stageMapping,
+  removeStagedMapping,
+  createDraft,
+  isApprovalValid,
+};
+
+export const residentPort: ResidentPort = {
+  approveDraft,
+  requestExport: residentRequestExport,
+};

@@ -73,3 +73,32 @@ The known foundation feature commit is `957a2e858f9705a1a51deca44b60dfa941f35a83
 
 - FDN-002: React UI, map/list equivalence, evidence/draft/approval UI
 - FDN-003: WebMCP adapter, tool registration, handler authorization
+
+## Spark frozen-blocker repair (FDN-001 focused)
+
+**Status:** SPK-FND-001 and SPK-FND-002 repaired and verified.
+
+### Repairs applied
+- `src/domain/actions.ts` — fixture-aware `stageMapping` and `createDraft` with reviewed-mapping allowlist validation.
+- `src/domain/actions.ts` — capability-separated `agentPort` and `residentPort`; old `requestExport` with `humanConfirmed` boolean removed.
+- `src/contracts/types.ts` — added `AgentPort` and `ResidentPort` interfaces; removed `ExportRequest`.
+- `tests/domain/actions.test.ts` — 5 new behavioural tests proving RED→GREEN for both blockers.
+- `docs/evidence/fdn-001-tdd-evidence.md` — honest RED→GREEN evidence appended.
+- `docs/reviews/spark-foundation-review.md` — review artifact preserved verbatim.
+
+### Test summary
+- Domain tests: 14 passed (5 new, 9 existing updated)
+- Fixture tests: 9 passed
+- Total: 23 passed, 0 failed
+
+### Acceptance commands run
+All exit 0:
+```bash
+npm run workflow:check
+npm run fixture:check
+npm run tdd:check
+npm run test
+npm run typecheck
+npm run lint
+npm run build
+```
