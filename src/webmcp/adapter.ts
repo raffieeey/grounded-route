@@ -328,7 +328,8 @@ export interface RegisterOptions {
  */
 export async function registerWebMcpTools(
   document: DocumentLike,
-  bridge: WorkspaceBridge
+  bridge: WorkspaceBridge,
+  options?: RegisterOptions
 ): Promise<RegistrationResult[]> {
   const mc = document?.modelContext;
   if (!mc) {
@@ -338,13 +339,23 @@ export async function registerWebMcpTools(
     }));
   }
 
+  const signal = options?.signal;
   const controller = createGroundedRouteController();
   const tools = buildTools(controller.agentPort, bridge);
-  const registrationController = new AbortController();
   const results: RegistrationResult[] = [];
   for (const tool of tools) {
+    // Stop registering the remaining tools once the caller has aborted (e.g.
+    // a StrictMode remount or real unmount). Each registerTool call also
+    // receives the signal so a host can remove an already-registered tool.
+    if (signal?.aborted) {
+      results.push({
+        unavailable: true,
+        reason: `registration aborted before ${tool.name}`,
+      });
+      continue;
+    }
     try {
-      await mc.registerTool(tool, { signal: registrationController.signal });
+      await mc.registerTool(tool, signal ? { signal } : undefined);
       results.push({ unavailable: false, registeredTool: tool });
     } catch (error) {
       results.push({

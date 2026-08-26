@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useMemo } from "react";
 import type { DomainState } from "@/contracts/types.ts";
 
 export interface WorkspaceBridge {
@@ -30,19 +30,23 @@ export function useWorkspaceBridge(initial: DomainState): {
 
   const getState = useCallback(() => stateRef.current, []);
 
-  const bridge: WorkspaceBridge = {
-    getState,
-    replaceState,
-    announce: (message: string) => {
-      const live = document.getElementById("workspace-announcer");
-      if (live) {
-        live.textContent = message;
-        setTimeout(() => {
-          if (live.textContent === message) live.textContent = "";
-        }, 1500);
-      }
-    },
-  };
+  const announce = useCallback((message: string) => {
+    const live = document.getElementById("workspace-announcer");
+    if (live) {
+      live.textContent = message;
+      setTimeout(() => {
+        if (live.textContent === message) live.textContent = "";
+      }, 1500);
+    }
+  }, []);
+
+  // Stable bridge identity: getState/replaceState/announce are all stable
+  // callbacks backed by a state ref, so the bridge object does not change on
+  // state updates. This prevents WebMCP tool re-registration on every render.
+  const bridge = useMemo<WorkspaceBridge>(
+    () => ({ getState, replaceState, announce }),
+    [getState, replaceState, announce]
+  );
 
   return { state, bridge };
 }

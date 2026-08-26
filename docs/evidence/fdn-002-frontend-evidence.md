@@ -76,17 +76,54 @@ App.tsx contains:
 useEffect(() => {
   const mc = (document as unknown as Record<string, unknown>).modelContext;
   if (!mc) return;
-  registerWebMcpTools(document, bridge).then(() => {
-    // Registration complete
-  });
+  const controller = new AbortController();
+  void registerWebMcpTools(document, bridge, { signal: controller.signal });
+  return () => {
+    controller.abort();
+  };
 }, [bridge]);
 ```
 
 - Feature-gated: returns early if `document.modelContext` absent
-- Called exactly once on mount (stable `bridge` dependency)
-- Uses same `bridge` that the UI uses for state
-- Adapter mutations update identical UI state via `replaceState`
+- The `bridge` object identity is stable across renders (`useWorkspaceBridge`
+  memoizes the bridge over stable `getState`/`replaceState`/`announce`
+  callbacks backed by a state ref), so this effect runs once per mount and does
+  not re-register on load/profile/stage/draft state changes
+- An `AbortController` cancels in-flight registration on a StrictMode remount
+  and unregisters the tool batch on real unmount via the documented
+  `{ signal }` option passed to each `modelContext.registerTool` call
+- Uses the same `bridge` that the UI uses for state; adapter mutations update
+  identical UI state via `replaceState`
 - No manual agent tool invocation from UI
+
+### Registration lifecycle evidence (DSK-UI-001 / DSK-UI-002 correction)
+
+**RED (before fix):** The original `useWorkspaceBridge` constructed a fresh
+`bridge` object literal on every render and `App` depended the registration
+effect on `[bridge]`. With `document.modelContext` present and React
+StrictMode, the focused lifecycle test (`tests/ui/workspace-bridge-lifecycle.test.tsx`)
+showed duplicate `registerTool` calls: the six tools registered twice on the
+StrictMode double-mount, and re-registered again on every resident state
+change (load/profile/stage/draft). The effect cleanup only set a local
+`cancelled` flag and never unregistered or aborted tools, so an unmount left
+the active tool batch in place. This duplicated the agent-facing tool surface
+and made the shared `DomainState`/tool surface non-deterministic — exactly the
+DSK-UI-001 defect. The previous evidence claiming "exactly once on mount
+(stable `bridge` dependency)" was materially false and is corrected here
+(DSK-UI-002).
+
+**GREEN (after fix):** `npm run test` — `tests/ui/workspace-bridge-lifecycle.test.tsx`
+(3 tests) passes:
+- A `<App />` mounted under React `StrictMode` with a fake
+  `document.modelContext` settles to exactly six active registrations
+  (`get_route_context`, `find_plan_evidence`, `stage_impact_overlay`,
+  `clear_staged_overlay`, `draft_public_comment`, `get_review_status`) — no
+  duplicates from the StrictMode double-mount.
+- Triggering resident load and profile-select state mutations through the same
+  bridge produces no new `registerTool` calls and leaves the active count at 6.
+- Unmount drives the abort signal so the active registration count drops to 0
+  (no duplicate/leftover active tools).
+- The `modelContext`-absent path remains safe (human-only, no throw).
 
 ## Accessibility
 
