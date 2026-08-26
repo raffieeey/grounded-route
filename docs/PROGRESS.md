@@ -79,15 +79,15 @@ The known foundation feature commit is `957a2e858f9705a1a51deca44b60dfa941f35a83
 **Status:** SPK-FND-001 and SPK-FND-002 repaired and verified.
 
 ### Repairs applied
-- `src/domain/actions.ts` — fixture-aware `stageMapping` and `createDraft` with reviewed-mapping allowlist validation.
-- `src/domain/actions.ts` — capability-separated `agentPort` and `residentPort`; old `requestExport` with `humanConfirmed` boolean removed.
-- `src/contracts/types.ts` — added `AgentPort` and `ResidentPort` interfaces; removed `ExportRequest`.
-- `tests/domain/actions.test.ts` — 5 new behavioural tests proving RED→GREEN for both blockers.
-- `docs/evidence/fdn-001-tdd-evidence.md` — honest RED→GREEN evidence appended.
+- `src/contracts/types.ts` — `AgentPort` staging/drafting methods now bind only intent fields and revision; no caller mapping collection argument.
+- `src/domain/actions.ts` — imported checked-in fixture mappings from `../../data/scenario_impact_mappings.json` and introduced `createGroundedRouteController()` to return capability-separated `agentPort`/`residentPort` ports with immutable fixture allowlist binding.
+- `src/domain/actions.ts` — `agentPort.stageMapping` and `agentPort.createDraft` now reject `sc-01`, unknown, and cross-scenario mapping IDs through trusted static allowlists.
+- `tests/domain/actions.test.ts` — extended SPK-FND-001 coverage for API shape and forged-input/mutational invariants.
+- `docs/evidence/fdn-001-tdd-evidence.md` — repair notes updated with this focused RED→GREEN evidence.
 - `docs/reviews/spark-foundation-review.md` — review artifact preserved verbatim.
 
 ### Test summary
-- Domain tests: 14 passed (5 new, 9 existing updated)
+- Domain tests: 17 passed (5 new, 9 existing updated, +3 API/forgery tests)
 - Fixture tests: 9 passed
 - Total: 23 passed, 0 failed
 

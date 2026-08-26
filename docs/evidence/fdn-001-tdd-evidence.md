@@ -183,3 +183,47 @@ npm run typecheck        # clean
 npm run lint             # clean
 npm run build            # dist produced
 ```
+
+## SPK-FND-001 controller-bound allowlist repair (2026-08-26)
+
+### RED proof
+
+Command:
+
+```bash
+npm run test -- tests/domain/actions.test.ts -t "RED: agent-facing action still trusts caller-provided mapping context"
+```
+
+Result:
+
+```text
+FAIL  tests/domain/actions.test.ts > domain actions > RED: agent-facing action still trusts caller-provided mapping context (pre-fix)
+AssertionError: expected true to be false // Object.is equality
+```
+
+The failure demonstrated that a caller-supplied `ScenarioImpactMapping` collection could still forge `stageMapping`.
+
+### GREEN proof
+
+Command:
+
+```bash
+npm run test
+```
+
+Result:
+
+```text
+✓ tests/domain/actions.test.ts (17 tests)
+✓ tests/data/fixture.test.ts (9 tests)
+Test Files  2 passed (2)
+     Tests  26 passed (26)
+```
+
+Command:
+
+```bash
+npm run workflow:check && npm run fixture:check && npm run tdd:check && npm run test && npm run typecheck && npm run lint && npm run build
+```
+
+All commands passed.

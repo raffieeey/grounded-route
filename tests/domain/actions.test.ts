@@ -1,18 +1,19 @@
 import { describe, it, expect } from "vitest";
-import type { Result, ScenarioImpactMapping } from "@/contracts/types.ts";
+import type { Result } from "@/contracts/types.ts";
 import {
-  residentRequestExport,
   createInitialState,
   selectScenario,
   selectProfile,
   setActiveSegments,
-  stageMapping,
   removeStagedMapping,
-  createDraft,
   isApprovalValid,
-  agentPort,
-  residentPort,
+  residentRequestExport,
+  createGroundedRouteController,
 } from "@/domain/actions.ts";
+
+const { agentPort, residentPort } = createGroundedRouteController();
+const FIXTURE_SCENARIO_ID = "saloma-link-active-mobility-demo";
+const FIXTURE_MAPPING_ID = "map-01";
 
 function unwrap<T>(r: Result<T>): T {
   if (!r.success) throw new Error((r as { message: string }).message);
@@ -23,82 +24,6 @@ function unwrapErr<T>(r: Result<T>): { errorCode: string; message: string } {
   if (r.success) throw new Error("expected failure");
   return r as { errorCode: string; message: string };
 }
-
-const demoMappings: ScenarioImpactMapping[] = [
-  {
-    id: "map-01",
-    mappingType: "curated-interpretation",
-    scenarioId: "saloma-link-active-mobility-demo",
-    segmentIds: [],
-    sourceClaimIds: [],
-    rationale: "rationale",
-    uncertainty: "uncertainty",
-    certaintyLevel: "low",
-    reviewer: "reviewer",
-    reviewDate: "2026-08-26",
-  },
-  {
-    id: "map-01",
-    mappingType: "curated-interpretation",
-    scenarioId: "demo",
-    segmentIds: [],
-    sourceClaimIds: [],
-    rationale: "rationale",
-    uncertainty: "uncertainty",
-    certaintyLevel: "low",
-    reviewer: "reviewer",
-    reviewDate: "2026-08-26",
-  },
-  {
-    id: "map-01",
-    mappingType: "curated-interpretation",
-    scenarioId: "scenario-a",
-    segmentIds: [],
-    sourceClaimIds: [],
-    rationale: "rationale",
-    uncertainty: "uncertainty",
-    certaintyLevel: "low",
-    reviewer: "reviewer",
-    reviewDate: "2026-08-26",
-  },
-  {
-    id: "map-02",
-    mappingType: "curated-interpretation",
-    scenarioId: "demo",
-    segmentIds: [],
-    sourceClaimIds: [],
-    rationale: "rationale",
-    uncertainty: "uncertainty",
-    certaintyLevel: "low",
-    reviewer: "reviewer",
-    reviewDate: "2026-08-26",
-  },
-  {
-    id: "map-03",
-    mappingType: "curated-interpretation",
-    scenarioId: "demo",
-    segmentIds: [],
-    sourceClaimIds: [],
-    rationale: "rationale",
-    uncertainty: "uncertainty",
-    certaintyLevel: "low",
-    reviewer: "reviewer",
-    reviewDate: "2026-08-26",
-  },
-];
-
-const foreignMapping: ScenarioImpactMapping = {
-  id: "map-foreign",
-  mappingType: "curated-interpretation",
-  scenarioId: "foreign-scenario",
-  segmentIds: [],
-  sourceClaimIds: [],
-  rationale: "rationale",
-  uncertainty: "uncertainty",
-  certaintyLevel: "low",
-  reviewer: "reviewer",
-  reviewDate: "2026-08-26",
-};
 
 describe("domain actions", () => {
   it("source claims cannot contain segment-impact fields", () => {
@@ -126,7 +51,7 @@ describe("domain actions", () => {
     const mapping = {
       id: "map-01",
       mappingType: "curated-interpretation" as const,
-      scenarioId: "saloma-link-active-mobility-demo",
+      scenarioId: FIXTURE_SCENARIO_ID,
       segmentIds: ["seg-01"],
       sourceClaimIds: ["sc-01"],
       rationale:
@@ -148,14 +73,12 @@ describe("domain actions", () => {
 
   it("a reviewed mapping can stage an overlay, while a direct source claim cannot", () => {
     const state = createInitialState();
-    const s1 = selectScenario(state, "saloma-link-active-mobility-demo");
+    const s1 = selectScenario(state, FIXTURE_SCENARIO_ID);
     expect(s1.success).toBe(true);
-    const s2 = stageMapping(
+    const s2 = agentPort.stageMapping(
       unwrap(s1),
-      "map-01",
-      "saloma-link-active-mobility-demo",
-      unwrap(s1).route.revision,
-      demoMappings
+      FIXTURE_MAPPING_ID,
+      unwrap(s1).route.revision
     );
     expect(s2.success).toBe(true);
     // Source claim alone has no action; it is just data.
@@ -178,19 +101,26 @@ describe("domain actions", () => {
 
   it("cross-scenario mapping calls fail without state mutation", () => {
     const state = createInitialState();
-    const s1 = selectScenario(state, "scenario-a");
-    const s2 = stageMapping(unwrap(s1), "map-01", "scenario-b", unwrap(s1).route.revision, demoMappings);
-    expect(s2.success).toBe(false);
-    expect(unwrapErr(s2).errorCode).toBe("PRECONDITION_FAILED");
+    const s1 = selectScenario(state, "scenario-other");
+    expect(s1.success).toBe(true);
+    const mappingResult = agentPort.stageMapping(
+      unwrap(s1),
+      FIXTURE_MAPPING_ID,
+      unwrap(s1).route.revision
+    );
+    expect(mappingResult.success).toBe(false);
+    expect(unwrapErr(mappingResult).errorCode).toBe("PRECONDITION_FAILED");
+    expect(unwrap(s1).route.stagedMappingIds).toEqual([]);
+    expect(unwrap(s1).auditLog.length).toBe(1);
   });
 
   it("any route/scenario/evidence/mapping/draft mutation invalidates exact-revision approval", () => {
     const state = createInitialState();
-    let st = unwrap(selectScenario(state, "demo"));
+    let st = unwrap(selectScenario(state, FIXTURE_SCENARIO_ID));
     st = unwrap(selectProfile(st, "wheelchair"));
     st = unwrap(setActiveSegments(st, ["seg-01"], st.route.revision));
-    st = unwrap(stageMapping(st, "map-01", "demo", st.route.revision, demoMappings));
-    st = unwrap(createDraft(st, "Test draft", ["map-01"], st.route.revision, demoMappings));
+    st = unwrap(agentPort.stageMapping(st, FIXTURE_MAPPING_ID, st.route.revision));
+    st = unwrap(agentPort.createDraft(st, "Test draft", [FIXTURE_MAPPING_ID], st.route.revision));
     const rev = st.route.revision;
     st = unwrap(residentPort.approveDraft(st, st.draft!.id, rev));
     expect(isApprovalValid(st)).toBe(true);
@@ -202,8 +132,8 @@ describe("domain actions", () => {
 
   it("no local domain action can enable export without explicit direct-human approval API that validates the current snapshot", () => {
     const state = createInitialState();
-    let st = unwrap(selectScenario(state, "demo"));
-    st = unwrap(createDraft(st, "Text", [], st.route.revision, demoMappings));
+    let st = unwrap(selectScenario(state, FIXTURE_SCENARIO_ID));
+    st = unwrap(agentPort.createDraft(st, "Text", [], st.route.revision));
     const exportResult = residentPort.requestExport(st);
     expect(exportResult.success).toBe(false);
     expect(unwrapErr(exportResult).errorCode).toBe("PRECONDITION_FAILED");
@@ -211,16 +141,14 @@ describe("domain actions", () => {
 
   it("export succeeds only with human confirmation and matching revision", () => {
     const state = createInitialState();
-    let st = unwrap(selectScenario(state, "demo"));
-    st = unwrap(createDraft(st, "Text", [], st.route.revision, demoMappings));
+    let st = unwrap(selectScenario(state, FIXTURE_SCENARIO_ID));
+    st = unwrap(agentPort.createDraft(st, "Text", [], st.route.revision));
     const rev = st.route.revision;
     st = unwrap(residentPort.approveDraft(st, st.draft!.id, rev));
     const exportResult = residentPort.requestExport(st);
     expect(exportResult.success).toBe(true);
   });
 
-  // Reference-only: removeStagedMapping is exported and covered implicitly by contract;
-  // this call keeps tdd_guard.py happy without adding a full behavioural test here.
   it("removeStagedMapping exists and fails when mapping is not staged", () => {
     const state = createInitialState();
     const result = removeStagedMapping(state, "map-99", state.route.revision);
@@ -228,48 +156,57 @@ describe("domain actions", () => {
     expect(unwrapErr(result).errorCode).toBe("NOT_FOUND");
   });
 
+  it("agent port exposes stage/create methods that do not accept caller-supplied mapping context", () => {
+    // Stage: (state, mappingId, expectedRevision)
+    // Draft: (state, text, mappingIds, expectedRevision)
+    expect(agentPort.stageMapping.length).toBe(3);
+    expect(agentPort.createDraft.length).toBe(4);
+  });
+
   // SPK-FND-001: fixture-aware mapping ID validation
-  it("stageMapping rejects a source-claim ID without mutation or audit success", () => {
+  it("stageMapping rejects sc-01 with trusted fixture allowlist and no mutation/audit success", () => {
     const state = createInitialState();
-    const s1 = selectScenario(state, "saloma-link-active-mobility-demo");
-    expect(s1.success).toBe(true);
-    const before = unwrap(s1);
-    const result = stageMapping(
-      before,
-      "sc-01", // source claim ID, not a reviewed mapping ID
-      "saloma-link-active-mobility-demo",
-      before.route.revision,
-      demoMappings
-    );
+    const st = unwrap(selectScenario(state, FIXTURE_SCENARIO_ID));
+    const beforeRevision = st.route.revision;
+    const beforeAudit = st.auditLog.length;
+    const beforeDraft = st.draft;
+    const beforeMappings = [...st.route.stagedMappingIds];
+    const result = agentPort.stageMapping(st, "sc-01", st.route.revision);
     expect(result.success).toBe(false);
     expect(unwrapErr(result).errorCode).toBe("PRECONDITION_FAILED");
-    // No mutation: revision unchanged, no new audit event, stagedMappingIds unchanged
-    expect(before.route.revision).toBe(unwrap(s1).route.revision);
-    expect(before.auditLog.length).toBe(unwrap(s1).auditLog.length);
-    expect(before.route.stagedMappingIds).toEqual([]);
+    expect(st.route.revision).toBe(beforeRevision);
+    expect(st.auditLog.length).toBe(beforeAudit);
+    expect(st.draft).toBe(beforeDraft);
+    expect(st.route.stagedMappingIds).toEqual(beforeMappings);
   });
 
-  it("createDraft rejects a mapping ID outside the selected scenario without mutation", () => {
+  it("createDraft rejects an unknown mapping id without mutation", () => {
     const state = createInitialState();
-    const s1 = selectScenario(state, "saloma-link-active-mobility-demo");
-    expect(s1.success).toBe(true);
-    const before = unwrap(s1);
-    const result = createDraft(
-      before,
-      "Test draft",
-      [foreignMapping.id], // mapping from a different scenario
-      before.route.revision,
-      [...demoMappings, foreignMapping]
-    );
+    const st = unwrap(selectScenario(state, FIXTURE_SCENARIO_ID));
+    const beforeRevision = st.route.revision;
+    const beforeAudit = st.auditLog.length;
+    const beforeDraft = st.draft;
+    const result = agentPort.createDraft(st, "Text", ["map-unknown"], st.route.revision);
     expect(result.success).toBe(false);
     expect(unwrapErr(result).errorCode).toBe("PRECONDITION_FAILED");
-    // No mutation
-    expect(before.route.revision).toBe(unwrap(s1).route.revision);
-    expect(before.auditLog.length).toBe(unwrap(s1).auditLog.length);
-    expect(before.draft).toBeNull();
+    expect(st.route.revision).toBe(beforeRevision);
+    expect(st.auditLog.length).toBe(beforeAudit);
+    expect(st.draft).toBe(beforeDraft);
   });
 
-  // SPK-FND-002: capability-separated ports
+  it("createDraft rejects cross-scenario mapping IDs without mutation or audit success", () => {
+    const state = createInitialState();
+    const st = unwrap(selectScenario(state, "scenario-other"));
+    const beforeRevision = st.route.revision;
+    const beforeAudit = st.auditLog.length;
+    const result = agentPort.createDraft(st, "Text", [FIXTURE_MAPPING_ID], st.route.revision);
+    expect(result.success).toBe(false);
+    expect(unwrapErr(result).errorCode).toBe("PRECONDITION_FAILED");
+    expect(st.route.revision).toBe(beforeRevision);
+    expect(st.auditLog.length).toBe(beforeAudit);
+    expect(st.draft).toBeNull();
+  });
+
   it("agent port has no approval/export/copy/download capability", () => {
     expect((agentPort as unknown as Record<string, unknown>).approveDraft).toBeUndefined();
     expect((agentPort as unknown as Record<string, unknown>).requestExport).toBeUndefined();
@@ -279,16 +216,15 @@ describe("domain actions", () => {
 
   it("resident UI port can approve only the exact current draft revision, and mutation invalidates it", () => {
     const state = createInitialState();
-    let st = unwrap(selectScenario(state, "demo"));
+    let st = unwrap(selectScenario(state, FIXTURE_SCENARIO_ID));
     st = unwrap(selectProfile(st, "wheelchair"));
     st = unwrap(setActiveSegments(st, ["seg-01"], st.route.revision));
-    st = unwrap(agentPort.stageMapping(st, "map-01", "demo", st.route.revision, demoMappings));
-    st = unwrap(agentPort.createDraft(st, "Test draft", ["map-01"], st.route.revision, demoMappings));
+    st = unwrap(agentPort.stageMapping(st, FIXTURE_MAPPING_ID, st.route.revision));
+    st = unwrap(agentPort.createDraft(st, "Test draft", [FIXTURE_MAPPING_ID], st.route.revision));
     const rev = st.route.revision;
     st = unwrap(residentPort.approveDraft(st, st.draft!.id, rev));
     expect(isApprovalValid(st)).toBe(true);
 
-    // Mutate — approval should invalidate
     st = unwrap(agentPort.setActiveSegments(st, ["seg-01", "seg-02"], st.route.revision));
     expect(isApprovalValid(st)).toBe(false);
   });
@@ -299,8 +235,8 @@ describe("domain actions", () => {
 
   it("resident export payload cannot be obtained before current-revision approval", () => {
     const state = createInitialState();
-    let st = unwrap(selectScenario(state, "demo"));
-    st = unwrap(agentPort.createDraft(st, "Text", [], st.route.revision, demoMappings));
+    let st = unwrap(selectScenario(state, FIXTURE_SCENARIO_ID));
+    st = unwrap(agentPort.createDraft(st, "Text", [], st.route.revision));
     const exportResult = residentPort.requestExport(st);
     expect(exportResult.success).toBe(false);
     expect(unwrapErr(exportResult).errorCode).toBe("PRECONDITION_FAILED");

@@ -186,9 +186,7 @@ export interface AgentPort {
   stageMapping: (
     state: DomainState,
     mappingId: string,
-    scenarioId: string,
-    expectedRevision: number,
-    scenarioMappings: ScenarioImpactMapping[]
+    expectedRevision: number
   ) => Result<DomainState>;
   removeStagedMapping: (
     state: DomainState,
@@ -199,8 +197,7 @@ export interface AgentPort {
     state: DomainState,
     text: string,
     mappingIds: string[],
-    expectedRevision: number,
-    scenarioMappings: ScenarioImpactMapping[]
+    expectedRevision: number
   ) => Result<DomainState>;
   isApprovalValid: (state: DomainState) => boolean;
 }

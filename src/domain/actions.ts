@@ -8,6 +8,13 @@ import type {
   ResidentPort,
 } from "@/contracts/types.ts";
 
+import scenarioImpactMappings from "../../data/scenario_impact_mappings.json";
+
+interface GroundedRouteController {
+  agentPort: AgentPort;
+  residentPort: ResidentPort;
+}
+
 let _eventCounter = 0;
 function nextEventId(): string {
   _eventCounter += 1;
@@ -41,6 +48,42 @@ function writeAudit(
     route: { ...state.route, revision: nextRevision },
     auditLog: [...state.auditLog, event],
   };
+}
+
+function buildScenarioMappingIndex(
+  mappings: readonly ScenarioImpactMapping[]
+): ReadonlyMap<string, ReadonlySet<string>> {
+  const scenarioMap = new Map<string, Set<string>>();
+
+  for (const mapping of mappings) {
+    const set = scenarioMap.get(mapping.scenarioId);
+    if (set) {
+      set.add(mapping.id);
+    } else {
+      scenarioMap.set(mapping.scenarioId, new Set([mapping.id]));
+    }
+  }
+
+  const trustedIndex = new Map<string, ReadonlySet<string>>();
+  for (const [scenarioId, ids] of scenarioMap.entries()) {
+    trustedIndex.set(scenarioId, ids);
+  }
+
+  return trustedIndex;
+}
+
+const trustedMappingIndex: ReadonlyMap<string, ReadonlySet<string>> =
+  buildScenarioMappingIndex(
+    scenarioImpactMappings as readonly ScenarioImpactMapping[]
+  );
+
+const EMPTY_MAPPING_IDS: ReadonlySet<string> = new Set<string>();
+
+function mappingIdsForScenario(
+  scenarioId: string | null
+): ReadonlySet<string> {
+  if (!scenarioId) return EMPTY_MAPPING_IDS;
+  return trustedMappingIndex.get(scenarioId) ?? EMPTY_MAPPING_IDS;
 }
 
 export function createInitialState(): DomainState {
@@ -99,38 +142,73 @@ export function setActiveSegments(
   return ok(next, next.route.revision);
 }
 
-export function stageMapping(
+function stageMappingWithAllowedSet(
   state: DomainState,
   mappingId: string,
-  scenarioId: string,
   expectedRevision: number,
-  scenarioMappings: ScenarioImpactMapping[]
+  allowedMappings: ReadonlySet<string>
 ): Result<DomainState> {
   if (state.route.revision !== expectedRevision) {
     return fail("STALE_CONTEXT", "stageMapping rejected: stale revision");
   }
-  if (state.route.scenarioId !== scenarioId) {
-    return fail(
-      "PRECONDITION_FAILED",
-      "stageMapping rejected: mapping does not belong to active scenario"
-    );
+
+  if (!state.route.scenarioId) {
+    return fail("PRECONDITION_FAILED", "stageMapping rejected: no scenario selected");
   }
-  const allowed = new Set(
-    scenarioMappings
-      .filter((m) => m.scenarioId === scenarioId)
-      .map((m) => m.id)
-  );
-  if (!allowed.has(mappingId)) {
+
+  if (!allowedMappings.has(mappingId)) {
     return fail(
       "PRECONDITION_FAILED",
       "stageMapping rejected: mappingId is not in the scenario reviewed allowlist"
     );
   }
+
   if (state.route.stagedMappingIds.includes(mappingId)) {
     return fail("PRECONDITION_FAILED", "mapping already staged");
   }
-  const next = writeAudit(state, "stageMapping", { mappingId, scenarioId });
+
+  const next = writeAudit(state, "stageMapping", {
+    mappingId,
+    scenarioId: state.route.scenarioId,
+  });
   next.route.stagedMappingIds = [...next.route.stagedMappingIds, mappingId];
+  next.approval = null;
+  return ok(next, next.route.revision);
+}
+
+function createDraftWithAllowedSet(
+  state: DomainState,
+  text: string,
+  mappingIds: string[],
+  expectedRevision: number,
+  allowedMappings: ReadonlySet<string>
+): Result<DomainState> {
+  if (state.route.revision !== expectedRevision) {
+    return fail("STALE_CONTEXT", "createDraft rejected: stale revision");
+  }
+  if (state.route.scenarioId == null) {
+    return fail("PRECONDITION_FAILED", "createDraft rejected: no scenario selected");
+  }
+
+  for (const id of mappingIds) {
+    if (!allowedMappings.has(id)) {
+      return fail(
+        "PRECONDITION_FAILED",
+        `createDraft rejected: mappingId ${id} is not in the scenario reviewed allowlist`
+      );
+    }
+  }
+
+  const draft = {
+    id: `draft-${Date.now()}`,
+    text,
+    mappingIds: [...mappingIds],
+    createdAt: new Date().toISOString(),
+    revision: expectedRevision + 1,
+  };
+
+  const next = writeAudit(state, "createDraft", { draftId: draft.id });
+  next.draft = draft;
   next.approval = null;
   return ok(next, next.route.revision);
 }
@@ -150,45 +228,6 @@ export function removeStagedMapping(
   next.route.stagedMappingIds = next.route.stagedMappingIds.filter(
     (id) => id !== mappingId
   );
-  next.approval = null;
-  return ok(next, next.route.revision);
-}
-
-export function createDraft(
-  state: DomainState,
-  text: string,
-  mappingIds: string[],
-  expectedRevision: number,
-  scenarioMappings: ScenarioImpactMapping[]
-): Result<DomainState> {
-  if (state.route.revision !== expectedRevision) {
-    return fail("STALE_CONTEXT", "createDraft rejected: stale revision");
-  }
-  if (state.route.scenarioId == null) {
-    return fail("PRECONDITION_FAILED", "createDraft rejected: no scenario selected");
-  }
-  const allowed = new Set(
-    scenarioMappings
-      .filter((m) => m.scenarioId === state.route.scenarioId)
-      .map((m) => m.id)
-  );
-  for (const id of mappingIds) {
-    if (!allowed.has(id)) {
-      return fail(
-        "PRECONDITION_FAILED",
-        `createDraft rejected: mappingId ${id} is not in the scenario reviewed allowlist`
-      );
-    }
-  }
-  const draft = {
-    id: `draft-${Date.now()}`,
-    text,
-    mappingIds: [...mappingIds],
-    createdAt: new Date().toISOString(),
-    revision: expectedRevision + 1,
-  };
-  const next = writeAudit(state, "createDraft", { draftId: draft.id });
-  next.draft = draft;
   next.approval = null;
   return ok(next, next.route.revision);
 }
@@ -225,7 +264,9 @@ export function isApprovalValid(state: DomainState): boolean {
  * Resident-only export request.
  * The domain layer never calls browser clipboard/download APIs.
  */
-export function residentRequestExport(state: DomainState): Result<{ url: string }> {
+export function residentRequestExport(
+  state: DomainState
+): Result<{ url: string }> {
   if (!state.approval || state.approval.invalidated) {
     return fail("PRECONDITION_FAILED", "no valid approval snapshot");
   }
@@ -241,18 +282,36 @@ export function residentRequestExport(state: DomainState): Result<{ url: string 
   return ok({ url: "blob:internal/export.txt" }, state.route.revision);
 }
 
-export const agentPort: AgentPort = {
-  createInitialState,
-  selectScenario,
-  selectProfile,
-  setActiveSegments,
-  stageMapping,
-  removeStagedMapping,
-  createDraft,
-  isApprovalValid,
-};
+export function createGroundedRouteController(): GroundedRouteController {
+  return {
+    agentPort: {
+      createInitialState,
+      selectScenario,
+      selectProfile,
+      setActiveSegments,
+      stageMapping: (state, mappingId, expectedRevision) =>
+        stageMappingWithAllowedSet(
+          state,
+          mappingId,
+          expectedRevision,
+          mappingIdsForScenario(state.route.scenarioId)
+        ),
+      removeStagedMapping,
+      createDraft: (state, text, mappingIds, expectedRevision) =>
+        createDraftWithAllowedSet(
+          state,
+          text,
+          mappingIds,
+          expectedRevision,
+          mappingIdsForScenario(state.route.scenarioId)
+        ),
+      isApprovalValid,
+    },
+    residentPort: {
+      approveDraft,
+      requestExport: residentRequestExport,
+    },
+  };
+}
 
-export const residentPort: ResidentPort = {
-  approveDraft,
-  requestExport: residentRequestExport,
-};
+export const { agentPort, residentPort } = createGroundedRouteController();
