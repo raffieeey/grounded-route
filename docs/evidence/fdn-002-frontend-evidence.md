@@ -112,15 +112,18 @@ DSK-UI-001 defect. The previous evidence claiming "exactly once on mount
 (stable `bridge` dependency)" was materially false and is corrected here
 (DSK-UI-002).
 
-**GREEN (after fix):** `npm run test` — `tests/ui/workspace-bridge-lifecycle.test.tsx`
+**GREEN (after fix):** `npx vitest run tests/ui/workspace-bridge-lifecycle.test.tsx`
 (3 tests) passes:
 - A `<App />` mounted under React `StrictMode` with a fake
   `document.modelContext` settles to exactly six active registrations
   (`get_route_context`, `find_plan_evidence`, `stage_impact_overlay`,
   `clear_staged_overlay`, `draft_public_comment`, `get_review_status`) — no
-  duplicates from the StrictMode double-mount.
+  duplicates from the StrictMode double-mount. The raw `registerTool` call
+  count is exactly **6** after the settled mount (RED was **7**: the first
+  interrupted setup's initial tool call plus the settled six-tool batch).
 - Triggering resident load and profile-select state mutations through the same
-  bridge produces no new `registerTool` calls and leaves the active count at 6.
+  bridge produces no new `registerTool` calls (raw count stays **6**) and
+  leaves the active count at 6.
 - Unmount drives the abort signal so the active registration count drops to 0
   (no duplicate/leftover active tools).
 - The `modelContext`-absent path remains safe (human-only, no throw).

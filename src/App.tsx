@@ -33,19 +33,27 @@ export default function App() {
 
   // Feature-gated WebMCP registration. The bridge identity is stable across
   // state changes (see useWorkspaceBridge), so this effect runs once per mount.
-  // An AbortController cancels in-flight registration on StrictMode remount and
-  // unregisters the tool batch on real unmount via the documented { signal }
-  // option passed to each modelContext.registerTool call.
+  // Registration is deferred to a task so the first StrictMode setup can be
+  // cancelled in its cleanup before it ever invokes registerWebMcpTools; the
+  // settled setup then emits exactly one six-tool batch. An AbortController
+  // cancels in-flight registration on remount and unregisters the tool batch
+  // on real unmount via the documented { signal } option.
   useEffect(() => {
     const mc = (document as unknown as Record<string, unknown>).modelContext;
     if (!mc) return;
     const controller = new AbortController();
-    void registerWebMcpTools(
-      document as unknown as Parameters<typeof registerWebMcpTools>[0],
-      bridge,
-      { signal: controller.signal }
-    );
+    let cancelled = false;
+    const task = setTimeout(() => {
+      if (cancelled) return;
+      void registerWebMcpTools(
+        document as unknown as Parameters<typeof registerWebMcpTools>[0],
+        bridge,
+        { signal: controller.signal }
+      );
+    }, 0);
     return () => {
+      cancelled = true;
+      clearTimeout(task);
       controller.abort();
     };
   }, [bridge]);

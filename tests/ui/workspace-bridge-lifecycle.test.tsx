@@ -75,7 +75,7 @@ describe("WebMCP registration lifecycle (DSK-UI-001)", () => {
       "stage_impact_overlay",
     ]);
     const callsAfterMount = mc.registerToolCalls().length;
-    expect(callsAfterMount).toBeGreaterThanOrEqual(6);
+    expect(callsAfterMount).toBe(6);
 
     // Resident load — UI state mutation through the same bridge.
     await user.click(screen.getByRole("button", { name: /Load illustrative demo/i }));
