@@ -257,12 +257,29 @@ export default function App() {
         className="sr-only"
       />
 
-      <header>
-        <h1>Will a city plan change your route?</h1>
-        <p className="value-prop">
-          Get a 30-second, source-linked route-impact check for one Kuala Lumpur
-          corridor — and turn it into an editable civic comment you control.
-        </p>
+      <header className={`landing-hero${started ? " landing-hero--compact" : ""}`}>
+        <div className="landing-hero__copy">
+          <p className="landing-eyebrow">Grounded route check</p>
+          <h1>Will a city plan change your route?</h1>
+          <p className="value-prop">
+            Get a 30-second, source-linked route-impact check for one Kuala Lumpur
+            corridor — and turn it into an editable civic comment you control.
+          </p>
+        </div>
+        <svg
+          data-testid="landing-route-motif"
+          className="landing-route-motif"
+          viewBox="0 0 180 118"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M18 93 C48 85 45 37 83 43 S117 92 158 24" className="landing-route-motif__halo" />
+          <path d="M18 93 C48 85 45 37 83 43 S117 92 158 24" className="landing-route-motif__line" />
+          <circle cx="18" cy="93" r="7" className="landing-route-motif__point" />
+          <circle cx="158" cy="24" r="7" className="landing-route-motif__point" />
+          <circle cx="83" cy="43" r="4" className="landing-route-motif__waypoint" />
+          <circle cx="117" cy="92" r="4" className="landing-route-motif__waypoint" />
+        </svg>
       </header>
 
       <section className="disclaimer" role="note">

@@ -8,6 +8,7 @@ import "@testing-library/jest-dom";
 import LocalRouteMap from "@/ui/LocalRouteMap.tsx";
 import AssistantActivity from "@/ui/AssistantActivity.tsx";
 import VerdictCard from "@/ui/VerdictCard.tsx";
+import App from "@/App.tsx";
 import type { ScenarioImpactMapping } from "@/contracts/types.ts";
 import type { RouteVerdict } from "@/domain/verdict.ts";
 import scenarios from "../../data/demo_scenarios.json";
@@ -253,10 +254,14 @@ describe("WOW-3 — verdict delta on staged overlays", () => {
 // WOW-4: Landing hero polish
 // ------------------------------------------------------------------
 describe("WOW-4 — landing hero polish", () => {
-  it("landing page contains a route-motif SVG", () => {
-    // We test App in route-verdict.test.tsx, but for WOW-4 we can assert
-    // the motif exists when not started. This test is here as a contract.
-    // The actual presence will be tested in route-verdict-flow e2e and App tests.
-    expect(true).toBe(true);
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("landing page contains an honest route-motif SVG and a polished CTA", () => {
+    render(<App />);
+    expect(screen.getByTestId("landing-route-motif").tagName).toBe("svg");
+    expect(screen.getByRole("button", { name: /Start a route-impact check/i }))
+      .toHaveClass("landing-cta");
   });
 });
