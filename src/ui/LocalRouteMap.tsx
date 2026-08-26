@@ -180,6 +180,19 @@ export default function LocalRouteMap({
           </g>
         ))}
       </svg>
+      <div className="map-attribution">
+        <p className="map-attribution-text">
+          <a
+            href="https://www.openstreetmap.org/copyright"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            © OpenStreetMap contributors
+          </a>
+          {" — "}
+          Geometry and tags are illustrative local fixture context, not navigation or certified accessibility data.
+        </p>
+      </div>
     </section>
   );
 }

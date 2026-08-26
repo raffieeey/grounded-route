@@ -32,6 +32,11 @@ Grounded Route uses WebMCP tools to let an agent operate on that shared artifact
 4. draft a cited comment;
 5. let the resident review, edit, reject, or export it.
 
+## Attribution and data
+
+- Route geometry and tags are derived from **OpenStreetMap** (ODbL). A visible `© OpenStreetMap contributors` notice appears wherever the map is rendered, with a link to the [OSM copyright page](https://www.openstreetmap.org/copyright). Any exported draft includes the same attribution in machine-readable metadata. The geometry and tags are illustrative local fixture context, not navigation or certified accessibility data.
+- Exact short excerpts from the DBKL Kuala Lumpur Development Plan 2040 are used as curated evidence. Their public-release terms are unresolved; see [the third-party data manifest](data/THIRD_PARTY_DATA_MANIFEST.md).
+
 ## Project status
 
 - **Stage:** TDD v0.2, independently reviewed by Sol; implementation is blocked on the M0 fixture-freeze gate.
@@ -62,3 +67,5 @@ Grounded Route uses WebMCP tools to let an agent operate on that shared artifact
 ## License
 
 MIT. See [LICENSE](LICENSE). The MIT license covers project-authored code/documentation; third-party data/excerpts are governed by their own documented terms. See [the data manifest](data/THIRD_PARTY_DATA_MANIFEST.md).
+
+**Public-release status:** The repository remains **private** because DBKL exact excerpts need a separate written-permission/removal/legal path. OSM attribution is implemented, but that does **not** clear the DBKL gate or authorize public release.
