@@ -23,6 +23,9 @@ export default function LocalRouteMap({
   stagedMappingIds,
   mappings,
 }: LocalRouteMapProps) {
+  const prefersReducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   const { paths, places } = useMemo(() => {
     const features = segmentsGeo.features;
     const allCoords = features.flatMap((f) => f.geometry.coordinates as number[][]);
@@ -105,7 +108,13 @@ export default function LocalRouteMap({
           Illustrative local route diagram — not navigation
         </span>
         {stagedCount > 0 && (
-          <span className="map-staged-badge">Staged: {stagedCount}</span>
+          <span
+            className="map-staged-chip"
+            aria-label={`${stagedCount} staged plan ${stagedCount === 1 ? "overlay" : "overlays"} awaiting your review`}
+          >
+            <span className="map-staged-chip__dot" aria-hidden="true" />
+            Staged — awaiting your review
+          </span>
         )}
       </div>
       <svg
@@ -128,13 +137,32 @@ export default function LocalRouteMap({
         ))}
         {paths.map((p) => (
           <g key={p.id}>
+            {p.isStaged && (
+              <path
+                d={p.d}
+                fill="none"
+                stroke="#0075de"
+                strokeWidth={9}
+                opacity={0.2}
+                className="segment-path__glow"
+                aria-hidden="true"
+              />
+            )}
             <path
               d={p.d}
               fill="none"
               stroke={p.isStaged ? "#0075de" : p.isDefault ? "#1a1a1a" : "#999"}
-              strokeWidth={p.isStaged ? 4 : p.isDefault ? 2.5 : 1.5}
-              strokeDasharray={p.isDefault ? undefined : "4 4"}
+              strokeWidth={p.isStaged ? 5 : p.isDefault ? 2.5 : 1.5}
+              strokeDasharray={p.isStaged ? "1 0" : p.isDefault ? undefined : "4 4"}
               opacity={p.isDefault ? 1 : 0.6}
+              data-staged={p.isStaged || undefined}
+              className={
+                p.isStaged
+                  ? prefersReducedMotion
+                    ? "segment-path--staged-reduced"
+                    : "segment-path--staged"
+                  : undefined
+              }
             />
             <text
               className="segment-label"

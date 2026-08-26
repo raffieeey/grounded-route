@@ -451,10 +451,60 @@ button:disabled {
   font-style: italic;
 }
 
-.map-staged-badge {
-  font-size: 0.85rem;
-  color: var(--accent);
-  font-weight: 600;
+.map-staged-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #8dc6ff;
+  border-radius: 999px;
+  background: #e6f2ff;
+  color: #07579f;
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.map-staged-chip__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 117, 222, 0.16);
+}
+
+.segment-path__glow {
+  filter: drop-shadow(0 0 3px rgba(0, 117, 222, 0.55));
+}
+
+.segment-path--staged {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: staged-overlay-sweep 600ms ease-out forwards;
+}
+
+.segment-path--staged-reduced {
+  stroke-dasharray: none;
+}
+
+@keyframes staged-overlay-sweep {
+  to { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .map-staged-chip__dot {
+    animation: staged-chip-pulse 1.8s ease-in-out infinite;
+  }
+}
+
+@keyframes staged-chip-pulse {
+  50% { transform: scale(1.22); box-shadow: 0 0 0 6px rgba(0, 117, 222, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .segment-path--staged,
+  .map-staged-chip__dot {
+    animation: none;
+  }
 }
 
 .local-route-map {
@@ -477,7 +527,7 @@ button:disabled {
   }
 
   .map-disclaimer,
-  .map-staged-badge {
+  .map-staged-chip {
     white-space: normal;
   }
 }
