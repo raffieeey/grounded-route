@@ -89,7 +89,13 @@ The known foundation feature commit is `957a2e858f9705a1a51deca44b60dfa941f35a83
 ### Test summary
 - Domain tests: 17 passed (5 new, 9 existing updated, +3 API/forgery tests)
 - Fixture tests: 9 passed
-- Total: 23 passed, 0 failed
+- Total: 26 passed, 0 failed
+
+### Final independent acceptance
+
+- GLM-5.2 via Ollama Cloud independently reviewed the final foundation candidate and returned **PASS**.
+- Review artifact: `docs/reviews/glm-foundation-final-review.md`.
+- The review confirmed trusted fixture-bound mapping authorization, capability-separated agent/resident ports, revision-bound approval invalidation, and the absence of backend/runtime network/model dependencies in the foundation scope.
 
 ### Acceptance commands run
 All exit 0:
