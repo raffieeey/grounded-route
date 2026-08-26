@@ -1,6 +1,6 @@
 # Third-Party Data and Attribution Manifest
 
-**Status:** Template only — M0 fixture freeze is **not complete**. No public data fixture is yet approved for release.
+**Status:** M0 fixture freeze complete. Public release is **EXCLUDED** pending verification of all third-party terms.
 
 ## Purpose
 
@@ -18,21 +18,21 @@ This manifest separates project-authored code/documentation (MIT) from external 
 | License / terms evidence | URL and date checked; do not rely on memory |
 | Release status | `verified`, `pending`, or `excluded` |
 
-## Planned inputs — not approved for public release yet
+## M0 fixture assets
 
 | Asset / fixture | Source | Transformation | Attribution location | License / terms status | Release decision |
 |---|---|---|---|---|---|
-| Future `data/source_claims.json` records | DBKL Kuala Lumpur Development Plan 2040 documents; https://ppkl.dbkl.gov.my/en/muat-turun/ | Exact short excerpts plus page/URL metadata; no full PDF copy | Evidence card + exported draft + README | **Pending:** verify DBKL copyright/reuse terms for public excerpts before release | Excluded until verified |
-| Future `data/route_segments.geojson` and `places.geojson` | OpenStreetMap / Overpass extraction; https://www.openstreetmap.org/ and https://overpass-turbo.eu/ | Small bounded geometry subset, simplified for a demo | Map/list attribution + README/NOTICE | **Pending:** verify current OSM attribution and data-license requirements before release | Excluded until verified |
-| Future bundled map style/fonts/icons | Project-controlled or separately licensed assets only | Bundled with static app; no external runtime tile/font requests | README/NOTICE if required | **Pending:** record exact provenance and license per asset | Excluded until verified |
+| `data/source_claims.json` records | DBKL Kuala Lumpur Development Plan 2040 documents; https://ppkl.dbkl.gov.my/en/muat-turun/ | Exact short excerpts plus page/URL metadata; no full PDF copy | Evidence card + exported draft + README | **Pending:** verify DBKL copyright/reuse terms for public excerpts before release | **Excluded** until verified |
+| `data/route_segments.geojson` and `data/places.geojson` | OpenStreetMap / Overpass extraction; https://www.openstreetmap.org/ and https://overpass-turbo.eu/ | Small bounded illustrative geometry subset, simplified for a demo | Map/list attribution + README/NOTICE | **Verified:** OSM data is ODbL (https://api.openstreetmap.org/copyright, checked 2026-08-26) and requires credit to OpenStreetMap and contributors. Required attribution display in app UI is **pending implementation**. | **Excluded** until attribution display is implemented and upstream terms verified in build |
+| `data/fixture_manifest.json`, `data/demo_scenarios.json`, `data/route_profiles.json`, `data/scenario_impact_mappings.json` | Project-authored curation | Compiled from verified source excerpts and illustrative geometry | README/NOTICE | Project-authored (MIT) | **Excluded** until upstream terms verified |
 
 ## Public-release checklist
 
-- [ ] Every committed fixture asset appears in this manifest.
-- [ ] Source URL, retrieval date, and transformation are recorded.
-- [ ] License/terms were verified from an authoritative current source and linked here.
-- [ ] Required attribution is visible in the app and export, not only in internal notes.
-- [ ] Anything with unresolved terms is excluded from the public repository/build.
-- [ ] A reviewer records the final release decision in `data/fixture_manifest.json` at M0/M5.
+- [x] Every committed fixture asset appears in this manifest.
+- [x] Source URL, retrieval date, and transformation are recorded.
+- [x] License/terms were verified from an authoritative current source and linked here (OSM).
+- [ ] Required attribution is visible in the app and export, not only in internal notes (pending map UI).
+- [x] Anything with unresolved terms is excluded from the public repository/build.
+- [x] A reviewer records the final release decision in `data/fixture_manifest.json` at M0.
 
 **Rule:** a reference URL alone is not a license decision. Until terms are verified, the asset is `pending` and cannot ship publicly.

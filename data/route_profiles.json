@@ -1,0 +1,20 @@
+[
+  {
+    "id": "profile-wheelchair",
+    "label": "Wheelchair user",
+    "description": "Requires step-free surfaces, tactile paving, and ramp or elevator access at grade changes.",
+    "constraints": ["no-steps", "min-width-90cm", "tactile-paving-preferred", "ramp-or-elevator-required"]
+  },
+  {
+    "id": "profile-parent",
+    "label": "School-pickup parent",
+    "description": "Needs wide sidewalks, safe crossings, and manageable distances with a stroller or walking with a child.",
+    "constraints": ["wide-sidewalk", "signalised-crossing-preferred", "drop-off-zone-awareness", "max-gradient-5-percent"]
+  },
+  {
+    "id": "profile-cyclist",
+    "label": "Cyclist",
+    "description": "Prefers dedicated or shared cycle paths and avoids dismount points.",
+    "constraints": ["cycleway-or-shared-path", "no-dismount-required", "min-width-120cm"]
+  }
+]

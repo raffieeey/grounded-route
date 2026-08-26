@@ -1,0 +1,24 @@
+[
+  {
+    "id": "saloma-link-active-mobility-demo",
+    "title": "Saloma Link Active-Mobility Corridor — Illustrative Demo",
+    "description": "A curated demonstration exploring how Kuala Lumpur Development Plan 2040 active-mobility policy intent may relate to a bounded KL Central / Saloma Link route. This is an illustrative route-evidence mapping, not an official construction or accessibility finding.",
+    "areaBoundsDescription": "KL Central station vicinity to Saloma Link and Demo School — roughly 5–10 blocks, illustrative geometry only",
+    "disclaimer": "This is an illustrative private-development fixture for demonstration purposes only. Segment impacts, accessibility findings, and construction timelines are not official. Field verification is required for any real-world claim.",
+    "profileIds": ["profile-wheelchair", "profile-parent", "profile-cyclist"],
+    "originPlaceId": "place-demo-home",
+    "destinationPlaceId": "place-demo-school",
+    "defaultSegmentIds": [
+      "seg-kl-central-to-jalan-travers",
+      "seg-jalan-travers-crossing",
+      "seg-jalan-travers-to-jalan-tun-sambanthan",
+      "seg-tun-sambanthan-plaza-crossing",
+      "seg-plaza-to-saloma-south",
+      "seg-saloma-link-bridge",
+      "seg-saloma-north-to-jalan-ampang",
+      "seg-jalan-ampang-crossing-east",
+      "seg-jalan-ampang-to-demo-school",
+      "seg-demo-school-frontage"
+    ]
+  }
+]

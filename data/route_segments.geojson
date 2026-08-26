@@ -1,0 +1,235 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [101.686, 3.134],
+          [101.687, 3.135],
+          [101.688, 3.136]
+        ]
+      },
+      "properties": {
+        "id": "seg-kl-central-to-jalan-travers",
+        "segmentName": "KL Central to Jalan Travers footway",
+        "tags": ["footway", "sidewalk"],
+        "lengthMeters": 320
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [101.688, 3.136],
+          [101.689, 3.137]
+        ]
+      },
+      "properties": {
+        "id": "seg-jalan-travers-crossing",
+        "segmentName": "Jalan Travers signalised crossing",
+        "tags": ["crossing", "footway"],
+        "lengthMeters": 120
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [101.689, 3.137],
+          [101.690, 3.138],
+          [101.691, 3.139]
+        ]
+      },
+      "properties": {
+        "id": "seg-jalan-travers-to-jalan-tun-sambanthan",
+        "segmentName": "Jalan Travers to Jalan Tun Sambanthan",
+        "tags": ["footway", "steps"],
+        "lengthMeters": 280
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [101.691, 3.139],
+          [101.692, 3.140]
+        ]
+      },
+      "properties": {
+        "id": "seg-tun-sambanthan-plaza-crossing",
+        "segmentName": "Tun Sambanthan plaza crossing",
+        "tags": ["crossing", "pedestrian-plaza"],
+        "lengthMeters": 90
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [101.692, 3.140],
+          [101.693, 3.141]
+        ]
+      },
+      "properties": {
+        "id": "seg-plaza-to-saloma-south",
+        "segmentName": "Plaza to Saloma Link south approach",
+        "tags": ["footway", "slope"],
+        "lengthMeters": 150
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [101.693, 3.141],
+          [101.694, 3.142]
+        ]
+      },
+      "properties": {
+        "id": "seg-saloma-link-bridge",
+        "segmentName": "Saloma Link bridge walkway",
+        "tags": ["footway", "bridge", "steps"],
+        "lengthMeters": 180
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [101.694, 3.142],
+          [101.695, 3.143]
+        ]
+      },
+      "properties": {
+        "id": "seg-saloma-north-to-jalan-ampang",
+        "segmentName": "Saloma Link north to Jalan Ampang",
+        "tags": ["footway", "sidewalk"],
+        "lengthMeters": 140
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [101.695, 3.143],
+          [101.696, 3.144]
+        ]
+      },
+      "properties": {
+        "id": "seg-jalan-ampang-crossing-east",
+        "segmentName": "Jalan Ampang crossing east",
+        "tags": ["crossing", "footway"],
+        "lengthMeters": 110
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [101.696, 3.144],
+          [101.697, 3.145]
+        ]
+      },
+      "properties": {
+        "id": "seg-jalan-ampang-to-demo-school",
+        "segmentName": "Jalan Ampang to Demo School corridor",
+        "tags": ["footway", "shared-path"],
+        "lengthMeters": 260
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [101.697, 3.145],
+          [101.698, 3.146]
+        ]
+      },
+      "properties": {
+        "id": "seg-demo-school-frontage",
+        "segmentName": "Demo School frontage walkway",
+        "tags": ["footway", "drop-off-zone-nearby"],
+        "lengthMeters": 80
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [101.690, 3.138],
+          [101.691, 3.139],
+          [101.692, 3.140]
+        ]
+      },
+      "properties": {
+        "id": "seg-cyclist-bypass-west",
+        "segmentName": "Cyclist bypass west loop",
+        "tags": ["cycleway", "shared-path"],
+        "lengthMeters": 310
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [101.693, 3.141],
+          [101.694, 3.142]
+        ]
+      },
+      "properties": {
+        "id": "seg-saloma-elevator-ramp",
+        "segmentName": "Saloma Link elevator and ramp approach",
+        "tags": ["footway", "ramp", "elevator"],
+        "lengthMeters": 100
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [101.688, 3.136],
+          [101.689, 3.137],
+          [101.690, 3.138]
+        ]
+      },
+      "properties": {
+        "id": "seg-parent-stroller-route",
+        "segmentName": "Parent stroller route via Jalan Travers",
+        "tags": ["footway", "wide-sidewalk"],
+        "lengthMeters": 290
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [101.692, 3.140],
+          [101.693, 3.141],
+          [101.694, 3.142],
+          [101.695, 3.143]
+        ]
+      },
+      "properties": {
+        "id": "seg-wheelchair-alternate",
+        "segmentName": "Wheelchair alternate route avoiding steps",
+        "tags": ["footway", "ramp", "tactile-paving"],
+        "lengthMeters": 420
+      }
+    }
+  ]
+}
