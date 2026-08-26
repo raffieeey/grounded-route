@@ -77,8 +77,15 @@ useEffect(() => {
   const mc = (document as unknown as Record<string, unknown>).modelContext;
   if (!mc) return;
   const controller = new AbortController();
-  void registerWebMcpTools(document, bridge, { signal: controller.signal });
+  let cancelled = false;
+  const task = setTimeout(() => {
+    if (!cancelled) {
+      void registerWebMcpTools(document, bridge, { signal: controller.signal });
+    }
+  }, 0);
   return () => {
+    cancelled = true;
+    clearTimeout(task);
     controller.abort();
   };
 }, [bridge]);
