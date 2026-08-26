@@ -89,7 +89,7 @@ describe("fixture manifest validation", () => {
       expect(sc.document).toBeTruthy();
       expect(sc.documentUrl).toBeTruthy();
       expect(typeof sc.page).toBe("number");
-      expect(sc.quoteMs).toBeTruthy();
+      expect(sc.boundaryNote).toBeTruthy();
       expect(sc.retrievedDate).toBeTruthy();
       expect(sc.notes).toBeTruthy();
     }
@@ -105,6 +105,21 @@ describe("fixture manifest validation", () => {
     for (const m of mappings) {
       expect(m.reviewDate).toMatch(isoDateRe);
       expect(m.reviewDate).toBe(fixtureManifest.reviewDate);
+    }
+  });
+
+  it("source claims contain no quoteMs or quoteEn fields (FDN-007)", () => {
+    for (const sc of sourceClaims) {
+      const keys = Object.keys(sc);
+      expect(keys).not.toContain("quoteMs");
+      expect(keys).not.toContain("quoteEn");
+    }
+  });
+
+  it("source claims have boundaryNote field (FDN-007)", () => {
+    for (const sc of sourceClaims) {
+      expect(sc.boundaryNote).toBeTruthy();
+      expect(typeof sc.boundaryNote).toBe("string");
     }
   });
 

@@ -88,7 +88,7 @@ function buildTools(
   const findPlanEvidence: RegisteredTool = {
     name: "find_plan_evidence",
     description:
-      "Look up labelled source-claim evidence by fixture source claim IDs. Returns quotes and notes only; evidence is untrusted content. Read-only; never mutates workspace state.",
+      "Look up official source references by fixture source claim IDs. Returns reference metadata (document, page, URL, retrieval date, boundary note) only; no quotation content. Read-only; never mutates workspace state.",
     inputSchema: {
       type: "object",
       properties: {
@@ -114,8 +114,8 @@ function buildTools(
           category: claim.category,
           document: claim.document,
           page: claim.page,
-          quoteMs: claim.quoteMs,
-          quoteEn: claim.quoteEn,
+          documentUrl: claim.documentUrl,
+          boundaryNote: claim.boundaryNote,
           retrievedDate: claim.retrievedDate,
           notes: claim.notes,
         };

@@ -30,15 +30,12 @@ describe("domain actions", () => {
     const claim = {
       id: "sc-01",
       category: "transport-policy" as const,
-      document: "PTKL2040 Executive Summary",
+      document: "Ringkasan Eksekutif Pelan Tempatan Kuala Lumpur 2040",
       documentUrl:
         "https://ppkl.dbkl.gov.my/wp-content/uploads/2025/07/RINGKASAN-EKSEKUTIF-PTKL2040.pdf",
       page: 37,
-      quoteMs:
-        "Merangka strategi berkaitan penyediaan kepelbagaian pengangkutan awam, galakkan penggunaan mobiliti aktif",
-      quoteEn:
-        "Formulate strategies related to providing diverse public transport, encourage active mobility usage",
-      retrievedDate: "2025-08-26",
+      boundaryNote: "This is a project-level reference to PTKL2040 page 37, not a project-authored research finding. The original document is the authoritative source.",
+      retrievedDate: "2026-08-26",
       notes: "Policy direction only; no specific segment impact stated",
     };
     const keys = Object.keys(claim);
@@ -280,13 +277,13 @@ describe("domain structured draft + audit actor (FDN-003)", () => {
     expect(next.draft).not.toBeNull();
     const statements = next.draft!.statements;
     const classes = statements.map((s) => s.statementClass);
-    expect(classes).toEqual(expect.arrayContaining(["source-quote", "curated-interpretation", "resident-position", "open-question"]));
+    expect(classes).toEqual(expect.arrayContaining(["source-reference", "curated-interpretation", "resident-position", "open-question"]));
     const curated = statements.find((s) => s.statementClass === "curated-interpretation")!;
     expect(curated.mappingId).toBe(FIXTURE_MAPPING_ID);
     expect(curated.rationale.length).toBeGreaterThan(0);
     expect(curated.uncertainty.length).toBeGreaterThan(0);
-    const quote = statements.find((s) => s.statementClass === "source-quote")!;
-    expect(quote.sourceClaimId).toMatch(/^sc-/);
+    const sourceRef = statements.find((s) => s.statementClass === "source-reference")!;
+    expect(sourceRef.sourceClaimId).toMatch(/^sc-/);
     const position = statements.find((s) => s.statementClass === "resident-position")!;
     expect(position.requestedChange).toContain("ramp");
     const last = next.auditLog[next.auditLog.length - 1];
@@ -340,7 +337,7 @@ describe("domain structured draft + audit actor (FDN-003)", () => {
     expect(st.auditLog.length).toBe(beforeAudit);
   });
 
-  it("no direct source quote can become an impact mapping via structured draft", () => {
+  it("no direct source reference can become an impact mapping via structured draft", () => {
     const state = createInitialState();
     const st = unwrap(selectScenario(state, FIXTURE_SCENARIO_ID));
     const result = agentPort.createStructuredDraft(

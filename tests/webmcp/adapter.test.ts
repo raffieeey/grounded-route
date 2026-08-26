@@ -251,7 +251,7 @@ describe("WebMCP adapter — stage / clear / draft mutations", () => {
     expect(state.draft).not.toBeNull();
     const statements = state.draft!.statements;
     const classes = statements.map((s) => s.statementClass);
-    expect(classes).toContain("source-quote");
+    expect(classes).toContain("source-reference");
     expect(classes).toContain("curated-interpretation");
     expect(classes).toContain("resident-position");
     expect(classes).toContain("open-question");
@@ -260,9 +260,9 @@ describe("WebMCP adapter — stage / clear / draft mutations", () => {
     expect(curated!.mappingId).toBe(FIXTURE_MAPPING_ID);
     expect(curated!.rationale.length).toBeGreaterThan(0);
     expect(curated!.uncertainty.length).toBeGreaterThan(0);
-    const quote = statements.find((s) => s.statementClass === "source-quote");
-    expect(quote).toBeTruthy();
-    expect(["sc-01", "sc-05"]).toContain(quote!.sourceClaimId);
+    const sourceRef = statements.find((s) => s.statementClass === "source-reference");
+    expect(sourceRef).toBeTruthy();
+    expect(["sc-01", "sc-05"]).toContain(sourceRef!.sourceClaimId);
     const position = statements.find((s) => s.statementClass === "resident-position");
     expect(position).toBeTruthy();
     expect(position!.text).toContain("step-free");
@@ -359,7 +359,8 @@ describe("WebMCP adapter — read tools", () => {
     const claims = data.evidence as Array<Record<string, unknown>>;
     expect(claims).toHaveLength(2);
     expect(claims[0].id).toBe("sc-01");
-    expect(typeof claims[0].quoteEn).toBe("string");
+    expect(typeof claims[0].document).toBe("string");
+    expect(typeof claims[0].boundaryNote).toBe("string");
     expect(bridge.replaceStateCalls).toBe(0);
   });
 

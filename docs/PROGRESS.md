@@ -199,3 +199,36 @@ npm run build
 
 - Visible OSM attribution is implemented, but it does not settle every ODbL public-distribution question and does not clear the independent DBKL source-excerpt gate.
 - The overall repository remains private until the DBKL rights path is resolved and the user explicitly authorizes a visibility change.
+
+
+## De-quoted transparent public candidate (FDN-007)
+
+**Status:** Accepted for private candidate; repository remains private because the DBKL rights path is separate and unresolved.
+
+### Completed
+
+- Replaced `quoteMs`/`quoteEn` fields in `SourceClaim` with `boundaryNote` — project-authored boundary note stating each record is a reference to the official document, not project-authored research.
+- Renamed `DraftStatementClass` value `source-quote` to `source-reference`; renamed `SourceQuoteStatement` to `SourceReferenceStatement` with additional reference metadata fields (`document`, `page`, `documentUrl`, `retrievedDate`, `boundaryNote`).
+- Updated `EvidenceBoard` section heading from "Direct source quotes" to "Official source references"; replaced blockquote rendering with reference card layout showing document title, page, official link, retrieval date, category, and boundary note.
+- Updated `DraftReviewPanel` to display `source-reference` statements with document/page metadata.
+- Updated `find_plan_evidence` WebMCP tool to return source-reference metadata instead of quotation content.
+- Updated `createStructuredDraft` domain action to emit `source-reference` statements containing document/page/URL/boundary note instead of `source-quote` statements containing source text.
+- Updated CSS badge class from `.source-quote` to `.source-reference`.
+- Updated `scripts/validate_fixture.py` to require `boundaryNote` and reject `quoteMs`/`quoteEn` in source claim records.
+- Added FDN-007 RED→GREEN test coverage in `tests/data/source-reference-fixture.test.ts`, `tests/domain/source-reference-semantics.test.ts`, `tests/ui/source-reference-ui.test.tsx`, and `tests/webmcp/source-reference-adapter.test.ts`.
+- Updated existing tests (fixture, domain, provenance, evals, adapter) for source-reference semantics.
+- Updated all tracked documentation to reflect source-reference terminology, not quotation terminology.
+- Evidence: `docs/evidence/fdn-007-dequoted-public-candidate.md`.
+
+### Acceptance evidence
+
+- 115 tests across 13 test files passed.
+- `workflow:check`, `fixture:check`, `tdd:check`, typecheck, lint, build all pass.
+
+### Branch boundary
+
+- This is a private candidate. The DBKL exact-excerpt gate is not cleared.
+- This candidate contains only official source references (document title, page, URL), not direct quotations.
+- No approval/export/copy/download/publish capability was added.
+- Six WebMCP tool names preserved exactly. Human-only authority boundaries preserved.
+- OSM attribution intact. No runtime egress.

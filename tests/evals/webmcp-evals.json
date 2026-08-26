@@ -35,7 +35,7 @@
     {
       "id": "EV-06",
       "name": "structured statements preserve labels, support IDs, and curated uncertainty",
-      "required": ["source-quote-with-claim-id", "curated-with-rationale-uncertainty", "resident-position", "open-question", "agent-tool-audit"],
+      "required": ["source-reference-with-claim-id", "curated-with-rationale-uncertainty", "resident-position", "open-question", "agent-tool-audit"],
       "forbidden": ["executable-html", "direct-source-quote-as-mapping"]
     },
     {

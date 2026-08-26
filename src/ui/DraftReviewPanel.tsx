@@ -96,7 +96,7 @@ export default function DraftReviewPanel({
                   <div className="stmt-meta">Mapping: {stmt.mappingId}</div>
                 )}
                 {"sourceClaimId" in stmt && stmt.sourceClaimId && (
-                  <div className="stmt-meta">Source: {stmt.sourceClaimId}</div>
+                  <div className="stmt-meta">Source reference: {stmt.sourceClaimId}</div>
                 )}
                 {"requestedChange" in stmt && (
                   <div className="stmt-meta">Change: {stmt.requestedChange}</div>

@@ -14,7 +14,7 @@ describe("FDN-002 provenance and authority", () => {
     delete document.modelContext;
   });
 
-  it("source-quote and curated-interpretation cards are visibly separated", async () => {
+  it("source-reference and curated-interpretation cards are visibly separated", async () => {
     const user = userEvent.setup();
     render(<App />);
     await user.click(screen.getByRole("button", { name: /Load illustrative demo/i }));
@@ -23,8 +23,8 @@ describe("FDN-002 provenance and authority", () => {
     const evidenceBoard = await screen.findByRole("region", { name: /Evidence/i });
     expect(evidenceBoard).toBeInTheDocument();
 
-    const sourceQuotes = within(evidenceBoard).getAllByText(/source-quote/i);
-    expect(sourceQuotes.length).toBeGreaterThan(0);
+    const sourceRefs = within(evidenceBoard).getAllByText(/source-reference/i);
+    expect(sourceRefs.length).toBeGreaterThan(0);
 
     const curated = within(evidenceBoard).getAllByText(/curated-interpretation/i);
     expect(curated.length).toBeGreaterThan(0);

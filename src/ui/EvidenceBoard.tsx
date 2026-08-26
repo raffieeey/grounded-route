@@ -16,26 +16,25 @@ export default function EvidenceBoard({ sourceClaims, mappings }: EvidenceBoardP
       <h2>Evidence board</h2>
 
       <div className="evidence-section">
-        <h3>Direct source quotes</h3>
+        <h3>Official source references</h3>
         <ul className="source-list">
           {relevantClaims.map((claim) => (
             <li key={claim.id} className="source-card">
               <div className="source-header">
-                <span className="badge source-quote">{'\u003e'} source-quote</span>
+                <span className="badge source-reference">{'\u003e'} source-reference</span>
                 <span className="source-doc">{claim.document}</span>
               </div>
-              <blockquote className="source-quote-text">
-                <p><strong>EN:</strong> {claim.quoteEn}</p>
-                <p><strong>MS:</strong> {claim.quoteMs}</p>
-              </blockquote>
-              <div className="source-meta">
-                Page {claim.page} ·{" "}
-                <a href={claim.documentUrl} target="_blank" rel="noopener noreferrer">
-                  Source URL
-                </a>
-                {" · Retrieved "}
-                {claim.retrievedDate}
+              <div className="source-reference-meta">
+                <p>Page {claim.page} ·{" "}
+                  <a href={claim.documentUrl} target="_blank" rel="noopener noreferrer">
+                    Official document
+                  </a>
+                  {" · Retrieved "}
+                  {claim.retrievedDate}
+                </p>
+                <p className="source-category">Category: {claim.category}</p>
               </div>
+              <div className="source-boundary">{claim.boundaryNote}</div>
               <div className="source-notes">{claim.notes}</div>
             </li>
           ))}

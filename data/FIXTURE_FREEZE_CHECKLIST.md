@@ -11,7 +11,7 @@
 
 ## Source and mapping freeze
 
-- [ ] `source_claims.json` contains 6–12 exact official excerpts with URL, document, page, and review date.
+- [ ] `source_claims.json` contains 6–12 official source references with URL, document, page, review date, and boundary note (no copied source text).
 - [ ] `scenario_impact_mappings.json` contains every claimed scenario-to-segment relationship.
 - [ ] Each mapping has valid source IDs, valid segment IDs, rationale, uncertainty, named reviewer, and review date.
 - [ ] No `SourceClaim` itself includes segment mapping or route-impact language.

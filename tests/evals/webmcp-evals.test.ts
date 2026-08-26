@@ -151,7 +151,7 @@ const checks: Record<string, () => Promise<void> | void> = {
     expect(out.success).toBe(true);
     const state = bridge.getState();
     const classes = state.draft!.statements.map((s) => s.statementClass);
-    expect(classes).toContain("source-quote");
+    expect(classes).toContain("source-reference");
     expect(classes).toContain("curated-interpretation");
     expect(classes).toContain("resident-position");
     expect(classes).toContain("open-question");

@@ -298,7 +298,7 @@ function assembleStructuredText(
   for (const claimId of sourceClaimIds) {
     const claim = sourceClaimById.get(claimId);
     if (claim) {
-      lines.push(`Source quote (${claimId}): ${claim.quoteEn}`);
+      lines.push(`Source reference (${claimId}): ${claim.document} page ${claim.page}`);
     }
   }
   for (const question of openQuestions) {
@@ -363,9 +363,14 @@ function createStructuredDraftWithAllowedSet(
     if (claim) {
       statements.push({
         id: nextStmtId(),
-        statementClass: "source-quote",
-        text: claim.quoteEn,
+        statementClass: "source-reference",
+        text: `Official source reference: ${claim.document}, page ${claim.page}`,
         sourceClaimId,
+        document: claim.document,
+        page: claim.page,
+        documentUrl: claim.documentUrl,
+        retrievedDate: claim.retrievedDate,
+        boundaryNote: claim.boundaryNote,
       });
     }
   }

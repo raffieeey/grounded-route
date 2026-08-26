@@ -22,7 +22,7 @@ This manifest separates project-authored code/documentation (MIT) from external 
 
 | Asset / fixture | Source | Transformation | Attribution location | License / terms status | Release decision |
 |---|---|---|---|---|---|
-| `data/source_claims.json` records | DBKL Kuala Lumpur Development Plan 2040 documents; https://ppkl.dbkl.gov.my/en/muat-turun/ | Exact short excerpts plus page/URL metadata; no full PDF copy | Evidence card + exported draft + README | **Pending:** verify DBKL copyright/reuse terms for public excerpts before release | **Excluded** until verified |
+| `data/source_claims.json` records | DBKL Kuala Lumpur Development Plan 2040 documents; https://ppkl.dbkl.gov.my/en/muat-turun/ | Official source references only (document title, page, URL, retrieval date, boundary note); no copied source text | Evidence card + exported draft + README | **Pending:** verify DBKL copyright/reuse terms before release | **Excluded** until verified |
 | `data/route_segments.geojson` and `data/places.geojson` | OpenStreetMap / Overpass extraction; https://www.openstreetmap.org/ and https://overpass-turbo.eu/ | Small bounded illustrative geometry subset, simplified for a demo | Map/list attribution (`src/ui/LocalRouteMap.tsx`) + exported draft (`src/ui/export-payload.ts`) + README/NOTICE | **Verified:** OSM data is ODbL (https://api.openstreetmap.org/copyright, checked 2026-08-26) and requires credit to OpenStreetMap and contributors. Required attribution is **implemented** in app UI and export metadata. | **Verified** — attribution display implemented and upstream terms verified in build |
 | `data/fixture_manifest.json`, `data/demo_scenarios.json`, `data/route_profiles.json`, `data/scenario_impact_mappings.json` | Project-authored curation | Compiled from verified source excerpts and illustrative geometry | README/NOTICE | Project-authored (MIT) | **Excluded** until upstream terms verified |
 
@@ -39,4 +39,4 @@ This manifest separates project-authored code/documentation (MIT) from external 
 
 ## Release exclusion notice
 
-The overall public release of this repository remains **blocked / excluded** because DBKL exact excerpts in `data/source_claims.json` need a separate written-permission/removal/legal path. The OSM attribution implementation does **not** resolve or clear the DBKL gate.
+The overall public release of this repository remains **blocked / excluded** because DBKL source-reference rights in `data/source_claims.json` need a separate resolution path. This candidate contains only source references, not copied excerpts. The OSM attribution implementation does **not** resolve or clear the DBKL gate.

@@ -253,7 +253,7 @@ button:disabled {
   letter-spacing: 0.02em;
 }
 
-.badge.source-quote {
+.badge.source-reference {
   background: #e8f5e9;
   color: #2e7d32;
 }
@@ -273,15 +273,27 @@ button:disabled {
   color: #c2185b;
 }
 
-.source-quote-text {
+.source-reference-meta {
   margin: 0 0 8px;
   padding: 0 0 0 12px;
   border-left: 3px solid var(--border);
 }
 
-.source-quote-text p {
+.source-reference-meta p {
   margin: 0 0 6px;
   font-size: 0.95rem;
+}
+
+.source-boundary {
+  font-size: 0.85rem;
+  color: var(--warning-text);
+  font-style: italic;
+  margin-bottom: 6px;
+}
+
+.source-category {
+  font-size: 0.85rem;
+  color: var(--muted);
 }
 
 .source-meta,
