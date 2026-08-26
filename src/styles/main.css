@@ -1064,6 +1064,12 @@ button:disabled {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .assistant-banner--sticky {
+    transition: none;
+  }
+}
+
 @keyframes assistant-ai-pulse {
   50% { box-shadow: 0 0 0 7px rgba(0, 117, 222, 0); transform: scale(1.04); }
 }
@@ -1182,7 +1188,18 @@ button:disabled {
     right: 12px;
     left: 12px;
     margin: 0;
+    /* Collapsed by default: agent presence stays visible without stealing the fold. */
+    max-height: 64px;
+    overflow: hidden;
+    transition: max-height 240ms ease;
   }
+  .assistant-banner--sticky:hover,
+  .assistant-banner--sticky:focus-within {
+    max-height: 70vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  }
+  /* Compensate for the fixed banner so it never covers workspace content. */
   h1 {
     font-size: 1.3rem;
   }

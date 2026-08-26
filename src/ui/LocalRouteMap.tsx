@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { RouteSegmentFeature, ScenarioImpactMapping } from "@/contracts/types.ts";
 import segmentsGeoRaw from "../../data/route_segments.geojson?raw";
 import placesGeoRaw from "../../data/places.geojson?raw";
@@ -23,9 +23,19 @@ export default function LocalRouteMap({
   stagedMappingIds,
   mappings,
 }: LocalRouteMapProps) {
-  const prefersReducedMotion =
-    typeof window !== "undefined" &&
-    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  // Reactive to OS-level preference changes; the CSS media query is the safety net.
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false),
+  );
+  useEffect(() => {
+    const mq = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    if (!mq) return;
+    const onChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mq.addEventListener?.("change", onChange);
+    return () => mq.removeEventListener?.("change", onChange);
+  }, []);
   const { paths, places } = useMemo(() => {
     const features = segmentsGeo.features;
     const allCoords = features.flatMap((f) => f.geometry.coordinates as number[][]);
@@ -153,7 +163,7 @@ export default function LocalRouteMap({
               fill="none"
               stroke={p.isStaged ? "#0075de" : p.isDefault ? "#1a1a1a" : "#999"}
               strokeWidth={p.isStaged ? 5 : p.isDefault ? 2.5 : 1.5}
-              strokeDasharray={p.isStaged ? "1 0" : p.isDefault ? undefined : "4 4"}
+              strokeDasharray={p.isStaged ? undefined : p.isDefault ? undefined : "4 4"}
               opacity={p.isDefault ? 1 : 0.6}
               data-staged={p.isStaged || undefined}
               className={
