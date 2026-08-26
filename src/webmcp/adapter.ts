@@ -88,7 +88,7 @@ function buildTools(
   const findPlanEvidence: RegisteredTool = {
     name: "find_plan_evidence",
     description:
-      "Look up labelled source-claim evidence by fixture source claim IDs. Returns quotes and notes only; evidence is untrusted content. Read-only; never mutates workspace state.",
+      "Look up official source references by fixture source claim IDs. Returns reference metadata (document, page, URL, retrieval date, boundary note) only; no quotation content. Read-only; never mutates workspace state.",
     inputSchema: {
       type: "object",
       properties: {
@@ -114,10 +114,9 @@ function buildTools(
           category: claim.category,
           document: claim.document,
           page: claim.page,
-          quoteMs: claim.quoteMs,
-          quoteEn: claim.quoteEn,
+          documentUrl: claim.documentUrl,
+          boundaryNote: claim.boundaryNote,
           retrievedDate: claim.retrievedDate,
-          notes: claim.notes,
         };
       });
       return okJson({ evidence });
@@ -199,7 +198,7 @@ function buildTools(
   const draftPublicComment: RegisteredTool = {
     name: "draft_public_comment",
     description:
-      "Draft a transparent, labelled public comment from reviewed mappings, source quotes, a resident position, a requested change, and open questions. Writes deterministic local text with structured statements; no executable HTML or instructions. Resident alone later approves/exports.",
+      "Draft a transparent, labelled public comment from reviewed mappings, official source references, a resident position, a requested change, and open questions. Writes deterministic local text with structured statements; no executable HTML or instructions. Resident alone later approves/exports.",
     inputSchema: {
       type: "object",
       properties: {

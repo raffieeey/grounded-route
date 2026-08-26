@@ -35,12 +35,12 @@ Grounded Route uses WebMCP tools to let an agent operate on that shared artifact
 ## Attribution and data
 
 - Route geometry and tags are derived from **OpenStreetMap** (ODbL). A visible `© OpenStreetMap contributors` notice appears wherever the map is rendered, with a link to the [OSM copyright page](https://www.openstreetmap.org/copyright). Any exported draft includes the same attribution in machine-readable metadata. The geometry and tags are illustrative local fixture context, not navigation or certified accessibility data.
-- Exact short excerpts from the DBKL Kuala Lumpur Development Plan 2040 are used as curated evidence. Their public-release terms are unresolved; see [the third-party data manifest](data/THIRD_PARTY_DATA_MANIFEST.md).
+- Official source references to the DBKL Kuala Lumpur Development Plan 2040 are used as curated evidence, providing document title, page, and official link — not copied source text. Their public-release terms are unresolved; see [the third-party data manifest](data/THIRD_PARTY_DATA_MANIFEST.md).
 
 ## Project status
 
 - **Stage:** M0 fixture, human-first workspace, WebMCP adapter, native local-Chrome execution proof, and OSM visible attribution are implemented and verified on private `main`.
-- **Repository visibility:** private; public release is blocked by the unresolved DBKL exact-excerpt permission/removal/legal path. It must not become public until that separate gate is cleared and the user explicitly approves the transition.
+- **Repository visibility:** private; public release is blocked by the unresolved DBKL source-reference rights path. It must not become public until that separate gate is cleared and the user explicitly approves the transition.
 - **Canonical design:** [docs/TECHNICAL_DESIGN.md](docs/TECHNICAL_DESIGN.md)
 - **Independent design review:** [docs/reviews/sol-tdd-review.md](docs/reviews/sol-tdd-review.md)
 - **Data contract:** [data/README.md](data/README.md)
@@ -66,6 +66,6 @@ Grounded Route uses WebMCP tools to let an agent operate on that shared artifact
 
 ## License
 
-MIT. See [LICENSE](LICENSE). The MIT license covers project-authored code/documentation; third-party data/excerpts are governed by their own documented terms. See [the data manifest](data/THIRD_PARTY_DATA_MANIFEST.md).
+MIT. See [LICENSE](LICENSE). The MIT license covers project-authored code/documentation; third-party data/references are governed by their own documented terms. See [the data manifest](data/THIRD_PARTY_DATA_MANIFEST.md).
 
-**Public-release status:** The repository remains **private** because DBKL exact excerpts need a separate written-permission/removal/legal path. OSM attribution is implemented, but that does **not** clear the DBKL gate or authorize public release.
+**Public-release status:** The repository remains **private** because the DBKL source-reference rights path needs separate resolution. This candidate contains only official source references (document title, page, URL), not direct quotations. OSM attribution is implemented, but that does **not** clear the DBKL gate or authorize public release.

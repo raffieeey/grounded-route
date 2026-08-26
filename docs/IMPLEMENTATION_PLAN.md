@@ -28,7 +28,7 @@ There is **no server backend or FastMCP service in this MVP**. “Backend” wor
 
 ## Frozen domain invariants
 
-1. `SourceClaim` is an immutable quote and has no segment-impact fields.
+1. `SourceClaim` is an immutable source reference and has no segment-impact fields.
 2. `ScenarioImpactMapping` is an explicitly reviewed `curated-interpretation` with source IDs, segment IDs, rationale, uncertainty, reviewer, and review date.
 3. Every state-changing action is deterministic, revisioned, auditable, and validates current route/scenario/evidence/mapping context.
 4. Approval binds to an exact draft revision and snapshot. Any relevant mutation invalidates it.
@@ -38,7 +38,7 @@ There is **no server backend or FastMCP service in this MVP**. “Backend” wor
 
 ## Required fixture scope
 
-Foundation must create one clearly labelled **illustrative KLDP2040 route-evidence demo**, not a claim about a live DBKL project. It must use a fictional demo origin/destination, a bounded KL Central civic-corridor geometry fixture, source quotes only when exact pages/URLs are verified, and curated mappings labelled with uncertainty. If direct source terms cannot be verified, mark data assets `pending`/excluded from public release; do not fabricate approval.
+Foundation must create one clearly labelled **illustrative KLDP2040 route-evidence demo**, not a claim about a live DBKL project. It must use a fictional demo origin/destination, a bounded KL Central civic-corridor geometry fixture, source references only when exact pages/URLs are verified, and curated mappings labelled with uncertainty. If direct source terms cannot be verified, mark data assets `pending`/excluded from public release; do not fabricate approval.
 
 ## Review/fix budget
 

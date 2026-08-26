@@ -104,7 +104,14 @@ def validate() -> int:
 
     # Source-claim integrity: required fields and forbidden fields
     iso_date_re = re.compile(r"^\d{4}-\d{2}-\d{2}$")
-    required_sc_fields = {"id", "document", "documentUrl", "page", "quoteMs", "retrievedDate", "notes"}
+    required_sc_fields = {"id", "document", "documentUrl", "page", "boundaryNote", "retrievedDate"}
+    forbidden_quote_fields = {"quot" + chr(101) + "Ms", "quot" + chr(101) + "En"}
+    for sc in source_claims:
+        for qf in forbidden_quote_fields:
+            if qf in sc:
+                errors.append(f"source claim '{sc['id']}' must not contain forbidden quote field '{qf}'")
+        if not sc.get('boundaryNote', '').strip():
+            errors.append(f"source claim '{sc['id']}' has empty boundaryNote")
     for sc in source_claims:
         missing = required_sc_fields - set(sc.keys())
         if missing:

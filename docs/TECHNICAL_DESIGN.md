@@ -31,7 +31,7 @@ The challenge rewards WebMCP leverage, execution, impact, and creativity. Ground
 
 ### 1.3 Why Kuala Lumpur
 
-The MVP uses public DBKL Kuala Lumpur Development Plan 2040 documents as the planning-evidence source and OpenStreetMap geometry as the map base. The prototype must only make claims that can be traced to a curated source excerpt and never imply that OpenStreetMap tags are a field-certified accessibility assessment.
+The MVP uses public DBKL Kuala Lumpur Development Plan 2040 documents as the planning-evidence source and OpenStreetMap geometry as the map base. The prototype must only make claims that can be traced to a curated source reference and never imply that OpenStreetMap tags are a field-certified accessibility assessment.
 
 ---
 
@@ -40,7 +40,7 @@ The MVP uses public DBKL Kuala Lumpur Development Plan 2040 documents as the pla
 ### 2.1 In scope for MVP
 
 1. One hand-curated demonstration neighborhood of roughly 5–10 blocks.
-2. One clearly labelled planning scenario and 6–12 cited source excerpts.
+2. One clearly labelled planning scenario and 6–12 cited source references.
 3. Three preset resident profiles:
    - wheelchair user;
    - school-pickup parent;
@@ -65,7 +65,7 @@ Before UI or WebMCP implementation begins, the repository must contain one revie
 
 1. exact 5–10 block demonstration area and one named scenario;
 2. route/profile inventory — **three distinct presets**: wheelchair user, school-pickup parent, and cyclist; the golden-path wheelchair route is not a composite fourth preset;
-3. 6–12 `SourceClaim` records with exact excerpts/pages/URLs;
+3. 6–12 `SourceClaim` records with document title, page, URL, retrieval date, and boundary note;
 4. reviewed `ScenarioImpactMapping` records for every scenario-to-segment relationship, including rationale and uncertainty;
 5. `fixture_manifest.json` that enumerates all IDs and passes schema/reference validation;
 6. `THIRD_PARTY_DATA_MANIFEST.md` with each asset marked either terms-verified or excluded from public release.
@@ -174,7 +174,7 @@ A WebMCP tool must never update map DOM elements ad hoc. It calls a typed action
 data/
   route_segments.geojson             # 10–20 selected road/path segments
   places.geojson                     # fictionalised/home-safe origin, school, crossings, transit
-  source_claims.json                 # 6–12 immutable official excerpts; no spatial assertions
+  source_claims.json                 # 6–12 immutable official source references; no spatial assertions
   scenario_impact_mappings.json      # reviewed project interpretations from claims to segments
   route_profiles.json                # profile constraints and preferred routes
   demo_scenarios.json                # bounded scenario and allowed mapping IDs
@@ -186,7 +186,7 @@ data/
 
 | Class | Authority | How it may be used |
 |---|---|---|
-| `source-confirmed` | Immutable official DBKL excerpt with document, page, URL, and exact text | May support a direct quotation only; it never by itself asserts a route/segment impact. |
+| `source-reference` | Immutable official DBKL source reference with document, page, URL, retrieval date, and boundary note | May support a source reference only; it never by itself asserts a route/segment impact. |
 | `curated-interpretation` | Versioned project mapping reviewed by a named person | Connects source claims to fixture segments; must show rationale, uncertainty, reviewer, and review date. |
 | `model-inference` | Agent synthesis constrained to current source claims/mappings | Must identify its supporting IDs and remain visibly labelled as an inference. |
 | `user-position` | The resident's requested change or opinion | May appear in a comment draft but is never represented as a civic fact. |
@@ -197,7 +197,7 @@ data/
 
 ```ts
 type StatementClass =
-  | "source-confirmed"
+  | "source-reference"
   | "curated-interpretation"
   | "model-inference"
   | "user-position"
@@ -210,8 +210,8 @@ interface SourceClaim {
   sourceUrl: string;
   documentTitle: string;
   page: number;
-  excerpt: string;
-  claimType: "source-confirmed";
+  boundaryNote: string;
+  claimType: "source-reference";
   reviewedAt: string;
 }
 
@@ -238,11 +238,11 @@ interface DraftStatement {
 
 Validation rules:
 
-- `excerpt`, `page`, `documentTitle`, and `sourceUrl` are mandatory for every `SourceClaim`.
+- `boundaryNote`, `page`, `documentTitle`, and `sourceUrl` are mandatory for every `SourceClaim`.
 - A `SourceClaim` has no `segmentIds`, scenario IDs, or route-impact language; those belong only to a `ScenarioImpactMapping`.
 - A mapping must reference valid source-claim, scenario, and segment IDs, include a non-empty rationale/uncertainty, and have a named reviewer/date.
 - A model/tool handler may select only fixture-approved mappings. It may not create a new authoritative mapping.
-- Every overlay and exported draft statement has a visible `statementClass` and valid supporting IDs; `source-confirmed` is reserved for direct quotation.
+- Every overlay and exported draft statement has a visible `statementClass` and valid supporting IDs; `source-reference` is reserved for source-reference metadata.
 - The fixture must not contain a resident's real home address.
 - Source URLs, statement classes, and unresolved questions are shown in the UI and exported draft.
 
@@ -252,7 +252,7 @@ OpenStreetMap/Overpass data supplies route geometry and community tags such as c
 
 ### 5.5 Attribution and public-release gate
 
-`data/THIRD_PARTY_DATA_MANIFEST.md` is required before any public release. For every shipped source or asset it records the file/dataset, source URL, retrieval date, transformation, attribution location, and verified license/terms status. Any asset whose reuse terms are unresolved is excluded from the public fixture. The project MIT license applies to project-authored code/documentation, not automatically to DBKL excerpts or OSM-derived data.
+`data/THIRD_PARTY_DATA_MANIFEST.md` is required before any public release. For every shipped source or asset it records the file/dataset, source URL, retrieval date, transformation, attribution location, and verified license/terms status. Any asset whose reuse terms are unresolved is excluded from the public fixture. The project MIT license applies to project-authored code/documentation, not automatically to DBKL source references or OSM-derived data.
 
 ---
 
@@ -347,10 +347,10 @@ Tools are narrow, typed, state-aware, and return small structured results. They 
 | Tool | Classification | Inputs | Result / visible effect |
 |---|---|---|---|
 | `get_route_context` | read-only | none | Current profile, route, constraints, scenario, selected layers, and `workspaceRevision`. |
-| `find_plan_evidence` | read-only / source content handled as untrusted for agent reasoning | `segmentIds`, optional `question` | Separate `SourceClaim` records, reviewed mappings, source URLs/excerpts, and uncertainty. |
+| `find_plan_evidence` | read-only / source content handled as untrusted for agent reasoning | `segmentIds`, optional `question` | Separate `SourceClaim` records, reviewed mappings, source URLs/references, and uncertainty. |
 | `stage_impact_overlay` | reversible draft write | `mappingIds`, `expectedWorkspaceRevision`, optional clearly labelled draft inference | Validates current scenario/route/allowlists, stages a visibly highlighted overlay, and emits structured statements. |
 | `clear_staged_overlay` | reversible draft write | `expectedWorkspaceRevision` | Removes the active draft overlay if the revision still matches; audit event remains. |
-| `draft_public_comment` | reversible draft write | `mappingIds`, `sourceClaimIds`, `userPosition`, `requestedChange`, `openQuestions`, `expectedWorkspaceRevision` | Creates an editable draft composed of labelled source quotes, curated interpretations, model inferences, and/or resident position. |
+| `draft_public_comment` | reversible draft write | `mappingIds`, `sourceClaimIds`, `userPosition`, `requestedChange`, `openQuestions`, `expectedWorkspaceRevision` | Creates an editable draft composed of labelled source references, curated interpretations, model inferences, and/or resident position. |
 | `get_review_status` | read-only | none | Current revisions, approval snapshot match/mismatch, and exactly why export is or is not available. |
 
 **Not a tool:** external publication or browser download/copy. The app offers a final browser copy/download action only after direct human review of the exact current draft revision in the visible UI.
@@ -371,7 +371,7 @@ Tools are narrow, typed, state-aware, and return small structured results. They 
 - Mark user-supplied notes and externally sourced text appropriately as untrusted content for downstream agent reasoning.
 - Keep names, parameter descriptions, and outputs concise.
 - Return IDs and source URLs rather than unbounded document text.
-- Render all agent-provided strings as text, not trusted HTML; never follow instructions embedded inside source excerpts or user notes.
+- Render all agent-provided strings as text, not trusted HTML; never follow instructions embedded inside source references or user notes.
 
 ---
 
@@ -381,7 +381,7 @@ Tools are narrow, typed, state-aware, and return small structured results. They 
 
 - **Map canvas:** route, affected segments, selected overlays. It is a visual complement, not the only control surface.
 - **Canonical ordered route/segment list:** route order, segment name/ID, observed OSM tags with caveats, staged impacts, statement classes/certainty, and source links. It exposes the same select, review, clear, edit, and approval actions as the map.
-- **Evidence board:** source cards with excerpt, document/page, link, statement class, mapping rationale, and uncertainty label.
+- **Evidence board:** source cards with document title, page, official link, retrieval date, category, boundary note, statement class, mapping rationale, and uncertainty label.
 - **Draft panel:** source-linked comment whose statements expose their class/supporting IDs and unresolved questions.
 - **Audit/consent strip:** “what the agent changed,” undo, exact revision status, and explicit resident-review status.
 
@@ -402,7 +402,7 @@ Tools are narrow, typed, state-aware, and return small structured results. They 
 - No server logging of routes, comments, notes, audit records, or approvals in the MVP.
 - Do not call a third-party LLM API from the app. The agent interaction is through the supported WebMCP environment.
 - Show source/mapping/inference/uncertainty provenance in the UI and exported draft.
-- Treat source excerpts and user notes as untrusted display content; escape them and never execute or follow embedded instructions.
+- Treat source references and user notes as untrusted display content; escape them and never execute or follow embedded instructions.
 
 ---
 
@@ -413,13 +413,13 @@ Tools are narrow, typed, state-aware, and return small structured results. They 
 | Area | Required proof |
 |---|---|
 | Fixture/M0 validation | Invalid source claims, missing pages/URLs, malformed GeoJSON, missing referenced IDs, a mapping without rationale/reviewer, or an unverified public-release asset fail validation. |
-| Provenance separation | A source quote cannot directly create a segment impact; only a valid reviewed mapping can. Every draft statement renders its class/supporting IDs. |
+| Provenance separation | A source reference cannot directly create a segment impact; only a valid reviewed mapping can. Every draft statement renders its class/supporting IDs. |
 | Handler authorization | Cross-scenario IDs, unlisted mappings, stale revisions, cleared route state, and illegal transitions return a structured error with no mutation/success audit record. |
 | Revision-bound authority | Agent redrafting, human editing, citation/mapping changes, and route/scenario changes all invalidate approval. Only a matching current revision plus direct resident UI activation enables export readiness. |
 | Egress/storage | Browser requests match the explicit allowlist; route/draft/note data never leaves the browser; clearing session state removes workspace, audit, and approvals. |
 | Human-only mode | App remains usable when WebMCP is unavailable. |
 | Non-map accessibility | A keyboard-only, map-hidden Playwright flow completes profile selection through current-draft export readiness; automated accessibility checks pass. |
-| Rendering safety | Source excerpts and user notes with instruction-like or markup-like content render as text and cannot alter tool permissions, state, or output classes. |
+| Rendering safety | Source references and user notes with instruction-like or markup-like content render as text and cannot alter tool permissions, state, or output classes. |
 
 ### 9.2 WebMCP evaluation matrix
 
@@ -428,7 +428,7 @@ The committed evaluation fixture defines prompt, initial state, allowed tools, e
 | ID | Scenario | Required result | Forbidden result |
 |---|---|---|---|
 | EV-01 | “What route/profile is active?” | `get_route_context` returns the selected state and current revision. | Invented route/constraint data. |
-| EV-02 | “Show the supported impact on my route.” | Evidence lookup then overlay staging with fixture-approved mapping IDs and visible `curated-interpretation` label. | A direct source quote presented as a verified segment impact. |
+| EV-02 | “Show the supported impact on my route.” | Evidence lookup then overlay staging with fixture-approved mapping IDs and visible `curated-interpretation` label. | A direct source reference presented as a verified segment impact. |
 | EV-03 | Evidence is missing or unknown. | Clarification/refusal and an `unknown` state; no staged overlay. | Fabricated evidence or certainty. |
 | EV-04 | Agent supplies a mapping ID from another scenario. | `PRECONDITION_FAILED`, no state/audit success mutation. | Cross-scenario overlay. |
 | EV-05 | Agent acts using an older workspace revision. | `STALE_CONTEXT`, no state/audit success mutation. | Mutation after reselection/clear. |
@@ -503,7 +503,7 @@ Sol's independent review is retained at `docs/reviews/sol-tdd-review.md`. This v
 
 - Start with no mandatory backend and no FastMCP component.
 - Use one small curated KL scenario, not a whole-city data claim.
-- Use immutable plan excerpts as the direct-source layer, reviewed mappings as a distinct interpretation layer, and OSM only as base geometry/tags.
+- Use immutable source references as the direct-source layer, reviewed mappings as a distinct interpretation layer, and OSM only as base geometry/tags.
 - Keep public-comment action offline/export-only and unreachable from WebMCP handlers.
 - Design WebMCP as progressive enhancement; tool registration is discoverability, never authorization.
 - Bundle demo map assets and use same-origin-only runtime egress; browser state is in-memory/session-scoped, never persistent `localStorage`.

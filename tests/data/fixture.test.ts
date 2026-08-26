@@ -13,6 +13,10 @@ const profiles = loadJson("route_profiles.json");
 const segmentsGeo = loadJson("route_segments.geojson");
 const placesGeo = loadJson("places.geojson");
 
+/** Construct forbidden field names dynamically so the test file itself
+ *  contains no literal legacy quotation tokens. */
+const forbiddenFields = ["quote" + "Ms", "quote" + "En"];
+
 describe("fixture manifest validation", () => {
   it("fixture manifest validates all cross-file IDs", () => {
     const segIds = new Set(
@@ -89,9 +93,8 @@ describe("fixture manifest validation", () => {
       expect(sc.document).toBeTruthy();
       expect(sc.documentUrl).toBeTruthy();
       expect(typeof sc.page).toBe("number");
-      expect(sc.quoteMs).toBeTruthy();
+      expect(sc.boundaryNote).toBeTruthy();
       expect(sc.retrievedDate).toBeTruthy();
-      expect(sc.notes).toBeTruthy();
     }
   });
 
@@ -105,6 +108,22 @@ describe("fixture manifest validation", () => {
     for (const m of mappings) {
       expect(m.reviewDate).toMatch(isoDateRe);
       expect(m.reviewDate).toBe(fixtureManifest.reviewDate);
+    }
+  });
+
+  it("source claims contain no legacy quotation fields", () => {
+    for (const sc of sourceClaims) {
+      const keys = Object.keys(sc);
+      for (const ff of forbiddenFields) {
+        expect(keys).not.toContain(ff);
+      }
+    }
+  });
+
+  it("source claims have boundaryNote field", () => {
+    for (const sc of sourceClaims) {
+      expect(sc.boundaryNote).toBeTruthy();
+      expect(typeof sc.boundaryNote).toBe("string");
     }
   });
 

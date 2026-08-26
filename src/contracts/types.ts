@@ -29,10 +29,9 @@ export interface SourceClaim {
   document: string;
   documentUrl: string;
   page: number;
-  quoteMs: string;
-  quoteEn: string;
+  boundaryNote: string;
+
   retrievedDate: string; // ISO date
-  notes: string;
   // Explicit: no segment-impact fields here
 }
 
@@ -117,7 +116,7 @@ export interface RouteState {
 /* ---------- Structured draft statements (FDN-003) ---------- */
 
 export type DraftStatementClass =
-  | "source-quote"
+  | "source-reference"
   | "curated-interpretation"
   | "resident-position"
   | "open-question";
@@ -128,9 +127,14 @@ export interface DraftStatementBase {
   text: string;
 }
 
-export interface SourceQuoteStatement extends DraftStatementBase {
-  statementClass: "source-quote";
+export interface SourceReferenceStatement extends DraftStatementBase {
+  statementClass: "source-reference";
   sourceClaimId: string;
+  document: string;
+  page: number;
+  documentUrl: string;
+  retrievedDate: string;
+  boundaryNote: string;
 }
 
 export interface CuratedInterpretationStatement extends DraftStatementBase {
@@ -150,7 +154,7 @@ export interface OpenQuestionStatement extends DraftStatementBase {
 }
 
 export type DraftStatement =
-  | SourceQuoteStatement
+  | SourceReferenceStatement
   | CuratedInterpretationStatement
   | ResidentPositionStatement
   | OpenQuestionStatement;

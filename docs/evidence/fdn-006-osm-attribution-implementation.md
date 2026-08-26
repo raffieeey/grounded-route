@@ -73,4 +73,4 @@ Full suite:
 
 ## Public-release status
 
-**DBKL/public-release approval remains unresolved.** The OSM attribution work is complete, but the separate DBKL exact-excerpt gate (documented in `docs/evidence/fdn-005-public-release-rights-review.md`) is still blocked. Do not make the repository public or claim the release is cleared.
+**DBKL/public-release approval remains unresolved.** The OSM attribution work is complete, but the separate DBKL source-reference gate (documented in `docs/evidence/fdn-005-public-release-rights-review.md`) is still blocked. Do not make the repository public or claim the release is cleared.

@@ -6,7 +6,7 @@ The MVP uses a deliberately small, versioned fixture. It is not a live city GIS 
 
 ## Authoritative hierarchy
 
-1. **Source claims:** exact, immutable DBKL document excerpts with title, page, URL, and review date. A source claim does not itself assert a route/segment impact.
+1. **Source claims:** official DBKL document references with title, page, URL, retrieval date, and a project-boundary note — not copied source text. A source claim does not itself assert a route/segment impact.
 2. **Scenario impact mappings:** reviewed project interpretations that connect source claims to the bounded fixture route segments, with rationale and uncertainty.
 3. **OpenStreetMap / Overpass extract:** supplies demonstration geometry and community-mapped tags only.
 4. **User note / model inference:** always labelled with its statement class and never elevated into an official fact.
@@ -33,7 +33,7 @@ fixture_manifest.json
 - resident home addresses;
 - personal contact details;
 - uncited planning claims;
-- route-impact assertions disguised as official source quotations;
+- route-impact assertions disguised as official source references;
 - claims that map geometry proves real-world accessibility;
 - complete source PDFs copied into the repository;
 - third-party assets with unresolved public-reuse terms.

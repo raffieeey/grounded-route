@@ -5,10 +5,8 @@
     "document": "Ringkasan Eksekutif Pelan Tempatan Kuala Lumpur 2040",
     "documentUrl": "https://ppkl.dbkl.gov.my/wp-content/uploads/2025/07/RINGKASAN-EKSEKUTIF-PTKL2040.pdf",
     "page": 37,
-    "quoteMs": "Merangka strategi berkaitan penyediaan kepelbagaian pengangkutan awam, galakkan penggunaan mobiliti aktif",
-    "quoteEn": "Formulate strategies related to providing diverse public transport, encourage active mobility usage",
     "retrievedDate": "2026-08-26",
-    "notes": "Policy direction only; no specific segment impact stated"
+    "boundaryNote": "This is a project-level reference to PTKL2040 page 37, not a project-authored research finding. The original document is the authoritative source."
   },
   {
     "id": "sc-02",
@@ -16,10 +14,8 @@
     "document": "Ringkasan Eksekutif Pelan Tempatan Kuala Lumpur 2040",
     "documentUrl": "https://ppkl.dbkl.gov.my/wp-content/uploads/2025/07/RINGKASAN-EKSEKUTIF-PTKL2040.pdf",
     "page": 37,
-    "quoteMs": "Prioriti penggunaan ruang jalan raya kepada pengguna jalan kaki dan basikal",
-    "quoteEn": "Priority use of road space for pedestrians and cyclists",
     "retrievedDate": "2026-08-26",
-    "notes": "Strategic intent; exact implementation corridor and timeline unspecified"
+    "boundaryNote": "This is a project-level reference to PTKL2040 page 37, not a project-authored research finding. The original document is the authoritative source."
   },
   {
     "id": "sc-03",
@@ -27,10 +23,8 @@
     "document": "Ringkasan Eksekutif Pelan Tempatan Kuala Lumpur 2040",
     "documentUrl": "https://ppkl.dbkl.gov.my/wp-content/uploads/2025/07/RINGKASAN-EKSEKUTIF-PTKL2040.pdf",
     "page": 38,
-    "quoteMs": "Pembangunan Rangkaian Laluan Pejalan Kaki dan Kenderaan Mikromobiliti yang Selamat, Berterusan dan Mudah Sampai",
-    "quoteEn": "Development of a Safe, Continuous and Accessible Pedestrian and Micromobility Network",
     "retrievedDate": "2026-08-26",
-    "notes": "Network-level policy; not a confirmed construction project for any specific segment"
+    "boundaryNote": "This is a project-level reference to PTKL2040 page 38, not a project-authored research finding. The original document is the authoritative source."
   },
   {
     "id": "sc-04",
@@ -38,10 +32,8 @@
     "document": "Ringkasan Eksekutif Pelan Tempatan Kuala Lumpur 2040",
     "documentUrl": "https://ppkl.dbkl.gov.my/wp-content/uploads/2025/07/RINGKASAN-EKSEKUTIF-PTKL2040.pdf",
     "page": 37,
-    "quoteMs": "Penambahbaikan tahap kemudahsampaian bagi stesen transit dan rangkaian jalan raya",
-    "quoteEn": "Improvement of accessibility levels for transit stations and road network",
     "retrievedDate": "2026-08-26",
-    "notes": "General accessibility policy; no specific station or segment commitment stated"
+    "boundaryNote": "This is a project-level reference to PTKL2040 page 37, not a project-authored research finding. The original document is the authoritative source."
   },
   {
     "id": "sc-05",
@@ -49,10 +41,8 @@
     "document": "Ringkasan Eksekutif Pelan Tempatan Kuala Lumpur 2040",
     "documentUrl": "https://ppkl.dbkl.gov.my/wp-content/uploads/2025/07/RINGKASAN-EKSEKUTIF-PTKL2040.pdf",
     "page": 14,
-    "quoteMs": "Jambatan Saloma atau Saloma Link adalah jejantas pejalan kaki yang menghubungkan Kampung Bharu dan Jalan Ampang",
-    "quoteEn": "Saloma Bridge or Saloma Link is a pedestrian bridge connecting Kampung Bharu and Jalan Ampang",
     "retrievedDate": "2026-08-26",
-    "notes": "Descriptive reference to existing infrastructure"
+    "boundaryNote": "This is a project-level reference to PTKL2040 page 14, not a project-authored research finding. The original document is the authoritative source."
   },
   {
     "id": "sc-06",
@@ -60,9 +50,7 @@
     "document": "Ringkasan Eksekutif Pelan Tempatan Kuala Lumpur 2040",
     "documentUrl": "https://ppkl.dbkl.gov.my/wp-content/uploads/2025/07/RINGKASAN-EKSEKUTIF-PTKL2040.pdf",
     "page": 38,
-    "quoteMs": "Promosi Pejalan Kaki dan Penggunaan Kenderaan Mikromobiliti",
-    "quoteEn": "Promotion of pedestrians and micromobility vehicle usage",
     "retrievedDate": "2026-08-26",
-    "notes": "General policy/implementation proposal; not a confirmed segment project"
+    "boundaryNote": "This is a project-level reference to PTKL2040 page 38, not a project-authored research finding. The original document is the authoritative source."
   }
 ]
