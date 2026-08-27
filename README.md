@@ -1,10 +1,20 @@
 # Grounded Route
 
-> **See how a city plan changes the route you actually live — and speak with evidence, not guesswork.**
+> **Google Maps tells you how to get somewhere. Grounded Route tells you how a city plan will change that trip — and helps you tell the city about it.**
 
 Grounded Route is a WebMCP-native civic planning workspace for the OpenMCP Challenge.
 
-A resident starts a 30-second **route-impact check**: they select a mobility profile and immediately see a deterministic, illustrative verdict on whether a narrowly scoped Kuala Lumpur planning scenario raises route conditions they should investigate, why, and what is unknown. They review a plain-language conditions shortlist, add the ones that matter to an editable pre-filled civic comment, and alone approve and export it. A browser assistant using WebMCP can inspect, stage reversible overlays, and draft in the same shared workspace; the resident sees every proposed change as a concise assistant-activity summary and remains the sole approver/exporter. The verdict is a fixture-bound planning/review prompt — not navigation, verified accessibility, a confirmed project impact, a construction timeline, or a DBKL commitment.
+**The problem.** Meet Aisyah. She uses a wheelchair and wheels from Kampung Bharu over the Saloma Link bridge every day. When the city publishes a development plan near her route, she wants to know one thing: *does this plan mess with MY route?* But the answer is buried in 200 pages of planning jargon, and writing a formal comment takes a weekend nobody has. So the people most affected never comment — and cities build things that break wheelchair routes.
+
+**The product.** A 30-second **route-impact check**:
+
+1. **"Who are you?"** — pick a mobility profile (wheelchair user / school-pickup parent / cyclist). The map shows *your* route on real Kuala Lumpur streets: the wheelchair route avoids a real stair shortcut; the cyclist's takes the road corridor.
+2. **"What's changing?"** — a plain-language verdict flags exactly where a narrowly scoped planning scenario touches your route, what is unknown, and links the official source.
+3. **"Say it back to the city."** — a pre-filled, editable civic comment. Review it, approve it, export it. TurboTax for civic comments.
+
+**Where the AI comes in.** A browser assistant (via WebMCP) works on **the same live map at the same time** — inspecting the route, staging reversible impact overlays, drafting comment text — and the resident watches every action happen on screen. **But the AI cannot submit. Ever.** There is no approve/export tool in its inventory; only the resident can approve what leaves their name. A human and an agent improve the same visual object, and the human stays in charge.
+
+The verdict is fixture-bound and illustrative — not navigation, verified accessibility, a confirmed project impact, a construction timeline, or a DBKL commitment.
 
 ## What we are building
 
