@@ -28,8 +28,11 @@ test.describe("FDN-008 human-first flow", () => {
     await page.getByRole("button", { name: "Approve current draft" }).click();
     await expect(exportBtn).not.toBeDisabled();
 
-    const external = requests.filter((u) => !u.startsWith("blob:") && !u.startsWith("data:") && !u.includes("localhost"));
-    expect(external.length).toBe(0);
+    const external = requests.filter((url) => !url.startsWith("blob:") && !url.startsWith("data:") && !url.includes("localhost"));
+    // FDN-010 permits only the visible OSM cartography tiles; no other
+    // third-party request is introduced by the resident flow.
+    expect(external.length).toBeGreaterThan(0);
+    expect(external.every((url) => /^https:\/\/[abc]\.tile\.openstreetmap\.org\/\d+\/\d+\/\d+\.png$/.test(url))).toBe(true);
   });
 
   test("clear session resets workspace", async ({ page }) => {

@@ -23,7 +23,7 @@ describe("FDN-006 OSM attribution — visible notice", () => {
       />,
     );
 
-    const attribution = screen.getByText(/© OpenStreetMap contributors/i);
+    const attribution = document.querySelector(".map-attribution-text");
     expect(attribution).toBeVisible();
 
     const link = screen.getByRole("link", { name: /OpenStreetMap contributors/i });

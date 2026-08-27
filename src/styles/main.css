@@ -585,21 +585,50 @@ button:disabled {
 
 .local-route-map {
   width: 100%;
-  height: auto;
+  height: 460px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: #f6f5f4;
   display: block;
+  overflow: hidden;
 }
 
-/* Mobile: give the diagram more useful vertical space and keep labels legible. */
+.local-route-map--fallback {
+  height: auto;
+}
+
+.local-route-map .leaflet-control-zoom a {
+  width: 44px;
+  height: 44px;
+  line-height: 42px;
+  font-size: 1.5rem;
+}
+
+.local-route-map .leaflet-control-zoom {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.local-route-map .leaflet-tooltip {
+  border: 0;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.28);
+  color: #1a1a1a;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 5px;
+}
+
+/* Mobile: a real map remains comfortably pannable without dominating the page. */
 @media (max-width: 600px) {
   #root {
     padding: 16px;
   }
 
   .local-route-map {
-    min-height: 420px;
+    height: 360px;
   }
 
   .map-disclaimer,
@@ -1225,6 +1254,6 @@ button:disabled {
     flex-direction: column;
   }
   .local-route-map {
-    max-height: 220px;
+    height: 360px;
   }
 }

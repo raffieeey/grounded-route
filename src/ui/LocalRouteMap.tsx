@@ -1,4 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { LatLngBoundsExpression, Polyline as LeafletPolyline } from "leaflet";
+import {
+  CircleMarker,
+  MapContainer,
+  Polyline,
+  TileLayer,
+  Tooltip,
+  useMap,
+} from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 import type { RouteSegmentFeature, ScenarioImpactMapping } from "@/contracts/types.ts";
 import segmentsGeoRaw from "../../data/route_segments.geojson?raw";
 import placesGeoRaw from "../../data/places.geojson?raw";
@@ -18,215 +28,245 @@ interface LocalRouteMapProps {
   mappings: ScenarioImpactMapping[];
 }
 
-export default function LocalRouteMap({
-  defaultSegmentIds,
-  stagedMappingIds,
-  mappings,
-}: LocalRouteMapProps) {
-  // Reactive to OS-level preference changes; the CSS media query is the safety net.
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false),
-  );
+interface RoutePath {
+  id: string;
+  name: string;
+  coordinates: [number, number][];
+  isDefault: boolean;
+  isStaged: boolean;
+}
+
+function FitRouteBounds({ bounds }: { bounds: LatLngBoundsExpression }) {
+  const map = useMap();
+
   useEffect(() => {
-    const mq = window.matchMedia?.("(prefers-reduced-motion: reduce)");
-    if (!mq) return;
-    const onChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
-    mq.addEventListener?.("change", onChange);
-    return () => mq.removeEventListener?.("change", onChange);
-  }, []);
-  const { paths, places } = useMemo(() => {
-    const features = segmentsGeo.features;
-    const allCoords = features.flatMap((f) => f.geometry.coordinates as number[][]);
-    const lngs = allCoords.map((c) => c[0]);
-    const lats = allCoords.map((c) => c[1]);
+    map.fitBounds(bounds, { padding: [24, 24] });
+  }, [bounds, map]);
+
+  return null;
+}
+
+function RoutePolyline({ path, prefersReducedMotion }: { path: RoutePath; prefersReducedMotion: boolean }) {
+  const ref = useRef<LeafletPolyline | null>(null);
+  const stagedClass = path.isStaged
+    ? prefersReducedMotion
+      ? "segment-path--staged-reduced"
+      : "segment-path--staged"
+    : undefined;
+
+  // Leaflet owns the SVG path, so add the semantic hook to its rendered element
+  // after react-leaflet has created it. The class drives the 600 ms sweep in CSS.
+  useEffect(() => {
+    const element = ref.current?.getElement();
+    if (!element) return;
+    element.classList.remove("segment-path--staged", "segment-path--staged-reduced");
+    if (path.isStaged) {
+      element.setAttribute("data-staged", "true");
+      if (stagedClass) element.classList.add(stagedClass);
+    } else {
+      element.removeAttribute("data-staged");
+    }
+  }, [path.isStaged, stagedClass]);
+
+  return (
+    <>
+      {path.isStaged && (
+        <Polyline
+          positions={path.coordinates}
+          pathOptions={{ color: "#0075de", weight: 9, opacity: 0.2, className: "segment-path__glow" }}
+          interactive={false}
+          aria-hidden="true"
+        />
+      )}
+      <Polyline
+        ref={ref}
+        positions={path.coordinates}
+        pathOptions={{
+          color: path.isStaged ? "#0075de" : path.isDefault ? "#1a1a1a" : "#999",
+          weight: path.isStaged ? 5 : path.isDefault ? 2.5 : 1.5,
+          dashArray: path.isStaged || path.isDefault ? undefined : "4 4",
+          opacity: path.isDefault ? 1 : 0.6,
+          className: stagedClass,
+        }}
+        // react-leaflet passes this to test doubles; the effect above guarantees
+        // the attribute is also applied to Leaflet's actual SVG element.
+        data-staged={path.isStaged ? "true" : undefined}
+      />
+    </>
+  );
+}
+
+function LocalRouteMapFallback({ paths }: { paths: RoutePath[] }) {
+  const { svgPaths, places } = useMemo(() => {
+    const allCoords = segmentsGeo.features.flatMap((feature) => feature.geometry.coordinates as number[][]);
+    const lngs = allCoords.map((coordinate) => coordinate[0]);
+    const lats = allCoords.map((coordinate) => coordinate[1]);
     const minLng = Math.min(...lngs);
     const maxLng = Math.max(...lngs);
     const minLat = Math.min(...lats);
     const maxLat = Math.max(...lats);
-
-    // Uniform scale keeps the fixture geometry truthful. Extra vertical headroom
-    // (padY > padX) leaves room for staggered labels above/below the corridor
-    // instead of piled on the route line, and gives the mobile diagram more
-    // useful vertical space inside a taller viewBox.
     const padX = 0.0005;
     const padY = 0.0016;
     const viewMinLng = minLng - padX;
     const viewMaxLng = maxLng + padX;
     const viewMinLat = minLat - padY;
     const viewMaxLat = maxLat + padY;
-
-    const VB_W = 800;
-    const VB_H = 1000;
     const rangeX = viewMaxLng - viewMinLng;
     const rangeY = viewMaxLat - viewMinLat;
-    const scale = VB_W / rangeX;
+    const scale = 800 / rangeX;
     const routeHeightPx = rangeY * scale;
-    const offsetY = (VB_H - routeHeightPx) / 2;
+    const offsetY = (1000 - routeHeightPx) / 2;
+    const scaleX = (lng: number) => ((lng - viewMinLng) / rangeX) * 800;
+    const scaleY = (lat: number) => offsetY + (1 - (lat - viewMinLat) / rangeY) * routeHeightPx;
 
-    const scaleX = (lng: number) => ((lng - viewMinLng) / rangeX) * VB_W;
-    const scaleY = (lat: number) =>
-      offsetY + (1 - (lat - viewMinLat) / rangeY) * routeHeightPx;
+    return {
+      svgPaths: paths.map((path) => ({
+        ...path,
+        d: path.coordinates
+          .map(([lat, lng], index) => `${index === 0 ? "M" : "L"}${scaleX(lng).toFixed(1)},${scaleY(lat).toFixed(1)}`)
+          .join(" "),
+      })),
+      places: placesGeo.features.map((place) => ({
+        x: scaleX(place.geometry.coordinates[0]),
+        y: scaleY(place.geometry.coordinates[1]),
+        name: place.properties.name,
+        placeType: place.properties.placeType,
+      })),
+    };
+  }, [paths]);
 
-    const segmentPaths = features.map((f, idx) => {
-      const coords = f.geometry.coordinates as number[][];
-      const d = coords
-        .map((c, i) => `${i === 0 ? "M" : "L"}${scaleX(c[0]).toFixed(1)},${scaleY(c[1]).toFixed(1)}`)
-        .join(" ");
-      const isDefault = defaultSegmentIds.includes(f.properties.id);
-      const segMappings = mappings.filter((m) =>
-        m.segmentIds.includes(f.properties.id)
-      );
-      const isStaged = segMappings.some((m) => stagedMappingIds.includes(m.id));
-      const midIdx = Math.floor(coords.length / 2);
-      const midLng = coords[midIdx][0];
-      const midLat = coords[midIdx][1];
-      const baseY = scaleY(midLat);
-      // Alternate long labels away from the route line so adjacent corridor
-      // labels never share the same vertical band.
-      const stagger = idx % 2 === 0 ? "up" : "down";
-      const labelY = stagger === "up" ? baseY - 22 : baseY + 26;
-      return {
-        id: f.properties.id,
-        d,
-        isDefault,
-        isStaged,
-        labelX: scaleX(midLng),
-        labelY,
-        stagger,
-        name: f.properties.segmentName,
-      };
-    });
+  return (
+    <svg
+      data-testid="local-route-map-fallback"
+      role="img"
+      aria-label="Illustrative local route diagram (offline fallback)"
+      viewBox="0 0 800 1000"
+      className="local-route-map local-route-map--fallback"
+    >
+      <rect x="0" y="0" width="800" height="1000" fill="#f6f5f4" />
+      {[0, 200, 400, 600, 800].map((n) => (
+        <line key={`v${n}`} x1={n} y1={0} x2={n} y2={1000} stroke="rgba(0,0,0,0.05)" strokeWidth={1} />
+      ))}
+      {[0, 250, 500, 750, 1000].map((n) => (
+        <line key={`h${n}`} x1={0} y1={n} x2={800} y2={n} stroke="rgba(0,0,0,0.05)" strokeWidth={1} />
+      ))}
+      {svgPaths.map((path) => (
+        <g key={path.id}>
+          {path.isStaged && (
+            <path d={path.d} fill="none" stroke="#0075de" strokeWidth={9} opacity={0.2} className="segment-path__glow" aria-hidden="true" />
+          )}
+          <path
+            d={path.d}
+            fill="none"
+            stroke={path.isStaged ? "#0075de" : path.isDefault ? "#1a1a1a" : "#999"}
+            strokeWidth={path.isStaged ? 5 : path.isDefault ? 2.5 : 1.5}
+            strokeDasharray={path.isStaged || path.isDefault ? undefined : "4 4"}
+            opacity={path.isDefault ? 1 : 0.6}
+            data-staged={path.isStaged || undefined}
+            className={path.isStaged ? "segment-path--staged-reduced" : undefined}
+          />
+        </g>
+      ))}
+      {places.map((place) => (
+        <g key={place.name}>
+          <circle
+            cx={place.x}
+            cy={place.y}
+            r={6}
+            fill={place.placeType === "origin" || place.placeType === "destination" ? "#0075de" : "#666"}
+            stroke="#fff"
+            strokeWidth={2}
+          />
+          <text x={place.x} y={place.y - 10} fontSize={11} fill="#1a1a1a" stroke="#ffffff" strokeWidth={3} paintOrder="stroke fill" textAnchor="middle" fontWeight={600}>
+            {place.name}
+          </text>
+        </g>
+      ))}
+    </svg>
+  );
+}
 
-    const placeLabels = placesGeo.features.map((p) => ({
-      x: scaleX(p.geometry.coordinates[0]),
-      y: scaleY(p.geometry.coordinates[1]),
-      name: p.properties.name,
-      placeType: p.properties.placeType,
-    }));
+export default function LocalRouteMap({ defaultSegmentIds, stagedMappingIds, mappings }: LocalRouteMapProps) {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(
+    () => typeof window !== "undefined" && (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false),
+  );
+  const [hasTileError, setHasTileError] = useState(false);
 
-    return { paths: segmentPaths, places: placeLabels };
-  }, [defaultSegmentIds, stagedMappingIds, mappings]);
+  useEffect(() => {
+    const mq = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    if (!mq) return;
+    const onChange = (event: MediaQueryListEvent) => setPrefersReducedMotion(event.matches);
+    mq.addEventListener?.("change", onChange);
+    return () => mq.removeEventListener?.("change", onChange);
+  }, []);
+
+  const { paths, bounds } = useMemo(() => {
+    const allCoords = segmentsGeo.features.flatMap((feature) => feature.geometry.coordinates as number[][]);
+    const lngs = allCoords.map((coordinate) => coordinate[0]);
+    const lats = allCoords.map((coordinate) => coordinate[1]);
+    const stagedIds = new Set(stagedMappingIds);
+    return {
+      paths: segmentsGeo.features.map((feature) => {
+        const id = feature.properties.id;
+        return {
+          id,
+          name: feature.properties.segmentName,
+          coordinates: (feature.geometry.coordinates as number[][]).map(([lng, lat]) => [lat, lng]),
+          isDefault: defaultSegmentIds.includes(id),
+          isStaged: mappings.some((mapping) => stagedIds.has(mapping.id) && mapping.segmentIds.includes(id)),
+        } as RoutePath;
+      }),
+      bounds: [
+        [Math.min(...lats), Math.min(...lngs)],
+        [Math.max(...lats), Math.max(...lngs)],
+      ] as LatLngBoundsExpression,
+    };
+  }, [defaultSegmentIds, mappings, stagedMappingIds]);
 
   const stagedCount = stagedMappingIds.length;
 
   return (
     <section aria-label="Local route map">
       <div className="map-header">
-        <span className="map-disclaimer">
-          Illustrative local route diagram — not navigation
-        </span>
+        <span className="map-disclaimer">Illustrative local route diagram — not navigation</span>
         {stagedCount > 0 && (
-          <span
-            className="map-staged-chip"
-            aria-label={`${stagedCount} staged plan ${stagedCount === 1 ? "overlay" : "overlays"} awaiting your review`}
-          >
+          <span className="map-staged-chip" aria-label={`${stagedCount} staged plan ${stagedCount === 1 ? "overlay" : "overlays"} awaiting your review`}>
             <span className="map-staged-chip__dot" aria-hidden="true" />
             Staged — awaiting your review
           </span>
         )}
       </div>
-      <svg
-        role="img"
-        aria-label="Illustrative local route diagram"
-        viewBox="0 0 800 1000"
-        className="local-route-map"
-      >
-        <rect x="0" y="0" width="800" height="1000" fill="#f6f5f4" />
-        {/* Grid lines for reference */}
-        {[0, 200, 400, 600, 800].map((n) => (
-          <g key={`v${n}`}>
-            <line x1={n} y1={0} x2={n} y2={1000} stroke="rgba(0,0,0,0.05)" strokeWidth={1} />
-          </g>
-        ))}
-        {[0, 250, 500, 750, 1000].map((n) => (
-          <g key={`h${n}`}>
-            <line x1={0} y1={n} x2={800} y2={n} stroke="rgba(0,0,0,0.05)" strokeWidth={1} />
-          </g>
-        ))}
-        {paths.map((p) => (
-          <g key={p.id}>
-            {p.isStaged && (
-              <path
-                d={p.d}
-                fill="none"
-                stroke="#0075de"
-                strokeWidth={9}
-                opacity={0.2}
-                className="segment-path__glow"
-                aria-hidden="true"
-              />
-            )}
-            <path
-              d={p.d}
-              fill="none"
-              stroke={p.isStaged ? "#0075de" : p.isDefault ? "#1a1a1a" : "#999"}
-              strokeWidth={p.isStaged ? 5 : p.isDefault ? 2.5 : 1.5}
-              strokeDasharray={p.isStaged ? undefined : p.isDefault ? undefined : "4 4"}
-              opacity={p.isDefault ? 1 : 0.6}
-              data-staged={p.isStaged || undefined}
-              className={
-                p.isStaged
-                  ? prefersReducedMotion
-                    ? "segment-path--staged-reduced"
-                    : "segment-path--staged"
-                  : undefined
-              }
-            />
-            <text
-              className="segment-label"
-              data-stagger={p.stagger}
-              x={p.labelX}
-              y={p.labelY}
-              fontSize={11}
-              fill="#1a1a1a"
-              stroke="#ffffff"
-              strokeWidth={3}
-              paintOrder="stroke fill"
-              textAnchor="middle"
-              style={{ fontFamily: "Inter, system-ui, sans-serif" }}
-            >
-              {p.name}
-            </text>
-          </g>
-        ))}
-        {places.map((pl) => (
-          <g key={pl.name}>
-            <circle
-              cx={pl.x}
-              cy={pl.y}
-              r={6}
-              fill={pl.placeType === "origin" ? "#0075de" : pl.placeType === "destination" ? "#0075de" : "#666"}
-              stroke="#fff"
-              strokeWidth={2}
-            />
-            <text
-              x={pl.x}
-              y={pl.y - 10}
-              fontSize={11}
-              fill="#1a1a1a"
-              stroke="#ffffff"
-              strokeWidth={3}
-              paintOrder="stroke fill"
-              textAnchor="middle"
-              fontWeight={600}
-              style={{ fontFamily: "Inter, system-ui, sans-serif" }}
-            >
-              {pl.name}
-            </text>
-          </g>
-        ))}
-      </svg>
+      {hasTileError ? (
+        <LocalRouteMapFallback paths={paths} />
+      ) : (
+        <MapContainer
+          className="local-route-map"
+          center={[3.14, 101.692]}
+          zoom={15}
+          scrollWheelZoom={false}
+          aria-label="Real local route map of the Saloma Link area"
+        >
+          <FitRouteBounds bounds={bounds} />
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution="© OpenStreetMap contributors"
+            eventHandlers={{ tileerror: () => setHasTileError(true) }}
+          />
+          {paths.map((path) => <RoutePolyline key={path.id} path={path} prefersReducedMotion={prefersReducedMotion} />)}
+          {placesGeo.features.map((place) => {
+            const [lng, lat] = place.geometry.coordinates;
+            const isEndpoint = place.properties.placeType === "origin" || place.properties.placeType === "destination";
+            return (
+              <CircleMarker key={place.properties.id} center={[lat, lng]} radius={6} pathOptions={{ color: "#fff", weight: 2, fillColor: isEndpoint ? "#0075de" : "#666", fillOpacity: 1 }}>
+                <Tooltip permanent direction="top" offset={[0, -7]}>{place.properties.name}</Tooltip>
+              </CircleMarker>
+            );
+          })}
+        </MapContainer>
+      )}
       <div className="map-attribution">
         <p className="map-attribution-text">
-          <a
-            href="https://www.openstreetmap.org/copyright"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            © OpenStreetMap contributors
-          </a>
+          <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a>
           {" — "}
           Geometry and tags are illustrative local fixture context, not navigation or certified accessibility data.
         </p>

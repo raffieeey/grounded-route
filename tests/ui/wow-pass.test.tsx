@@ -61,7 +61,7 @@ describe("WOW-1 — staged overlay animation and visual language", () => {
     );
 
     const paths = Array.from(
-      container.querySelectorAll("svg.local-route-map path"),
+      container.querySelectorAll(".local-route-map .leaflet-overlay-pane path"),
     );
     const stagedPaths = paths.filter(
       (p) => p.getAttribute("data-staged") === "true",
@@ -81,7 +81,7 @@ describe("WOW-1 — staged overlay animation and visual language", () => {
       />,
     );
     const paths = Array.from(
-      container.querySelectorAll("svg.local-route-map path"),
+      container.querySelectorAll(".local-route-map .leaflet-overlay-pane path"),
     );
     for (const p of paths) {
       expect(p).not.toHaveClass("segment-path--staged");
@@ -101,7 +101,7 @@ describe("WOW-1 — staged overlay animation and visual language", () => {
     );
 
     const paths = Array.from(
-      container.querySelectorAll("svg.local-route-map path"),
+      container.querySelectorAll(".local-route-map .leaflet-overlay-pane path"),
     );
     const stagedPaths = paths.filter(
       (p) => p.getAttribute("data-staged") === "true",

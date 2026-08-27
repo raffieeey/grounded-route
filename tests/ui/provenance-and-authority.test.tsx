@@ -102,12 +102,12 @@ describe("FDN-002 provenance and authority (FDN-008 contract)", () => {
     await user.click(screen.getByRole("button", { name: /Start a route-impact check/i }));
     await user.click(screen.getByRole("button", { name: /Wheelchair user/i }));
 
-    const mapRegion = await screen.findByRole("img", { name: /Illustrative local route diagram/i });
+    const mapRegion = await screen.findByRole("region", { name: /Local route map/i });
     expect(mapRegion).toBeInTheDocument();
 
     const conditions = await screen.findByRole("region", { name: /Conditions to review/i });
     await user.click(within(conditions).getAllByRole("button", { name: /Add .* to my draft/i })[0]);
 
-    expect(screen.getByRole("img", { name: /Illustrative local route diagram/i })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: /Local route map/i })).toBeInTheDocument();
   });
 });
