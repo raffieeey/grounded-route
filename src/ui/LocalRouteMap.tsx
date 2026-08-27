@@ -380,7 +380,11 @@ export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultS
       ] as LatLngBoundsExpression,
       stairsMarker,
       worksMarkers: (() => {
-        // 🚧 at the midpoint of each staged (proposed-works) segment
+        // 🚧 at the midpoint of each staged (proposed-works) segment that is on
+        // THIS profile's route. The plan touches the whole corridor, but the
+        // resident's proposed works are the ones on their own trip — a
+        // wheelchair user should not see construction markers on the cyclist's
+        // road detour, and vice versa.
         if (stagedMappingIds.length === 0) return [];
         const stagedSegIds = new Set(
           mappings
@@ -388,7 +392,7 @@ export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultS
             .flatMap((mapping) => mapping.segmentIds),
         );
         const rawMarkers = segmentsGeo.features
-          .filter((feature) => stagedSegIds.has(feature.properties.id))
+          .filter((feature) => stagedSegIds.has(feature.properties.id) && defaultSegmentIds.includes(feature.properties.id))
           .map((feature) => {
             const coords = feature.geometry.coordinates as number[][];
             const mid = coords[Math.floor(coords.length / 2)];
