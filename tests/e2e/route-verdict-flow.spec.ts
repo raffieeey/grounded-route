@@ -70,6 +70,7 @@ test.describe("FDN-008 route-verdict browser contract", () => {
     await page.getByRole("button", { name: "Wheelchair user" }).click();
     const verdict = page.getByRole("region", { name: "Route impact check" });
     await expect(verdict).toBeVisible();
+    await expect(page.getByTestId("profile-route-caption")).toContainText("Your route as a Wheelchair user — avoids steps");
     const wheelchairHeadline = await verdict.locator(".verdict-headline").textContent();
     const wheelchairConditions = await page
       .getByRole("region", { name: "Conditions to review" })
@@ -77,6 +78,7 @@ test.describe("FDN-008 route-verdict browser contract", () => {
       .count();
 
     await page.getByRole("button", { name: "Cyclist" }).click();
+    await expect(page.getByTestId("profile-route-caption")).toContainText("Your route as a Cyclist — uses road bypass");
     const cyclistHeadline = await verdict.locator(".verdict-headline").textContent();
     const cyclistConditions = await page
       .getByRole("region", { name: "Conditions to review" })

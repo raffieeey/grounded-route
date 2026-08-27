@@ -320,3 +320,25 @@ authority boundary. Evidence: `docs/evidence/fdn-008-route-verdict-redesign.md`.
   explicitly permits only OSM tile PNG requests.
 - `workflow:check`, `fixture:check`, `tdd:check`, typecheck, lint, and build
   pass.
+
+## FDN-011 — Profile-distinct route visualization (private candidate)
+
+**Status:** Implemented on `feat/profile-route-distinction`; not pushed.
+Evidence: `docs/evidence/fdn-011-profile-route-distinction.md`.
+
+### Completed
+
+- The active route is now profile-distinct: wheelchair purple, school-pickup
+  parent amber, and cyclist green at 4px, while other corridor segments remain
+  visible as 1px, 0.25-opacity context.
+- The map header identifies the resident profile and route note; named active
+  alternates and bypasses are visibly labeled in the selected profile color.
+- The staged blue glow/foreground still takes precedence, and the tile-error
+  SVG fallback receives the same profile color and fade treatment.
+
+### Acceptance evidence
+
+- 163 Vitest tests across 18 files and the Playwright suite pass, including
+  FDN-011 focused color, caption, switch, staged-precedence, and fallback tests.
+- `workflow:check`, `fixture:check`, `tdd:check`, typecheck, lint, and build
+  pass.

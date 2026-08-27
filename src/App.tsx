@@ -314,6 +314,7 @@ export default function App() {
               <div className="workspace-grid">
                 <div className="workspace-main">
                   <LocalRouteMap
+                    profileId={state.route.profileId ?? undefined}
                     defaultSegmentIds={activeSegmentIds}
                     stagedMappingIds={state.route.stagedMappingIds}
                     mappings={scenarioMappings}
