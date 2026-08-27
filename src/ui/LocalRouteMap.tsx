@@ -324,7 +324,8 @@ export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultS
         <MapContainer
           className="local-route-map"
           center={[3.14, 101.692]}
-          zoom={15}
+          zoom={16}
+          maxZoom={18}
           scrollWheelZoom={false}
           aria-label="Real local route map of the Kampung Baru, Saloma Link, and KLCC Park corridor"
         >
