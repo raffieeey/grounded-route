@@ -99,7 +99,7 @@ describe("fixture manifest validation", () => {
 
   it("fixture manifest reviewDate and fixtureVersion reflect current M0 date", () => {
     expect(fixtureManifest.reviewDate).toBe("2026-08-26");
-    expect(fixtureManifest.fixtureVersion).toBe("fdn-012-2026-08-27");
+    expect(fixtureManifest.fixtureVersion).toBe("fdn-013-2026-08-27");
   });
 
   it("all source claims have required fields", () => {

@@ -28,9 +28,9 @@ fixture_manifest.json
 - [M0 Fixture-Freeze Checklist](FIXTURE_FREEZE_CHECKLIST.md)
 - [Third-Party Data and Attribution Manifest](THIRD_PARTY_DATA_MANIFEST.md)
 
-## FDN-012 geometry freeze
+## FDN-013 divergent-corridor geometry freeze
 
-`route_segments.geojson` is a 2026-08-27 Overpass extract for the real Kampung Baru–Saloma Link–Jalan Ampang corridor. Every segment carries its OSM way reference in `osmWayIds`; the only composite segment joins three explicitly listed, connected plaza footway/crossing ways. See [the FDN-012 evidence record](../docs/evidence/fdn-012-real-street-geometry.md) before changing geometry or profile-route IDs.
+`route_segments.geojson` is a 2026-08-27 Overpass extract for a real north Kampung Baru–Saloma Link–KLCC Park corridor. Every segment carries its OSM way reference in `osmWayIds`; the three long composites follow ordered, connected source-way vertices and list every source way. The wheelchair route is 2.02 km and excludes `highway=steps` way 765200304; the parent route traverses it, while the cyclist uses the 2.49 km Jalan Raja Abdullah/Jalan Sultan Ismail road-and-cycleway detour. See [the FDN-013 evidence record](../docs/evidence/fdn-013-divergent-corridor.md) before changing geometry or profile-route IDs.
 
 ## Prohibited data
 

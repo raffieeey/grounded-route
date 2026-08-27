@@ -78,7 +78,7 @@ test.describe("FDN-008 route-verdict browser contract", () => {
       .count();
 
     await page.getByRole("button", { name: "Cyclist" }).click();
-    await expect(page.getByTestId("profile-route-caption")).toContainText("Your route as a Cyclist — uses road bypass");
+    await expect(page.getByTestId("profile-route-caption")).toContainText("Your route as a Cyclist — uses a real road detour");
     const cyclistHeadline = await verdict.locator(".verdict-headline").textContent();
     const cyclistConditions = await page
       .getByRole("region", { name: "Conditions to review" })

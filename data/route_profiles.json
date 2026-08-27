@@ -2,55 +2,39 @@
   {
     "id": "profile-wheelchair",
     "label": "Wheelchair user",
-    "description": "Uses the mapped Saloma Link elevator approach and avoids the mapped north stair shortcut; surface and lift operation still require field verification.",
+    "description": "Uses the real 2.02 km Kampung Baru–Saloma Link–KLCC Park step-free route, including the mapped elevator approach and not the mapped north stair shortcut; surface and lift operation still require field verification.",
     "constraints": ["no-steps", "min-width-90cm", "tactile-paving-preferred", "ramp-or-elevator-required"],
     "routeSegmentIds": [
-      "seg-jalan-haji-hassan-salleh",
-      "seg-jalan-sungai-baru",
-      "seg-lorong-raja-muda-musa-1",
+      "seg-kampung-baru-north-access",
       "seg-saloma-north-access-footway",
       "seg-saloma-elevator-bridge-approach",
       "seg-saloma-link-main-bridge",
       "seg-saloma-south-slope",
-      "seg-saloma-south-access-footway",
-      "seg-saloma-plaza-crossing-link",
-      "seg-jalan-saloma-sidewalk"
+      "seg-saloma-to-klcc-park-step-free-approach"
     ]
   },
   {
     "id": "profile-parent",
     "label": "School-pickup parent",
-    "description": "Uses the short mapped stair route with a child on foot and needs safe crossings; suitability for a stroller remains a field-check question.",
+    "description": "Uses the same real Kampung Baru–Saloma Link–KLCC Park corridor with the short mapped north stair way on foot; suitability for a stroller and all crossing conditions remain field-check questions.",
     "constraints": ["wide-sidewalk", "signalised-crossing-preferred", "stair-shortcut-awareness", "max-gradient-5-percent"],
     "routeSegmentIds": [
-      "seg-jalan-haji-hassan-salleh",
-      "seg-jalan-sungai-baru",
-      "seg-lorong-raja-muda-musa-1",
+      "seg-kampung-baru-north-access",
       "seg-saloma-north-access-footway",
       "seg-saloma-north-stairs",
       "seg-saloma-elevator-bridge-approach",
       "seg-saloma-link-main-bridge",
       "seg-saloma-south-slope",
-      "seg-saloma-south-access-footway",
-      "seg-saloma-plaza-crossing-link",
-      "seg-jalan-saloma-sidewalk"
+      "seg-saloma-to-klcc-park-step-free-approach"
     ]
   },
   {
     "id": "profile-cyclist",
     "label": "Cyclist",
-    "description": "Uses the mapped Jalan Saloma service-road bypass after the Saloma Link section where OSM marks bicycle dismount.",
-    "constraints": ["road-or-shared-path", "dismount-where-signed", "min-width-120cm"],
+    "description": "Uses the real 2.49 km Jalan Raja Abdullah, Jalan Sultan Ismail, and mapped cycleway detour instead of the Saloma Link pedestrian bridge.",
+    "constraints": ["road-or-shared-path", "cycleway-or-shared-path", "dismount-where-signed", "min-width-120cm"],
     "routeSegmentIds": [
-      "seg-jalan-haji-hassan-salleh",
-      "seg-jalan-sungai-baru",
-      "seg-lorong-raja-muda-musa-1",
-      "seg-saloma-north-access-footway",
-      "seg-saloma-elevator-bridge-approach",
-      "seg-saloma-link-main-bridge",
-      "seg-saloma-south-slope",
-      "seg-jalan-saloma-road-bypass",
-      "seg-jalan-saloma-sidewalk"
+      "seg-jalan-raja-abdullah-sultan-ismail-cycling-detour"
     ]
   }
 ]

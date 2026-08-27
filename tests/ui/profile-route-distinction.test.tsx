@@ -41,9 +41,9 @@ describe("FDN-011 profile-distinct route visualization", () => {
     expect(document.querySelector("[data-segment-id='seg-saloma-elevator-bridge-approach']")).toHaveClass("segment-path--profile-wheelchair");
     expect(document.querySelector("[data-segment-id='seg-saloma-elevator-bridge-approach']")).toHaveAttribute("data-color", "#7c3aed");
     expect(document.querySelector("[data-segment-id='seg-saloma-elevator-bridge-approach']")).toHaveAttribute("data-weight", "4");
-    expect(document.querySelector("[data-segment-id='seg-jalan-saloma-road-bypass']")).toHaveClass("segment-path--background");
-    expect(document.querySelector("[data-segment-id='seg-jalan-saloma-road-bypass']")).toHaveAttribute("data-opacity", "0.25");
-    expect(document.querySelector("[data-segment-id='seg-jalan-saloma-road-bypass']")).toHaveAttribute("data-weight", "1");
+    expect(document.querySelector("[data-segment-id='seg-jalan-raja-abdullah-sultan-ismail-cycling-detour']")).toHaveClass("segment-path--background");
+    expect(document.querySelector("[data-segment-id='seg-jalan-raja-abdullah-sultan-ismail-cycling-detour']")).toHaveAttribute("data-opacity", "0.25");
+    expect(document.querySelector("[data-segment-id='seg-jalan-raja-abdullah-sultan-ismail-cycling-detour']")).toHaveAttribute("data-weight", "1");
   });
 
   it("shows the selected resident profile and route note in the colored caption", () => {
@@ -51,7 +51,7 @@ describe("FDN-011 profile-distinct route visualization", () => {
 
     const caption = screen.getByTestId("profile-route-caption");
     expect(caption).toHaveTextContent("Your route as a School-pickup parent");
-    expect(caption).toHaveTextContent("stroller-friendly footways");
+    expect(caption).toHaveTextContent("uses the north stair shortcut");
     expect(caption).toHaveStyle({ color: "rgb(217, 119, 6)" });
   });
 
@@ -63,8 +63,8 @@ describe("FDN-011 profile-distinct route visualization", () => {
     expect(document.querySelector("[data-segment-id='seg-saloma-elevator-bridge-approach']")).toHaveAttribute("data-color", "#7c3aed");
     rerender(<LocalRouteMap profileId="profile-cyclist" defaultSegmentIds={cyclist.routeSegmentIds} stagedMappingIds={[]} mappings={scenarioMappings} />);
 
-    expect(document.querySelector("[data-segment-id='seg-jalan-saloma-road-bypass']")).toHaveAttribute("data-color", "#059669");
-    expect(document.querySelector("[data-segment-id='seg-saloma-plaza-crossing-link']")).toHaveClass("segment-path--background");
+    expect(document.querySelector("[data-segment-id='seg-jalan-raja-abdullah-sultan-ismail-cycling-detour']")).toHaveAttribute("data-color", "#059669");
+    expect(document.querySelector("[data-segment-id='seg-saloma-to-klcc-park-step-free-approach']")).toHaveClass("segment-path--background");
     expect(screen.getByTestId("profile-route-caption")).toHaveTextContent("Your route as a Cyclist");
     expect(wheelchair.routeSegmentIds).toContain("seg-saloma-elevator-bridge-approach");
   });
@@ -83,10 +83,10 @@ describe("FDN-011 profile-distinct route visualization", () => {
     renderMap("profile-cyclist");
     fireEvent.click(screen.getByRole("button", { name: "Trigger tile error" }));
 
-    const bypass = document.querySelector("[data-segment-id='seg-jalan-saloma-road-bypass']")!;
+    const bypass = document.querySelector("[data-segment-id='seg-jalan-raja-abdullah-sultan-ismail-cycling-detour']")!;
     expect(bypass).toHaveAttribute("stroke", "#059669");
     expect(bypass).toHaveAttribute("stroke-width", "4");
-    expect(document.querySelector("[data-segment-id='seg-saloma-plaza-crossing-link']")).toHaveAttribute("opacity", "0.25");
-    expect(screen.getByText("Jalan Saloma service-road bypass")).toHaveClass("route-detour-label--profile-cyclist");
+    expect(document.querySelector("[data-segment-id='seg-saloma-to-klcc-park-step-free-approach']")).toHaveAttribute("opacity", "0.25");
+    expect(screen.getByText("Jalan Raja Abdullah and Sultan Ismail cycling road detour")).toHaveClass("route-detour-label--profile-cyclist");
   });
 });

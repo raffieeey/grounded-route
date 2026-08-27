@@ -31,8 +31,8 @@ interface LocalRouteMapProps {
 
 const PROFILE_ROUTE_DETAILS: Record<string, { label: string; color: string; note: string }> = {
   "profile-wheelchair": { label: "Wheelchair user", color: "#7c3aed", note: "avoids steps" },
-  "profile-parent": { label: "School-pickup parent", color: "#d97706", note: "stroller-friendly footways" },
-  "profile-cyclist": { label: "Cyclist", color: "#059669", note: "uses road bypass" },
+  "profile-parent": { label: "School-pickup parent", color: "#d97706", note: "uses the north stair shortcut" },
+  "profile-cyclist": { label: "Cyclist", color: "#059669", note: "uses a real road detour" },
 };
 
 const DEFAULT_PROFILE_ID = "profile-wheelchair";
@@ -309,7 +309,7 @@ export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultS
           center={[3.14, 101.692]}
           zoom={15}
           scrollWheelZoom={false}
-          aria-label="Real local route map of the Saloma Link area"
+          aria-label="Real local route map of the Kampung Baru, Saloma Link, and KLCC Park corridor"
         >
           <FitRouteBounds bounds={bounds} />
           <TileLayer

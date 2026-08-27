@@ -4,21 +4,14 @@
     "mappingType": "curated-interpretation",
     "scenarioId": "saloma-link-active-mobility-demo",
     "segmentIds": [
-      "seg-jalan-haji-hassan-salleh",
-      "seg-jalan-sungai-baru",
-      "seg-lorong-raja-muda-musa-1",
+      "seg-kampung-baru-north-access",
       "seg-saloma-north-access-footway",
       "seg-saloma-north-stairs",
       "seg-saloma-elevator-bridge-approach",
       "seg-saloma-link-main-bridge",
       "seg-saloma-south-slope",
-      "seg-saloma-south-access-footway",
-      "seg-saloma-plaza-crossing-link",
-      "seg-jalan-saloma-road-bypass",
-      "seg-jalan-saloma-sidewalk",
-      "seg-jalan-ampang-signal-crossing",
-      "seg-jalan-ampang-crossing-link",
-      "seg-klcc-edge-sidewalk"
+      "seg-saloma-to-klcc-park-step-free-approach",
+      "seg-jalan-raja-abdullah-sultan-ismail-cycling-detour"
     ],
     "sourceClaimIds": [
       "sc-01",
@@ -27,7 +20,7 @@
       "sc-04",
       "sc-06"
     ],
-    "rationale": "Illustrative route-evidence mapping: PTKL2040 active-mobility policy intent is spatially associated with the real Kampung Baru\u2013Saloma Link\u2013Jalan Ampang corridor. Not an official construction or accessibility finding.",
+    "rationale": "Illustrative route-evidence mapping: PTKL2040 active-mobility policy intent is spatially associated with the real north Kampung Baru\u2013Saloma Link\u2013KLCC Park corridor and its mapped cycling-road detour. Not an official construction or accessibility finding.",
     "uncertainty": "Actual implementation timing, accessibility status, and on-site conditions are unverified. Field verification required before any real-world claim.",
     "certaintyLevel": "low",
     "reviewer": "M0 Fixture Reviewer",
@@ -56,12 +49,13 @@
     "scenarioId": "saloma-link-active-mobility-demo",
     "segmentIds": [
       "seg-saloma-elevator-bridge-approach",
-      "seg-saloma-south-slope"
+      "seg-saloma-south-slope",
+      "seg-saloma-to-klcc-park-step-free-approach"
     ],
     "sourceClaimIds": [
       "sc-04"
     ],
-    "rationale": "Accessibility improvement policy is spatially associated with the OSM-mapped elevator approach and sloping south approach that avoid the north stair shortcut; this is a curated interpretation, not a verified project plan.",
+    "rationale": "Accessibility improvement policy is spatially associated with the OSM-mapped elevator approach, sloping south approach, and longer step-free KLCC Park approach that avoid the north stair shortcut; this is a curated interpretation, not a verified project plan.",
     "uncertainty": "Specific lift, tactile-paving, or gradient improvements are not confirmed in the source document.",
     "certaintyLevel": "low",
     "reviewer": "M0 Fixture Reviewer",
