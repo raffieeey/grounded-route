@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { LatLngBoundsExpression, Polyline as LeafletPolyline } from "leaflet";
+import L from "leaflet";
 import {
   CircleMarker,
   MapContainer,
+  Marker,
   Polyline,
   TileLayer,
   Tooltip,
@@ -334,23 +336,22 @@ export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultS
           />
           {paths.map((path) => <RoutePolyline key={path.id} path={path} prefersReducedMotion={prefersReducedMotion} />)}
           {stairsMarker && (
-            <CircleMarker
-              center={[stairsMarker.lat, stairsMarker.lng]}
-              radius={11}
-              pathOptions={{
-                color: stairsMarker.usedByThisProfile ? "#d97706" : "#dc2626",
-                weight: 2,
-                fillColor: "#fff7ed",
-                fillOpacity: 1,
-              }}
+            <Marker
+              position={[stairsMarker.lat, stairsMarker.lng]}
+              icon={L.divIcon({
+                className: "stairs-marker-icon",
+                html: `<div class="stairs-chip" data-used="${stairsMarker.usedByThisProfile}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 20h4v-4h4v-4h4V8h4" fill="none" stroke="${stairsMarker.usedByThisProfile ? "#d97706" : "#dc2626"}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`,
+                iconSize: [26, 26],
+                iconAnchor: [13, 13],
+              })}
             >
-              <Tooltip permanent direction="top" offset={[0, -6]} className="stairs-marker-label">
-                🪜 {stairsMarker.label}
+              <Tooltip permanent direction="top" offset={[0, -8]} className="stairs-marker-label">
+                {stairsMarker.label}
                 {stairsMarker.usedByThisProfile
                   ? " — on your route"
                   : " — your route avoids this"}
               </Tooltip>
-            </CircleMarker>
+            </Marker>
           )}
           {placesGeo.features.map((place) => {
             const [lng, lat] = place.geometry.coordinates;

@@ -10,6 +10,9 @@ vi.mock("react-leaflet", () => ({
   MapContainer: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (
     <div data-testid="leaflet-map" {...props}>{children}</div>
   ),
+  Marker: ({ children, position }: React.PropsWithChildren<{ position: [number, number] }>) => (
+    <div data-testid="stairs-marker" data-lat={position[0]} data-lng={position[1]}>{children}</div>
+  ),
   TileLayer: ({ eventHandlers }: { eventHandlers?: { tileerror?: () => void } }) => (
     <button type="button" aria-label="Trigger tile error" onClick={eventHandlers?.tileerror}>
       OSM tiles

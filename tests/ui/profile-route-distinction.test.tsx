@@ -8,6 +8,9 @@ import mappings from "../../data/scenario_impact_mappings.json";
 
 vi.mock("react-leaflet", () => ({
   MapContainer: ({ children }: React.PropsWithChildren) => <div data-testid="leaflet-map">{children}</div>,
+  Marker: ({ children, position }: React.PropsWithChildren<{ position: [number, number] }>) => (
+    <div data-testid="stairs-marker" data-lat={position[0]} data-lng={position[1]}>{children}</div>
+  ),
   TileLayer: ({ eventHandlers }: { eventHandlers?: { tileerror?: () => void } }) => (
     <button type="button" aria-label="Trigger tile error" onClick={eventHandlers?.tileerror}>OSM tiles</button>
   ),
