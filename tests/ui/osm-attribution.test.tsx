@@ -125,8 +125,12 @@ describe("FDN-006 OSM attribution — export through UI", () => {
     await user.click(exportBtn);
 
     expect(blobSpy).toHaveBeenCalled();
-    const blobParts = blobSpy.mock.calls[0][0] as string[];
-    const payload = JSON.parse(blobParts[0]);
+    const blobText = (blobSpy.mock.calls[0][0] as string[]).join("");
+    // The export is a human-readable letter followed by the machine-readable payload.
+    expect(blobText).toContain("To the Kuala Lumpur City Hall (DBKL) planning team,");
+    const jsonStart = blobText.indexOf("MACHINE-READABLE EXPORT (Grounded Route)");
+    expect(jsonStart).toBeGreaterThan(0);
+    const payload = JSON.parse(blobText.slice(blobText.indexOf("{", jsonStart)));
 
     expect(payload.attribution).toBeDefined();
     expect(payload.attribution.osm).toBe("© OpenStreetMap contributors");

@@ -1,4 +1,5 @@
 import { buildExportPayload } from "@/ui/export-payload.ts";
+import { buildExportLetter } from "@/ui/export-letter.ts";
 import { useEffect, useMemo, useCallback, useState } from "react";
 import "./styles/main.css";
 import scenarios from "../data/demo_scenarios.json";
@@ -200,9 +201,10 @@ export default function App() {
   const handleExport = useCallback(() => {
     const result = residentPort.requestExport(state);
     if (result.success) {
+      const letter = buildExportLetter(state);
       const payload = buildExportPayload(state);
       const blob = new Blob(
-        [JSON.stringify(payload, null, 2)],
+        [`${letter}\n\n${"=".repeat(60)}\nMACHINE-READABLE EXPORT (Grounded Route)\n${JSON.stringify(payload, null, 2)}`],
         { type: "text/plain" }
       );
       const url = URL.createObjectURL(blob);
