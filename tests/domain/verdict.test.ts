@@ -58,10 +58,10 @@ describe("FDN-008 profile route rules (V2)", () => {
     expect(p).not.toEqual(c);
   });
 
-  it("the wheelchair route avoids steps segments and uses the step-free alternate + elevator/ramp", () => {
+  it("the wheelchair route avoids real stair segments and uses the mapped Saloma elevator approach", () => {
     const w = profileRouteSegmentIds("profile-wheelchair");
-    expect(w).toContain("seg-wheelchair-alternate");
-    expect(w).toContain("seg-saloma-elevator-ramp");
+    expect(w).toContain("seg-saloma-elevator-bridge-approach");
+    expect(w).not.toContain("seg-saloma-north-stairs");
     // No segment in the wheelchair route carries the `steps` tag.
     for (const id of w) {
       const seg = allSegments.find((s) => s.properties.id === id)!;

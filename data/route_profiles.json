@@ -2,51 +2,55 @@
   {
     "id": "profile-wheelchair",
     "label": "Wheelchair user",
-    "description": "Requires step-free surfaces, tactile paving, and ramp or elevator access at grade changes.",
+    "description": "Uses the mapped Saloma Link elevator approach and avoids the mapped north stair shortcut; surface and lift operation still require field verification.",
     "constraints": ["no-steps", "min-width-90cm", "tactile-paving-preferred", "ramp-or-elevator-required"],
     "routeSegmentIds": [
-      "seg-kl-central-to-jalan-travers",
-      "seg-jalan-travers-crossing",
-      "seg-parent-stroller-route",
-      "seg-tun-sambanthan-plaza-crossing",
-      "seg-plaza-to-saloma-south",
-      "seg-saloma-elevator-ramp",
-      "seg-wheelchair-alternate",
-      "seg-saloma-north-to-jalan-ampang",
-      "seg-jalan-ampang-crossing-east",
-      "seg-jalan-ampang-to-demo-school",
-      "seg-demo-school-frontage"
+      "seg-jalan-haji-hassan-salleh",
+      "seg-jalan-sungai-baru",
+      "seg-lorong-raja-muda-musa-1",
+      "seg-saloma-north-access-footway",
+      "seg-saloma-elevator-bridge-approach",
+      "seg-saloma-link-main-bridge",
+      "seg-saloma-south-slope",
+      "seg-saloma-south-access-footway",
+      "seg-saloma-plaza-crossing-link",
+      "seg-jalan-saloma-sidewalk"
     ]
   },
   {
     "id": "profile-parent",
     "label": "School-pickup parent",
-    "description": "Needs wide sidewalks, safe crossings, and manageable distances with a stroller or walking with a child.",
-    "constraints": ["wide-sidewalk", "signalised-crossing-preferred", "drop-off-zone-awareness", "max-gradient-5-percent"],
+    "description": "Uses the short mapped stair route with a child on foot and needs safe crossings; suitability for a stroller remains a field-check question.",
+    "constraints": ["wide-sidewalk", "signalised-crossing-preferred", "stair-shortcut-awareness", "max-gradient-5-percent"],
     "routeSegmentIds": [
-      "seg-kl-central-to-jalan-travers",
-      "seg-jalan-travers-crossing",
-      "seg-parent-stroller-route",
-      "seg-tun-sambanthan-plaza-crossing",
-      "seg-plaza-to-saloma-south",
-      "seg-saloma-link-bridge",
-      "seg-saloma-north-to-jalan-ampang",
-      "seg-jalan-ampang-crossing-east",
-      "seg-jalan-ampang-to-demo-school",
-      "seg-demo-school-frontage"
+      "seg-jalan-haji-hassan-salleh",
+      "seg-jalan-sungai-baru",
+      "seg-lorong-raja-muda-musa-1",
+      "seg-saloma-north-access-footway",
+      "seg-saloma-north-stairs",
+      "seg-saloma-elevator-bridge-approach",
+      "seg-saloma-link-main-bridge",
+      "seg-saloma-south-slope",
+      "seg-saloma-south-access-footway",
+      "seg-saloma-plaza-crossing-link",
+      "seg-jalan-saloma-sidewalk"
     ]
   },
   {
     "id": "profile-cyclist",
     "label": "Cyclist",
-    "description": "Prefers dedicated or shared cycle paths and avoids dismount points.",
-    "constraints": ["cycleway-or-shared-path", "no-dismount-required", "min-width-120cm"],
+    "description": "Uses the mapped Jalan Saloma service-road bypass after the Saloma Link section where OSM marks bicycle dismount.",
+    "constraints": ["road-or-shared-path", "dismount-where-signed", "min-width-120cm"],
     "routeSegmentIds": [
-      "seg-kl-central-to-jalan-travers",
-      "seg-jalan-travers-crossing",
-      "seg-cyclist-bypass-west",
-      "seg-jalan-ampang-to-demo-school",
-      "seg-demo-school-frontage"
+      "seg-jalan-haji-hassan-salleh",
+      "seg-jalan-sungai-baru",
+      "seg-lorong-raja-muda-musa-1",
+      "seg-saloma-north-access-footway",
+      "seg-saloma-elevator-bridge-approach",
+      "seg-saloma-link-main-bridge",
+      "seg-saloma-south-slope",
+      "seg-jalan-saloma-road-bypass",
+      "seg-jalan-saloma-sidewalk"
     ]
   }
 ]

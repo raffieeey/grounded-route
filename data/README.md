@@ -28,6 +28,10 @@ fixture_manifest.json
 - [M0 Fixture-Freeze Checklist](FIXTURE_FREEZE_CHECKLIST.md)
 - [Third-Party Data and Attribution Manifest](THIRD_PARTY_DATA_MANIFEST.md)
 
+## FDN-012 geometry freeze
+
+`route_segments.geojson` is a 2026-08-27 Overpass extract for the real Kampung Baru–Saloma Link–Jalan Ampang corridor. Every segment carries its OSM way reference in `osmWayIds`; the only composite segment joins three explicitly listed, connected plaza footway/crossing ways. See [the FDN-012 evidence record](../docs/evidence/fdn-012-real-street-geometry.md) before changing geometry or profile-route IDs.
+
 ## Prohibited data
 
 - resident home addresses;

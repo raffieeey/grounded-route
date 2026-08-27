@@ -56,7 +56,7 @@ describe("FDN-010 real map tiles", () => {
     renderMap();
 
     expect(screen.getByTestId("leaflet-map")).toHaveClass("local-route-map");
-    expect(screen.getAllByTestId("route-polyline")).toHaveLength(14);
+    expect(screen.getAllByTestId("route-polyline")).toHaveLength(15);
   });
 
   it("marks staged route paths for the blue sweep overlay", () => {

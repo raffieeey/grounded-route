@@ -4,10 +4,10 @@
 
 ## Scope freeze
 
-- [ ] One exact Kuala Lumpur 5–10 block demonstration area named and bounded.
+- [x] One exact Kuala Lumpur 5–10 block demonstration area named and bounded: Kampung Baru–Saloma Link–Jalan Ampang (FDN-012, 2026-08-27).
 - [ ] One named planning scenario chosen; it is clearly labelled as a curated demonstration scenario.
 - [ ] Three distinct preset profiles are defined: wheelchair user, school-pickup parent, cyclist.
-- [ ] Each profile has an explicit fixture route and constraints; no real home address is present.
+- [x] Each profile has an explicit fixture route and constraints; no real home address is present.
 
 ## Source and mapping freeze
 
@@ -15,7 +15,13 @@
 - [ ] `scenario_impact_mappings.json` contains every claimed scenario-to-segment relationship.
 - [ ] Each mapping has valid source IDs, valid segment IDs, rationale, uncertainty, named reviewer, and review date.
 - [ ] No `SourceClaim` itself includes segment mapping or route-impact language.
-- [ ] `fixture_manifest.json` validates every cross-file ID reference and records a fixture version.
+- [x] `fixture_manifest.json` validates every cross-file ID reference and records a fixture version.
+
+## FDN-012 real-geometry record
+
+- [x] Every route segment records real OSM way reference(s); no synthetic diagonal geometry remains.
+- [x] The Saloma north stair way (765200304) and elevator node (7146945539) were checked in the 2026-08-27 Overpass response.
+- [x] The wheelchair route excludes every segment tagged `steps`; the parent uses the real stair shortcut and the cyclist uses Jalan Saloma service road.
 
 ## Public-release readiness
 

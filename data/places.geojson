@@ -5,11 +5,11 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [101.686, 3.134]
+        "coordinates": [101.7057985, 3.1609804]
       },
       "properties": {
         "id": "place-demo-home",
-        "name": "Demo Home",
+        "name": "Demo Home (Jalan Haji Hassan Salleh)",
         "placeType": "origin"
       }
     },
@@ -17,11 +17,11 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [101.698, 3.146]
+        "coordinates": [101.7102705, 3.1596015]
       },
       "properties": {
         "id": "place-demo-school",
-        "name": "Demo School",
+        "name": "Demo School (near Jalan Ampang)",
         "placeType": "destination"
       }
     },
@@ -29,11 +29,11 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [101.691, 3.139]
+        "coordinates": [101.7067864, 3.1613773]
       },
       "properties": {
         "id": "place-demo-transit",
-        "name": "Demo Transit",
+        "name": "Kampung Baru LRT Station",
         "placeType": "transit"
       }
     },
@@ -41,7 +41,7 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [101.694, 3.142]
+        "coordinates": [101.7084433, 3.160753]
       },
       "properties": {
         "id": "place-saloma-link",
