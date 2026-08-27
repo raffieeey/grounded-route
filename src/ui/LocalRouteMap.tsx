@@ -257,7 +257,7 @@ export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultS
     return () => mq.removeEventListener?.("change", onChange);
   }, []);
 
-  const { paths, bounds } = useMemo(() => {
+  const { paths, bounds, stairsMarker } = useMemo(() => {
     const allCoords = segmentsGeo.features.flatMap((feature) => feature.geometry.coordinates as number[][]);
     const lngs = allCoords.map((coordinate) => coordinate[0]);
     const lats = allCoords.map((coordinate) => coordinate[1]);
@@ -281,6 +281,21 @@ export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultS
         [Math.min(...lats), Math.min(...lngs)],
         [Math.max(...lats), Math.max(...lngs)],
       ] as LatLngBoundsExpression,
+      stairsMarker: (() => {
+        const stairs = segmentsGeo.features.find(
+          (feature) => feature.properties.id === "seg-saloma-north-stairs",
+        );
+        if (!stairs) return null;
+        const coords = stairs.geometry.coordinates as number[][];
+        const mid = coords[Math.floor(coords.length / 2)];
+        const [midLng, midLat] = mid;
+        return {
+          lat: midLat,
+          lng: midLng,
+          usedByThisProfile: defaultSegmentIds.includes("seg-saloma-north-stairs"),
+          label: "Stair shortcut",
+        };
+      })(),
     };
   }, [defaultSegmentIds, mappings, profileId, stagedMappingIds]);
 
@@ -318,6 +333,25 @@ export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultS
             eventHandlers={{ tileerror: () => setHasTileError(true) }}
           />
           {paths.map((path) => <RoutePolyline key={path.id} path={path} prefersReducedMotion={prefersReducedMotion} />)}
+          {stairsMarker && (
+            <CircleMarker
+              center={[stairsMarker.lat, stairsMarker.lng]}
+              radius={11}
+              pathOptions={{
+                color: stairsMarker.usedByThisProfile ? "#d97706" : "#dc2626",
+                weight: 2,
+                fillColor: "#fff7ed",
+                fillOpacity: 1,
+              }}
+            >
+              <Tooltip permanent direction="top" offset={[0, -6]} className="stairs-marker-label">
+                🪜 {stairsMarker.label}
+                {stairsMarker.usedByThisProfile
+                  ? " — on your route"
+                  : " — your route avoids this"}
+              </Tooltip>
+            </CircleMarker>
+          )}
           {placesGeo.features.map((place) => {
             const [lng, lat] = place.geometry.coordinates;
             const isEndpoint = place.properties.placeType === "origin" || place.properties.placeType === "destination";
