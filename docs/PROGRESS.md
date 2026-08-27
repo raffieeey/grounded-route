@@ -293,3 +293,30 @@ authority boundary. Evidence: `docs/evidence/fdn-008-route-verdict-redesign.md`.
 - 154 Vitest tests and 22 desktop/mobile Playwright checks pass.
 - `workflow:check`, `fixture:check`, `tdd:check`, typecheck, lint, and build
   pass.
+
+## FDN-010 — Real OSM basemap tiles (private candidate)
+
+**Status:** Implemented on `feat/real-map-tiles`; not pushed. Evidence:
+`docs/evidence/fdn-010-real-map-tiles.md`.
+
+### Completed
+
+- Replaced the hand-rolled map as the normal view with a Leaflet/react-leaflet
+  map fitted to the actual Kuala Lumpur fixture bounds, using OSM Carto tiles.
+- Kept route semantics intact on top of the tiles: dark default segments,
+  dashed grey non-default segments, and staged blue paths with a broad glow and
+  reduced-motion-safe 600ms SVG dash sweep.
+- Added permanent named place labels, 44px Leaflet zoom controls, disabled
+  scroll-wheel zoom, visible OSM attribution/disclaimer, and the existing
+  staged-review chip.
+- Preserved the former schematic as the rendered fallback after a TileLayer
+  `tileerror`, so offline/test tile failure still leaves the route legible.
+
+### Acceptance evidence
+
+- 158 Vitest tests across 17 files pass, including four FDN-010 map/tile
+  fallback tests.
+- 22 desktop/mobile Playwright checks pass; the prior no-egress check now
+  explicitly permits only OSM tile PNG requests.
+- `workflow:check`, `fixture:check`, `tdd:check`, typecheck, lint, and build
+  pass.

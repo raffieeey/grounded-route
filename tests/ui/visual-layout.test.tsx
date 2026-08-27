@@ -13,7 +13,7 @@ const scenarioMappings = (
   mappings as ScenarioImpactMapping[]
 ).filter((m) => m.scenarioId === scenario.id);
 
-describe("FDN-002 visual layout — local route diagram", () => {
+describe("FDN-010 visual layout — real local route map", () => {
   it("preserves the explicit illustrative-not-navigation label for assistive tech", () => {
     const { container } = render(
       <LocalRouteMap
@@ -22,15 +22,13 @@ describe("FDN-002 visual layout — local route diagram", () => {
         mappings={scenarioMappings}
       />,
     );
-    const svg = container.querySelector("svg.local-route-map");
-    expect(svg).not.toBeNull();
-    expect(svg?.getAttribute("role")).toBe("img");
-    expect(svg?.getAttribute("aria-label") ?? "").toMatch(/illustrative local route diagram/i);
+    expect(screen.getByRole("region", { name: /Local route map/i })).toBeVisible();
+    expect(container.querySelector(".local-route-map.leaflet-container")).not.toBeNull();
     expect(screen.getByText(/Illustrative local route diagram — not navigation/i)).toBeVisible();
   });
 
-  it("staggered segment labels alternate above/below the route line with a readable halo", () => {
-    const { container } = render(
+  it("renders permanent named place labels over the real map", () => {
+    render(
       <LocalRouteMap
         defaultSegmentIds={scenario.defaultSegmentIds}
         stagedMappingIds={[]}
@@ -38,30 +36,9 @@ describe("FDN-002 visual layout — local route diagram", () => {
       />,
     );
 
-    const labels = Array.from(
-      container.querySelectorAll("svg.local-route-map text.segment-label"),
-    );
-    expect(labels.length).toBeGreaterThan(0);
-
-    // Every rendered segment label carries an explicit stagger side.
-    const sides = labels.map((el) => el.getAttribute("data-stagger"));
-    expect(sides.every((s) => s === "up" || s === "down")).toBe(true);
-
-    // Stagger is deliberate: both sides are used (not a single pile on the line).
-    expect(new Set(sides).size).toBeGreaterThan(1);
-
-    // Adjacent corridor labels must not share the same side (no run-length overlap).
-    for (let i = 1; i < sides.length; i += 1) {
-      expect(sides[i]).not.toBe(sides[i - 1]);
+    for (const name of ["Demo Home", "Demo School", "Demo Transit", "Saloma Link"]) {
+      expect(screen.getByRole("tooltip", { name })).toBeVisible();
     }
-
-    // Each label has a halo (white stroke painted behind the dark fill).
-    expect(
-      labels.every((el) => (el.getAttribute("stroke") ?? "").toLowerCase() === "#ffffff"),
-    ).toBe(true);
-    expect(
-      labels.every((el) => (el.getAttribute("paint-order") ?? "").includes("stroke")),
-    ).toBe(true);
   });
 });
 
