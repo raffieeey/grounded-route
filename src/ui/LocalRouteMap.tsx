@@ -340,9 +340,9 @@ export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultS
               position={[stairsMarker.lat, stairsMarker.lng]}
               icon={L.divIcon({
                 className: "stairs-marker-icon",
-                html: `<div class="stairs-chip" data-used="${stairsMarker.usedByThisProfile}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 20h4v-4h4v-4h4V8h4" fill="none" stroke="${stairsMarker.usedByThisProfile ? "#d97706" : "#dc2626"}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`,
-                iconSize: [26, 26],
-                iconAnchor: [13, 13],
+                html: `<div class="stairs-chip" data-used="${stairsMarker.usedByThisProfile}"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M3 21h5v-5h5v-5h5v-5h3" fill="none" stroke="${stairsMarker.usedByThisProfile ? "#d97706" : "#dc2626"}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`,
+                iconSize: [34, 34],
+                iconAnchor: [17, 17],
               })}
             >
               <Tooltip permanent direction="top" offset={[0, -8]} className="stairs-marker-label">
