@@ -111,13 +111,29 @@ function RoutePolyline({ path, prefersReducedMotion }: { path: RoutePath; prefer
   return (
     <>
       {path.isStaged && (
-        <Polyline
-          ref={glowRef}
-          positions={path.coordinates}
-          pathOptions={{ color: "#0b8bff", weight: 14, opacity: 0.35 }}
-          interactive={false}
-          aria-hidden="true"
-        />
+        <>
+          <Polyline
+            ref={glowRef}
+            positions={path.coordinates}
+            pathOptions={{ color: "#0b8bff", weight: 14, opacity: 0.35 }}
+            interactive={false}
+            aria-hidden="true"
+          />
+          {/* Proposed-works band: amber/black roadwork striping on the staged segment */}
+          <Polyline
+            positions={path.coordinates}
+            pathOptions={{
+              color: "#f59e0b",
+              weight: 9,
+              opacity: 0.85,
+              dashArray: "10 8",
+              lineCap: "butt",
+              className: "segment-path__works",
+            }}
+            interactive={false}
+            aria-hidden="true"
+          />
+        </>
       )}
       <Polyline
         ref={ref}
@@ -259,7 +275,7 @@ export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultS
     return () => mq.removeEventListener?.("change", onChange);
   }, []);
 
-  const { paths, bounds, stairsMarker } = useMemo(() => {
+  const { paths, bounds, stairsMarker, worksMarkers } = useMemo(() => {
     const allCoords = segmentsGeo.features.flatMap((feature) => feature.geometry.coordinates as number[][]);
     const lngs = allCoords.map((coordinate) => coordinate[0]);
     const lats = allCoords.map((coordinate) => coordinate[1]);
@@ -297,6 +313,22 @@ export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultS
           usedByThisProfile: defaultSegmentIds.includes("seg-saloma-north-stairs"),
           label: "Stair shortcut",
         };
+      })(),
+      worksMarkers: (() => {
+        // 🚧 at the midpoint of each staged (proposed-works) segment
+        if (stagedMappingIds.length === 0) return [];
+        const stagedSegIds = new Set(
+          mappings
+            .filter((mapping) => stagedIds.has(mapping.id))
+            .flatMap((mapping) => mapping.segmentIds),
+        );
+        return segmentsGeo.features
+          .filter((feature) => stagedSegIds.has(feature.properties.id))
+          .map((feature) => {
+            const coords = feature.geometry.coordinates as number[][];
+            const mid = coords[Math.floor(coords.length / 2)];
+            return { lat: mid[1], lng: mid[0], segmentId: feature.properties.id };
+          });
       })(),
     };
   }, [defaultSegmentIds, mappings, profileId, stagedMappingIds]);
@@ -336,6 +368,22 @@ export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultS
             eventHandlers={{ tileerror: () => setHasTileError(true) }}
           />
           {paths.map((path) => <RoutePolyline key={path.id} path={path} prefersReducedMotion={prefersReducedMotion} />)}
+          {worksMarkers.map((marker) => (
+            <Marker
+              key={marker.segmentId}
+              position={[marker.lat, marker.lng]}
+              icon={L.divIcon({
+                className: "works-marker-icon",
+                html: `<div class="works-chip" role="img" aria-label="Proposed works area">🚧</div>`,
+                iconSize: [30, 30],
+                iconAnchor: [15, 15],
+              })}
+            >
+              <Tooltip permanent direction="top" offset={[0, -8]} className="works-marker-label">
+                Proposed works
+              </Tooltip>
+            </Marker>
+          ))}
           {stairsMarker && (
             <Marker
               position={[stairsMarker.lat, stairsMarker.lng]}
