@@ -527,6 +527,32 @@ button:disabled {
   font-style: italic;
 }
 
+.profile-route-caption {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.route-detour-label {
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
+  font-weight: 800;
+  padding: 2px 5px;
+}
+
+.leaflet-tooltip.route-detour-label--profile-wheelchair, .route-detour-label--profile-wheelchair { color: #7c3aed; }
+.leaflet-tooltip.route-detour-label--profile-parent, .route-detour-label--profile-parent { color: #d97706; }
+.leaflet-tooltip.route-detour-label--profile-cyclist, .route-detour-label--profile-cyclist { color: #059669; }
+.leaflet-tooltip.route-detour-label--staged, .route-detour-label--staged { color: #0075de; }
+
+.local-route-map--fallback .route-detour-label {
+  stroke: #fff;
+  stroke-width: 3px;
+  paint-order: stroke fill;
+  text-anchor: middle;
+}
+
 .map-staged-chip {
   display: inline-flex;
   align-items: center;

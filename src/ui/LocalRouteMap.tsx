@@ -23,10 +23,19 @@ const placesGeo = JSON.parse(placesGeoRaw) as {
 };
 
 interface LocalRouteMapProps {
+  profileId?: string;
   defaultSegmentIds: string[];
   stagedMappingIds: string[];
   mappings: ScenarioImpactMapping[];
 }
+
+const PROFILE_ROUTE_DETAILS: Record<string, { label: string; color: string; note: string }> = {
+  "profile-wheelchair": { label: "Wheelchair user", color: "#7c3aed", note: "avoids steps" },
+  "profile-parent": { label: "School-pickup parent", color: "#d97706", note: "stroller-friendly footways" },
+  "profile-cyclist": { label: "Cyclist", color: "#059669", note: "uses road bypass" },
+};
+
+const DEFAULT_PROFILE_ID = "profile-wheelchair";
 
 interface RoutePath {
   id: string;
@@ -34,6 +43,9 @@ interface RoutePath {
   coordinates: [number, number][];
   isDefault: boolean;
   isStaged: boolean;
+  isDetour: boolean;
+  profileId: string;
+  profileColor: string;
 }
 
 function FitRouteBounds({ bounds }: { bounds: LatLngBoundsExpression }) {
@@ -54,20 +66,37 @@ function RoutePolyline({ path, prefersReducedMotion }: { path: RoutePath; prefer
       ? "segment-path--staged-reduced"
       : "segment-path--staged"
     : undefined;
+  const routeClassNames = path.isStaged
+    ? [stagedClass]
+    : path.isDefault
+      ? ["segment-path--own", `segment-path--${path.profileId}`]
+      : ["segment-path--background"];
+  const routeClassName = routeClassNames.filter(Boolean).join(" ");
+  const detourLabelClass = path.isStaged
+    ? "route-detour-label--staged"
+    : `route-detour-label--${path.profileId}`;
 
   // Leaflet owns the SVG path, so add the semantic hook to its rendered element
   // after react-leaflet has created it. The class drives the 600 ms sweep in CSS.
   useEffect(() => {
     const element = ref.current?.getElement();
     if (!element) return;
-    element.classList.remove("segment-path--staged", "segment-path--staged-reduced");
+    const currentClasses = routeClassName.split(" ").filter(Boolean);
+    element.classList.remove(
+      "segment-path--staged",
+      "segment-path--staged-reduced",
+      "segment-path--own",
+      "segment-path--background",
+      ...Object.keys(PROFILE_ROUTE_DETAILS).map((id) => `segment-path--${id}`),
+    );
+    element.classList.add(...currentClasses);
+    element.setAttribute("data-segment-id", path.id);
     if (path.isStaged) {
       element.setAttribute("data-staged", "true");
-      if (stagedClass) element.classList.add(stagedClass);
     } else {
       element.removeAttribute("data-staged");
     }
-  }, [path.isStaged, stagedClass]);
+  }, [path.id, path.isStaged, routeClassName]);
 
   // The glow polyline: Leaflet does not reliably attach pathOptions.className to
   // its SVG element, so tag the class on the rendered element ourselves.
@@ -92,16 +121,23 @@ function RoutePolyline({ path, prefersReducedMotion }: { path: RoutePath; prefer
         ref={ref}
         positions={path.coordinates}
         pathOptions={{
-          color: path.isStaged ? "#0075de" : path.isDefault ? "#1a1a1a" : "#999",
-          weight: path.isStaged ? 5 : path.isDefault ? 2.5 : 1.5,
+          color: path.isStaged ? "#0075de" : path.isDefault ? path.profileColor : "#999",
+          weight: path.isStaged ? 5 : path.isDefault ? 4 : 1,
           dashArray: path.isStaged || path.isDefault ? undefined : "4 4",
-          opacity: path.isDefault ? 1 : 0.6,
-          className: stagedClass,
+          opacity: path.isStaged || path.isDefault ? 1 : 0.25,
+          className: routeClassName,
         }}
         // react-leaflet passes this to test doubles; the effect above guarantees
         // the attribute is also applied to Leaflet's actual SVG element.
         data-staged={path.isStaged ? "true" : undefined}
-      />
+        data-segment-id={path.id}
+      >
+        {path.isDetour && (
+          <Tooltip permanent direction="top" offset={[0, -8]} className={`route-detour-label ${detourLabelClass}`}>
+            {path.name}
+          </Tooltip>
+        )}
+      </Polyline>
     </>
   );
 }
@@ -130,12 +166,17 @@ function LocalRouteMapFallback({ paths }: { paths: RoutePath[] }) {
     const scaleY = (lat: number) => offsetY + (1 - (lat - viewMinLat) / rangeY) * routeHeightPx;
 
     return {
-      svgPaths: paths.map((path) => ({
-        ...path,
-        d: path.coordinates
-          .map(([lat, lng], index) => `${index === 0 ? "M" : "L"}${scaleX(lng).toFixed(1)},${scaleY(lat).toFixed(1)}`)
-          .join(" "),
-      })),
+      svgPaths: paths.map((path) => {
+        const [labelLat, labelLng] = path.coordinates[Math.floor(path.coordinates.length / 2)];
+        return {
+          ...path,
+          d: path.coordinates
+            .map(([lat, lng], index) => `${index === 0 ? "M" : "L"}${scaleX(lng).toFixed(1)},${scaleY(lat).toFixed(1)}`)
+            .join(" "),
+          labelX: scaleX(labelLng),
+          labelY: scaleY(labelLat) - 12,
+        };
+      }),
       places: placesGeo.features.map((place) => ({
         x: scaleX(place.geometry.coordinates[0]),
         y: scaleY(place.geometry.coordinates[1]),
@@ -168,13 +209,19 @@ function LocalRouteMapFallback({ paths }: { paths: RoutePath[] }) {
           <path
             d={path.d}
             fill="none"
-            stroke={path.isStaged ? "#0075de" : path.isDefault ? "#1a1a1a" : "#999"}
-            strokeWidth={path.isStaged ? 5 : path.isDefault ? 2.5 : 1.5}
+            stroke={path.isStaged ? "#0075de" : path.isDefault ? path.profileColor : "#999"}
+            strokeWidth={path.isStaged ? 5 : path.isDefault ? 4 : 1}
             strokeDasharray={path.isStaged || path.isDefault ? undefined : "4 4"}
-            opacity={path.isDefault ? 1 : 0.6}
+            opacity={path.isStaged || path.isDefault ? 1 : 0.25}
             data-staged={path.isStaged || undefined}
-            className={path.isStaged ? "segment-path--staged-reduced" : undefined}
+            data-segment-id={path.id}
+            className={path.isStaged ? "segment-path--staged-reduced" : path.isDefault ? `segment-path--own segment-path--${path.profileId}` : "segment-path--background"}
           />
+          {path.isDetour && (
+            <text x={path.labelX} y={path.labelY} className={`route-detour-label ${path.isStaged ? "route-detour-label--staged" : `route-detour-label--${path.profileId}`}`}>
+              {path.name}
+            </text>
+          )}
         </g>
       ))}
       {places.map((place) => (
@@ -196,7 +243,7 @@ function LocalRouteMapFallback({ paths }: { paths: RoutePath[] }) {
   );
 }
 
-export default function LocalRouteMap({ defaultSegmentIds, stagedMappingIds, mappings }: LocalRouteMapProps) {
+export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultSegmentIds, stagedMappingIds, mappings }: LocalRouteMapProps) {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(
     () => typeof window !== "undefined" && (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false),
   );
@@ -215,6 +262,7 @@ export default function LocalRouteMap({ defaultSegmentIds, stagedMappingIds, map
     const lngs = allCoords.map((coordinate) => coordinate[0]);
     const lats = allCoords.map((coordinate) => coordinate[1]);
     const stagedIds = new Set(stagedMappingIds);
+    const profile = PROFILE_ROUTE_DETAILS[profileId] ?? PROFILE_ROUTE_DETAILS[DEFAULT_PROFILE_ID];
     return {
       paths: segmentsGeo.features.map((feature) => {
         const id = feature.properties.id;
@@ -224,6 +272,9 @@ export default function LocalRouteMap({ defaultSegmentIds, stagedMappingIds, map
           coordinates: (feature.geometry.coordinates as number[][]).map(([lng, lat]) => [lat, lng]),
           isDefault: defaultSegmentIds.includes(id),
           isStaged: mappings.some((mapping) => stagedIds.has(mapping.id) && mapping.segmentIds.includes(id)),
+          isDetour: defaultSegmentIds.includes(id) && /(?:alternate|detour|bypass)/i.test(feature.properties.segmentName),
+          profileId,
+          profileColor: profile.color,
         } as RoutePath;
       }),
       bounds: [
@@ -231,14 +282,18 @@ export default function LocalRouteMap({ defaultSegmentIds, stagedMappingIds, map
         [Math.max(...lats), Math.max(...lngs)],
       ] as LatLngBoundsExpression,
     };
-  }, [defaultSegmentIds, mappings, stagedMappingIds]);
+  }, [defaultSegmentIds, mappings, profileId, stagedMappingIds]);
 
   const stagedCount = stagedMappingIds.length;
+  const profile = PROFILE_ROUTE_DETAILS[profileId] ?? PROFILE_ROUTE_DETAILS[DEFAULT_PROFILE_ID];
 
   return (
     <section aria-label="Local route map">
       <div className="map-header">
         <span className="map-disclaimer">Illustrative local route diagram — not navigation</span>
+        <span data-testid="profile-route-caption" className={`profile-route-caption profile-route-caption--${profileId}`} style={{ color: profile.color }}>
+          Your route as a {profile.label} — {profile.note}
+        </span>
         {stagedCount > 0 && (
           <span className="map-staged-chip" aria-label={`${stagedCount} staged plan ${stagedCount === 1 ? "overlay" : "overlays"} awaiting your review`}>
             <span className="map-staged-chip__dot" aria-hidden="true" />
