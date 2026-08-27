@@ -549,7 +549,7 @@ button:disabled {
 }
 
 .segment-path__glow {
-  filter: drop-shadow(0 0 3px rgba(0, 117, 222, 0.55));
+  filter: drop-shadow(0 0 6px rgba(11, 139, 255, 0.8));
 }
 
 .segment-path--staged {

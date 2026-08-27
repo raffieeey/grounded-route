@@ -48,6 +48,7 @@ function FitRouteBounds({ bounds }: { bounds: LatLngBoundsExpression }) {
 
 function RoutePolyline({ path, prefersReducedMotion }: { path: RoutePath; prefersReducedMotion: boolean }) {
   const ref = useRef<LeafletPolyline | null>(null);
+  const glowRef = useRef<LeafletPolyline | null>(null);
   const stagedClass = path.isStaged
     ? prefersReducedMotion
       ? "segment-path--staged-reduced"
@@ -68,12 +69,21 @@ function RoutePolyline({ path, prefersReducedMotion }: { path: RoutePath; prefer
     }
   }, [path.isStaged, stagedClass]);
 
+  // The glow polyline: Leaflet does not reliably attach pathOptions.className to
+  // its SVG element, so tag the class on the rendered element ourselves.
+  useEffect(() => {
+    const glowEl = glowRef.current?.getElement();
+    if (!glowEl) return;
+    glowEl.classList.add("segment-path__glow");
+  }, [path.isStaged]);
+
   return (
     <>
       {path.isStaged && (
         <Polyline
+          ref={glowRef}
           positions={path.coordinates}
-          pathOptions={{ color: "#0075de", weight: 9, opacity: 0.2, className: "segment-path__glow" }}
+          pathOptions={{ color: "#0b8bff", weight: 14, opacity: 0.35 }}
           interactive={false}
           aria-hidden="true"
         />
