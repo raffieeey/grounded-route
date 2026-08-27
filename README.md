@@ -69,10 +69,10 @@ npm run typecheck && npm run lint && npm run build
 
 ## Project status
 
-- **Stage:** M0 fixture, human-first workspace, WebMCP adapter, native local-Chrome execution proof, OSM visible attribution, and the FDN-009 visible-agent wow pass are implemented and verified on `main`.
+- **Stage:** M0+ — fixture, human-first workspace, WebMCP adapter, real OSM basemap with divergent real-street routes per profile, visible agent activity (wow pass), native local-Chrome execution proof, OSM visible attribution — implemented and verified on `main`.
 - **Repository visibility:** public. Third-party terms are resolved — see [the third-party data manifest](data/THIRD_PARTY_DATA_MANIFEST.md) (OSM ODbL attribution implemented; DBKL resolved as citation-as-reference with no copied content).
 - **Canonical design:** [docs/TECHNICAL_DESIGN.md](docs/TECHNICAL_DESIGN.md)
-- **Independent design review:** [docs/reviews/sol-tdd-review.md](docs/reviews/sol-tdd-review.md)
+- **Docs guide:** [docs/README.md](docs/README.md) — what each docs folder is, including the multi-model review process archive
 - **Data contract:** [data/README.md](data/README.md)
 - **Fixture gate:** [data/FIXTURE_FREEZE_CHECKLIST.md](data/FIXTURE_FREEZE_CHECKLIST.md)
 - **Third-party data manifest:** [data/THIRD_PARTY_DATA_MANIFEST.md](data/THIRD_PARTY_DATA_MANIFEST.md)

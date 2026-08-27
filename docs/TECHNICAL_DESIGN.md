@@ -491,7 +491,7 @@ The committed evaluation fixture defines prompt, initial state, allowed tools, e
 
 ### 12.1 Sol review disposition
 
-Sol's independent review is retained at `docs/reviews/sol-tdd-review.md`. This v0.2 incorporates SOL-001 through SOL-008:
+Sol's independent review is retained at `docs/process-archive/sol-tdd-review.md`. This v0.2 incorporates SOL-001 through SOL-008:
 
 - source claims are separated from reviewed spatial interpretations;
 - consent is bound to an exact revision/snapshot and invalidated by mutation;

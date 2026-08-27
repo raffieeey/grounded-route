@@ -138,7 +138,7 @@ npm run build
 - StrictMode lifecycle regression coverage: exactly six raw WebMCP registrations; no re-registration after resident state updates; cleanup aborts active registrations.
 - Mobile accessibility visual repair: 44px computed minimum button height at 390×844, label halo/stagger layout, mobile profile grid, and aligned audit rows.
 - Evidence: `docs/evidence/fdn-002-frontend-evidence.md` and `docs/evidence/fdn-002-visual-qa.md`.
-- Independent review: `docs/reviews/deepseek-flash-visual-final-review.md` **PASS**.
+- Independent review: `docs/process-archive/deepseek-flash-visual-final-review.md` **PASS**.
 
 ### Acceptance evidence
 
@@ -180,7 +180,7 @@ npm run build
 - No automatic request/tracking was introduced; the attribution is a user-followable static link.
 - WebMCP inventory remains six narrow tools with no export, attribution, copy, download, or approval capability.
 - FDN-006 evidence: `docs/evidence/fdn-006-osm-attribution-implementation.md`.
-- Independent DeepSeek Flash review: `docs/reviews/deepseek-flash-osm-attribution-review.md` — **PASS**.
+- Independent DeepSeek Flash review: `docs/process-archive/deepseek-flash-osm-attribution-review.md` — **PASS**.
 
 ### Acceptance evidence
 
