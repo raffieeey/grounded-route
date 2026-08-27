@@ -1,7 +1,7 @@
 {
-  "fixtureVersion": "m0-2026-08-26",
+  "fixtureVersion": "fdn-012-2026-08-27",
   "scenarioId": "saloma-link-active-mobility-demo",
-  "areaName": "KL Central / Saloma Link illustrative corridor",
+  "areaName": "Kampung Baru / Saloma Link / Jalan Ampang illustrative corridor",
   "reviewer": "M0 Fixture Reviewer",
   "reviewDate": "2026-08-26",
   "sourceClaimIds": [
@@ -13,20 +13,21 @@
     "sc-06"
   ],
   "segmentIds": [
-    "seg-kl-central-to-jalan-travers",
-    "seg-jalan-travers-crossing",
-    "seg-jalan-travers-to-jalan-tun-sambanthan",
-    "seg-tun-sambanthan-plaza-crossing",
-    "seg-plaza-to-saloma-south",
-    "seg-saloma-link-bridge",
-    "seg-saloma-north-to-jalan-ampang",
-    "seg-jalan-ampang-crossing-east",
-    "seg-jalan-ampang-to-demo-school",
-    "seg-demo-school-frontage",
-    "seg-cyclist-bypass-west",
-    "seg-saloma-elevator-ramp",
-    "seg-parent-stroller-route",
-    "seg-wheelchair-alternate"
+    "seg-jalan-haji-hassan-salleh",
+    "seg-jalan-sungai-baru",
+    "seg-lorong-raja-muda-musa-1",
+    "seg-saloma-north-access-footway",
+    "seg-saloma-north-stairs",
+    "seg-saloma-elevator-bridge-approach",
+    "seg-saloma-link-main-bridge",
+    "seg-saloma-south-slope",
+    "seg-saloma-south-access-footway",
+    "seg-saloma-plaza-crossing-link",
+    "seg-jalan-saloma-road-bypass",
+    "seg-jalan-saloma-sidewalk",
+    "seg-jalan-ampang-signal-crossing",
+    "seg-jalan-ampang-crossing-link",
+    "seg-klcc-edge-sidewalk"
   ],
   "mappingIds": [
     "map-01",
@@ -46,10 +47,18 @@
   ],
   "validationCommand": "python3 scripts/validate_fixture.py",
   "knownUncertainties": [
-    "Exact implementation timing and segment boundaries are unverified",
-    "OSM-derived/demo geometry is illustrative and not field-surveyed",
-    "Accessibility retrofit status of Saloma Link is unknown"
+    "Exact implementation timing and policy-to-segment effect are unverified",
+    "OSM-derived geometry follows mapped ways but is not a field survey or navigation instruction",
+    "Saloma Link lift operation, surface condition, and actual accessibility require field verification"
   ],
+  "geometrySource": {
+    "provider": "OpenStreetMap via Overpass API",
+    "queryEndpoint": "https://overpass-api.de/api/interpreter",
+    "retrievedDate": "2026-08-27",
+    "extractionMethod": "Selected full OSM way polylines and one ordered contiguous composite of plaza footways/crossing; each segment records its source way ID(s) in route_segments.geojson. The Saloma elevator approach also records OSM node 7146945539.",
+    "wayIds": ["169064885", "776974154", "169064905", "765200305", "765200304", "1237772915", "765200301", "765200306", "507063859", "1424318962", "1424318963", "1301010392", "766409728", "1173851759", "732632239", "732632238", "1344488622"],
+    "attribution": "© OpenStreetMap contributors, ODbL"
+  },
   "publicReleaseStatus": "approved",
   "publicReleaseDecision": "2026-08-26: DBKL resolved as citation-as-reference (title/page/URL only, no copied content); OSM ODbL attribution implemented and verified. See data/THIRD_PARTY_DATA_MANIFEST.md."
 }

@@ -6,16 +6,43 @@
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [101.686, 3.134],
-          [101.687, 3.135],
-          [101.688, 3.136]
+          [
+            101.7057985,
+            3.1609804
+          ],
+          [
+            101.705759,
+            3.1610041
+          ],
+          [
+            101.7057283,
+            3.161044
+          ],
+          [
+            101.7056527,
+            3.1612243
+          ],
+          [
+            101.7055379,
+            3.1615624
+          ],
+          [
+            101.7053676,
+            3.1620824
+          ]
         ]
       },
       "properties": {
-        "id": "seg-kl-central-to-jalan-travers",
-        "segmentName": "KL Central to Jalan Travers footway",
-        "tags": ["footway", "sidewalk"],
-        "lengthMeters": 320
+        "id": "seg-jalan-haji-hassan-salleh",
+        "segmentName": "Jalan Haji Hassan Salleh residential street",
+        "tags": [
+          "residential-road",
+          "asphalt"
+        ],
+        "lengthMeters": 133,
+        "osmWayIds": [
+          "169064885"
+        ]
       }
     },
     {
@@ -23,15 +50,35 @@
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [101.688, 3.136],
-          [101.689, 3.137]
+          [
+            101.7057985,
+            3.1609804
+          ],
+          [
+            101.7063734,
+            3.1610731
+          ],
+          [
+            101.7071728,
+            3.1611795
+          ],
+          [
+            101.7077408,
+            3.1612601
+          ]
         ]
       },
       "properties": {
-        "id": "seg-jalan-travers-crossing",
-        "segmentName": "Jalan Travers signalised crossing",
-        "tags": ["crossing", "footway"],
-        "lengthMeters": 120
+        "id": "seg-jalan-sungai-baru",
+        "segmentName": "Jalan Sungai Baru residential street",
+        "tags": [
+          "residential-road",
+          "asphalt"
+        ],
+        "lengthMeters": 218,
+        "osmWayIds": [
+          "776974154"
+        ]
       }
     },
     {
@@ -39,16 +86,59 @@
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [101.689, 3.137],
-          [101.690, 3.138],
-          [101.691, 3.139]
+          [
+            101.7077408,
+            3.1612601
+          ],
+          [
+            101.7076897,
+            3.1613436
+          ],
+          [
+            101.707557,
+            3.1615603
+          ],
+          [
+            101.7074763,
+            3.161692
+          ],
+          [
+            101.7074145,
+            3.1617982
+          ],
+          [
+            101.7073726,
+            3.1618702
+          ],
+          [
+            101.7073431,
+            3.1619209
+          ],
+          [
+            101.707267,
+            3.1620605
+          ],
+          [
+            101.7071486,
+            3.1622764
+          ],
+          [
+            101.7070571,
+            3.1624518
+          ]
         ]
       },
       "properties": {
-        "id": "seg-jalan-travers-to-jalan-tun-sambanthan",
-        "segmentName": "Jalan Travers to Jalan Tun Sambanthan",
-        "tags": ["footway", "steps"],
-        "lengthMeters": 280
+        "id": "seg-lorong-raja-muda-musa-1",
+        "segmentName": "Lorong Raja Muda Musa 1 connector",
+        "tags": [
+          "residential-road",
+          "asphalt"
+        ],
+        "lengthMeters": 153,
+        "osmWayIds": [
+          "169064905"
+        ]
       }
     },
     {
@@ -56,15 +146,30 @@
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [101.691, 3.139],
-          [101.692, 3.140]
+          [
+            101.7076897,
+            3.1613436
+          ],
+          [
+            101.7078425,
+            3.1614369
+          ],
+          [
+            101.7078518,
+            3.1614609
+          ]
         ]
       },
       "properties": {
-        "id": "seg-tun-sambanthan-plaza-crossing",
-        "segmentName": "Tun Sambanthan plaza crossing",
-        "tags": ["crossing", "pedestrian-plaza"],
-        "lengthMeters": 90
+        "id": "seg-saloma-north-access-footway",
+        "segmentName": "Saloma Link north access footway",
+        "tags": [
+          "footway"
+        ],
+        "lengthMeters": 23,
+        "osmWayIds": [
+          "765200305"
+        ]
       }
     },
     {
@@ -72,15 +177,35 @@
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [101.692, 3.140],
-          [101.693, 3.141]
+          [
+            101.7078425,
+            3.1614369
+          ],
+          [
+            101.7078968,
+            3.161462
+          ],
+          [
+            101.7078816,
+            3.1614978
+          ],
+          [
+            101.7078345,
+            3.1614798
+          ]
         ]
       },
       "properties": {
-        "id": "seg-plaza-to-saloma-south",
-        "segmentName": "Plaza to Saloma Link south approach",
-        "tags": ["footway", "slope"],
-        "lengthMeters": 150
+        "id": "seg-saloma-north-stairs",
+        "segmentName": "Saloma Link north stair shortcut",
+        "tags": [
+          "steps",
+          "footway"
+        ],
+        "lengthMeters": 17,
+        "osmWayIds": [
+          "765200304"
+        ]
       }
     },
     {
@@ -88,15 +213,39 @@
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [101.693, 3.141],
-          [101.694, 3.142]
+          [
+            101.7077741,
+            3.1614383
+          ],
+          [
+            101.7078345,
+            3.1614798
+          ],
+          [
+            101.7078518,
+            3.1614609
+          ],
+          [
+            101.7080099,
+            3.1612697
+          ]
         ]
       },
       "properties": {
-        "id": "seg-saloma-link-bridge",
-        "segmentName": "Saloma Link bridge walkway",
-        "tags": ["footway", "bridge", "steps"],
-        "lengthMeters": 180
+        "id": "seg-saloma-elevator-bridge-approach",
+        "segmentName": "Saloma Link elevator bridge approach",
+        "tags": [
+          "footway",
+          "bridge",
+          "elevator"
+        ],
+        "lengthMeters": 39,
+        "osmWayIds": [
+          "1237772915"
+        ],
+        "osmNodeIds": [
+          "7146945539"
+        ]
       }
     },
     {
@@ -104,15 +253,28 @@
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [101.694, 3.142],
-          [101.695, 3.143]
+          [
+            101.7080099,
+            3.1612697
+          ],
+          [
+            101.7084433,
+            3.160753
+          ]
         ]
       },
       "properties": {
-        "id": "seg-saloma-north-to-jalan-ampang",
-        "segmentName": "Saloma Link north to Jalan Ampang",
-        "tags": ["footway", "sidewalk"],
-        "lengthMeters": 140
+        "id": "seg-saloma-link-main-bridge",
+        "segmentName": "Saloma Link main bridge",
+        "tags": [
+          "footway",
+          "bridge",
+          "dismount"
+        ],
+        "lengthMeters": 75,
+        "osmWayIds": [
+          "765200301"
+        ]
       }
     },
     {
@@ -120,15 +282,48 @@
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [101.695, 3.143],
-          [101.696, 3.144]
+          [
+            101.7084433,
+            3.160753
+          ],
+          [
+            101.7089998,
+            3.1609597
+          ],
+          [
+            101.7091912,
+            3.1606538
+          ],
+          [
+            101.7092511,
+            3.1604149
+          ],
+          [
+            101.709276,
+            3.1603674
+          ],
+          [
+            101.7093016,
+            3.1603471
+          ],
+          [
+            101.7093596,
+            3.1602843
+          ]
         ]
       },
       "properties": {
-        "id": "seg-jalan-ampang-crossing-east",
-        "segmentName": "Jalan Ampang crossing east",
-        "tags": ["crossing", "footway"],
-        "lengthMeters": 110
+        "id": "seg-saloma-south-slope",
+        "segmentName": "Saloma Link south sloping approach",
+        "tags": [
+          "footway",
+          "slope",
+          "dismount"
+        ],
+        "lengthMeters": 153,
+        "osmWayIds": [
+          "765200306"
+        ]
       }
     },
     {
@@ -136,15 +331,48 @@
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [101.696, 3.144],
-          [101.697, 3.145]
+          [
+            101.7098503,
+            3.1594299
+          ],
+          [
+            101.7098325,
+            3.1594734
+          ],
+          [
+            101.7097831,
+            3.1595447
+          ],
+          [
+            101.7094551,
+            3.1601288
+          ],
+          [
+            101.7093792,
+            3.160264
+          ],
+          [
+            101.7093596,
+            3.1602843
+          ],
+          [
+            101.7094222,
+            3.1602808
+          ]
         ]
       },
       "properties": {
-        "id": "seg-jalan-ampang-to-demo-school",
-        "segmentName": "Jalan Ampang to Demo School corridor",
-        "tags": ["footway", "shared-path"],
-        "lengthMeters": 260
+        "id": "seg-saloma-south-access-footway",
+        "segmentName": "Saloma Link south access footway",
+        "tags": [
+          "footway",
+          "stroller-friendly",
+          "wheelchair-tagged"
+        ],
+        "lengthMeters": 117,
+        "osmWayIds": [
+          "507063859"
+        ]
       }
     },
     {
@@ -152,15 +380,47 @@
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [101.697, 3.145],
-          [101.698, 3.146]
+          [
+            101.7098503,
+            3.1594299
+          ],
+          [
+            101.709857,
+            3.1594018
+          ],
+          [
+            101.709886,
+            3.1594012
+          ],
+          [
+            101.7099281,
+            3.1594142
+          ],
+          [
+            101.7099421,
+            3.1594194
+          ],
+          [
+            101.7100073,
+            3.159448
+          ]
         ]
       },
       "properties": {
-        "id": "seg-demo-school-frontage",
-        "segmentName": "Demo School frontage walkway",
-        "tags": ["footway", "drop-off-zone-nearby"],
-        "lengthMeters": 80
+        "id": "seg-saloma-plaza-crossing-link",
+        "segmentName": "Saloma Link plaza footways and marked crossing",
+        "tags": [
+          "footway",
+          "crossing",
+          "stroller-friendly",
+          "wheelchair-tagged"
+        ],
+        "lengthMeters": 21,
+        "osmWayIds": [
+          "1424318962",
+          "1424318963",
+          "1301010392"
+        ]
       }
     },
     {
@@ -168,16 +428,51 @@
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [101.690, 3.138],
-          [101.691, 3.139],
-          [101.692, 3.140]
+          [
+            101.7094222,
+            3.1602808
+          ],
+          [
+            101.7094987,
+            3.160154
+          ],
+          [
+            101.7095194,
+            3.1601197
+          ],
+          [
+            101.7098728,
+            3.1595343
+          ],
+          [
+            101.7098819,
+            3.1595192
+          ],
+          [
+            101.7099421,
+            3.1594194
+          ],
+          [
+            101.7099712,
+            3.1593713
+          ],
+          [
+            101.7100062,
+            3.1593133
+          ]
         ]
       },
       "properties": {
-        "id": "seg-cyclist-bypass-west",
-        "segmentName": "Cyclist bypass west loop",
-        "tags": ["cycleway", "shared-path"],
-        "lengthMeters": 310
+        "id": "seg-jalan-saloma-road-bypass",
+        "segmentName": "Jalan Saloma service-road bypass",
+        "tags": [
+          "service-road",
+          "asphalt"
+        ],
+        "lengthMeters": 126,
+        "osmWayIds": [
+          "766409728"
+        ]
       }
     },
     {
@@ -185,15 +480,37 @@
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [101.693, 3.141],
-          [101.694, 3.142]
+          [
+            101.7102705,
+            3.1596015
+          ],
+          [
+            101.710149,
+            3.1595203
+          ],
+          [
+            101.7100555,
+            3.1594672
+          ],
+          [
+            101.7100073,
+            3.159448
+          ]
         ]
       },
       "properties": {
-        "id": "seg-saloma-elevator-ramp",
-        "segmentName": "Saloma Link elevator and ramp approach",
-        "tags": ["footway", "ramp", "elevator"],
-        "lengthMeters": 100
+        "id": "seg-jalan-saloma-sidewalk",
+        "segmentName": "Jalan Saloma sidewalk",
+        "tags": [
+          "footway",
+          "sidewalk",
+          "tactile-paving",
+          "wheelchair-tagged"
+        ],
+        "lengthMeters": 34,
+        "osmWayIds": [
+          "1173851759"
+        ]
       }
     },
     {
@@ -201,16 +518,85 @@
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [101.688, 3.136],
-          [101.689, 3.137],
-          [101.690, 3.138]
+          [
+            101.7102705,
+            3.1596015
+          ],
+          [
+            101.7102665,
+            3.1595267
+          ],
+          [
+            101.7102588,
+            3.1594037
+          ],
+          [
+            101.7102489,
+            3.1592871
+          ],
+          [
+            101.7102398,
+            3.1591989
+          ],
+          [
+            101.710363,
+            3.1592088
+          ],
+          [
+            101.7104937,
+            3.159228
+          ],
+          [
+            101.7105858,
+            3.15924
+          ],
+          [
+            101.7105853,
+            3.1593488
+          ],
+          [
+            101.7105843,
+            3.1594654
+          ],
+          [
+            101.7105825,
+            3.1595486
+          ],
+          [
+            101.7105008,
+            3.1595453
+          ],
+          [
+            101.7104004,
+            3.1595412
+          ],
+          [
+            101.7103662,
+            3.1595398
+          ],
+          [
+            101.7103278,
+            3.159575
+          ],
+          [
+            101.7102866,
+            3.1596129
+          ]
         ]
       },
       "properties": {
-        "id": "seg-parent-stroller-route",
-        "segmentName": "Parent stroller route via Jalan Travers",
-        "tags": ["footway", "wide-sidewalk"],
-        "lengthMeters": 290
+        "id": "seg-jalan-ampang-signal-crossing",
+        "segmentName": "Jalan Ampang signalised crossing",
+        "tags": [
+          "footway",
+          "crossing",
+          "signalised",
+          "wheelchair-tagged"
+        ],
+        "lengthMeters": 154,
+        "osmWayIds": [
+          "732632239"
+        ]
       }
     },
     {
@@ -218,18 +604,163 @@
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [101.692, 3.140],
-          [101.693, 3.141],
-          [101.694, 3.142],
-          [101.695, 3.143]
+          [
+            101.7106744,
+            3.1590819
+          ],
+          [
+            101.7106283,
+            3.1591088
+          ],
+          [
+            101.7105876,
+            3.1591353
+          ]
         ]
       },
       "properties": {
-        "id": "seg-wheelchair-alternate",
-        "segmentName": "Wheelchair alternate route avoiding steps",
-        "tags": ["footway", "ramp", "tactile-paving"],
-        "lengthMeters": 420
+        "id": "seg-jalan-ampang-crossing-link",
+        "segmentName": "Jalan Ampang crossing link",
+        "tags": [
+          "footway",
+          "crossing",
+          "signalised"
+        ],
+        "lengthMeters": 11,
+        "osmWayIds": [
+          "732632238"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            101.7115367,
+            3.159106
+          ],
+          [
+            101.7115636,
+            3.1590674
+          ],
+          [
+            101.7115867,
+            3.159014
+          ],
+          [
+            101.7115985,
+            3.1589761
+          ],
+          [
+            101.7116034,
+            3.1589408
+          ],
+          [
+            101.7115999,
+            3.1589036
+          ],
+          [
+            101.7115938,
+            3.1588652
+          ],
+          [
+            101.7115833,
+            3.1588364
+          ],
+          [
+            101.7115498,
+            3.1587861
+          ],
+          [
+            101.7114262,
+            3.1586605
+          ],
+          [
+            101.7113733,
+            3.158611
+          ],
+          [
+            101.71133,
+            3.1585746
+          ],
+          [
+            101.7111952,
+            3.1584583
+          ],
+          [
+            101.7111445,
+            3.1584093
+          ],
+          [
+            101.7110835,
+            3.1583504
+          ],
+          [
+            101.7109788,
+            3.1582609
+          ],
+          [
+            101.7109103,
+            3.158234
+          ],
+          [
+            101.7108428,
+            3.1582428
+          ],
+          [
+            101.7108006,
+            3.1582597
+          ],
+          [
+            101.7107642,
+            3.1582943
+          ],
+          [
+            101.7107485,
+            3.1583344
+          ],
+          [
+            101.7106799,
+            3.1585619
+          ],
+          [
+            101.7106448,
+            3.1587113
+          ],
+          [
+            101.710622,
+            3.1588906
+          ],
+          [
+            101.7106265,
+            3.1589498
+          ],
+          [
+            101.7106452,
+            3.1590314
+          ],
+          [
+            101.7106744,
+            3.1590819
+          ]
+        ]
+      },
+      "properties": {
+        "id": "seg-klcc-edge-sidewalk",
+        "segmentName": "KLCC edge sidewalk",
+        "tags": [
+          "footway",
+          "sidewalk",
+          "wheelchair-tagged"
+        ],
+        "lengthMeters": 242,
+        "osmWayIds": [
+          "1344488622"
+        ]
       }
     }
   ]
 }
+
