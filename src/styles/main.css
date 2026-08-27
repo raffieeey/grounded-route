@@ -551,9 +551,9 @@ button:disabled {
   }
 }
 
-.leaflet-tooltip.route-detour-label--profile-wheelchair, .route-detour-label--profile-wheelchair { color: #7c3aed; }
+.leaflet-tooltip.route-detour-label--profile-wheelchair, .route-detour-label--profile-wheelchair { color: #6d28d9; }
 .leaflet-tooltip.route-detour-label--profile-parent, .route-detour-label--profile-parent { color: #d97706; }
-.leaflet-tooltip.route-detour-label--profile-cyclist, .route-detour-label--profile-cyclist { color: #059669; }
+.leaflet-tooltip.route-detour-label--profile-cyclist, .route-detour-label--profile-cyclist { color: #0f766e; }
 .leaflet-tooltip.route-detour-label--staged, .route-detour-label--staged { color: #0075de; }
 
 .local-route-map--fallback .route-detour-label {
@@ -690,9 +690,13 @@ button:disabled {
 /* Mobile compact above-fold (FDN-008 V4) */
 @media (max-width: 600px) {
   .disclaimer {
-    padding: 8px 10px;
-    font-size: 0.8rem;
-    margin-bottom: 10px;
+    padding: 5px 8px;
+    font-size: 0.72rem;
+    color: #6b7280;
+    margin-bottom: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .value-prop {
     font-size: 0.95rem;
@@ -810,6 +814,22 @@ button:disabled {
   font-size: 15px;
   line-height: 1;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  position: relative;
+}
+
+.works-chip__count {
+  position: absolute;
+  right: -8px;
+  bottom: -7px;
+  min-width: 18px;
+  padding: 1px 3px;
+  border: 1px solid #78350f;
+  border-radius: 999px;
+  background: #fff;
+  color: #78350f;
+  font-size: 9px;
+  font-weight: 800;
+  text-align: center;
 }
 
 .works-marker-label {

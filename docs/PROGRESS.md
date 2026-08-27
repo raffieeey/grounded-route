@@ -342,3 +342,26 @@ Evidence: `docs/evidence/fdn-011-profile-route-distinction.md`.
   FDN-011 focused color, caption, switch, staged-precedence, and fallback tests.
 - `workflow:check`, `fixture:check`, `tdd:check`, typecheck, lint, and build
   pass.
+
+## FDN-014 — Works-chip declutter and route-hue binding (private candidate)
+
+**Status:** Implemented on `feat/works-chips-polish`; not pushed. Evidence:
+`docs/evidence/fdn-014-chips-polish.md`.
+
+### Completed
+
+- Nearby staged-works markers are grouped at 60m, receive a count badge, and
+  preserve the stair-shortcut accessibility label by suppressing its nearest
+  overlapping works cluster.
+- Edge-aware chip placement avoids the zoom control and right/bottom label
+  clipping. Wheelchair, parent, and cyclist route/caption hues are now
+  `#6d28d9`, `#d97706`, and `#0f766e` respectively.
+- The mobile disclaimer remains complete in the DOM while rendering as a
+  lighter 0.72rem ellipsized line; the V6 browser test confirms the staged
+  verdict delta fits inside 390×844.
+
+### Acceptance evidence
+
+- Focused UI tests cover distance clustering, stairs-label protection, and
+  updated profile hues; the V6 browser test covers the staged verdict fold.
+- Full verification results are recorded in the FDN-014 evidence file.
