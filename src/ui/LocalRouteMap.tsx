@@ -32,9 +32,9 @@ interface LocalRouteMapProps {
 }
 
 const PROFILE_ROUTE_DETAILS: Record<string, { label: string; color: string; note: string }> = {
-  "profile-wheelchair": { label: "Wheelchair user", color: "#7c3aed", note: "avoids steps" },
+  "profile-wheelchair": { label: "Wheelchair user", color: "#6d28d9", note: "avoids steps" },
   "profile-parent": { label: "School-pickup parent", color: "#d97706", note: "uses the north stair shortcut" },
-  "profile-cyclist": { label: "Cyclist", color: "#059669", note: "uses a real road detour" },
+  "profile-cyclist": { label: "Cyclist", color: "#0f766e", note: "uses a real road detour" },
 };
 
 const DEFAULT_PROFILE_ID = "profile-wheelchair";
@@ -48,6 +48,65 @@ interface RoutePath {
   isDetour: boolean;
   profileId: string;
   profileColor: string;
+}
+
+interface WorksMarker {
+  lat: number;
+  lng: number;
+  segmentId: string;
+}
+
+interface WorksCluster {
+  lat: number;
+  lng: number;
+  segmentIds: string[];
+  count: number;
+}
+
+const WORKS_CLUSTER_DISTANCE_METERS = 120;
+const STAIRS_LABEL_CLEARANCE_METERS = 220;
+
+function distanceInMeters(a: Pick<WorksMarker, "lat" | "lng">, b: Pick<WorksMarker, "lat" | "lng">) {
+  const earthRadiusMeters = 6_371_000;
+  const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
+  const deltaLat = toRadians(b.lat - a.lat);
+  const deltaLng = toRadians(b.lng - a.lng);
+  const startLat = toRadians(a.lat);
+  const endLat = toRadians(b.lat);
+  const haversine = Math.sin(deltaLat / 2) ** 2 + Math.cos(startLat) * Math.cos(endLat) * Math.sin(deltaLng / 2) ** 2;
+  return earthRadiusMeters * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
+}
+
+/** Groups staged works that would otherwise render as one overlapping chip cluster. */
+export function clusterWorksMarkers(markers: WorksMarker[]): WorksCluster[] {
+  const assigned = new Set<number>();
+  const clusters: WorksCluster[] = [];
+
+  markers.forEach((_marker, index) => {
+    if (assigned.has(index)) return;
+    const memberIndexes = [index];
+    assigned.add(index);
+
+    for (let cursor = 0; cursor < memberIndexes.length; cursor += 1) {
+      const member = markers[memberIndexes[cursor]];
+      markers.forEach((candidate, candidateIndex) => {
+        if (!assigned.has(candidateIndex) && distanceInMeters(member, candidate) < WORKS_CLUSTER_DISTANCE_METERS) {
+          assigned.add(candidateIndex);
+          memberIndexes.push(candidateIndex);
+        }
+      });
+    }
+
+    const members = memberIndexes.map((memberIndex) => markers[memberIndex]);
+    clusters.push({
+      lat: members.reduce((sum, member) => sum + member.lat, 0) / members.length,
+      lng: members.reduce((sum, member) => sum + member.lng, 0) / members.length,
+      segmentIds: members.map((member) => member.segmentId),
+      count: members.length,
+    });
+  });
+
+  return clusters;
 }
 
 function FitRouteBounds({ bounds }: { bounds: LatLngBoundsExpression }) {
@@ -125,7 +184,7 @@ function RoutePolyline({ path, prefersReducedMotion }: { path: RoutePath; prefer
             pathOptions={{
               color: "#f59e0b",
               weight: 9,
-              opacity: 0.85,
+              opacity: 0.9,
               dashArray: "10 8",
               lineCap: "butt",
               className: "segment-path__works",
@@ -279,8 +338,28 @@ export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultS
     const allCoords = segmentsGeo.features.flatMap((feature) => feature.geometry.coordinates as number[][]);
     const lngs = allCoords.map((coordinate) => coordinate[0]);
     const lats = allCoords.map((coordinate) => coordinate[1]);
+    const minLng = Math.min(...lngs);
+    const maxLng = Math.max(...lngs);
+    const minLat = Math.min(...lats);
+    const maxLat = Math.max(...lats);
     const stagedIds = new Set(stagedMappingIds);
     const profile = PROFILE_ROUTE_DETAILS[profileId] ?? PROFILE_ROUTE_DETAILS[DEFAULT_PROFILE_ID];
+    const stairs = segmentsGeo.features.find(
+      (feature) => feature.properties.id === "seg-saloma-north-stairs",
+    );
+    const stairsMarker = stairs
+      ? (() => {
+          const coords = stairs.geometry.coordinates as number[][];
+          const mid = coords[Math.floor(coords.length / 2)];
+          const [midLng, midLat] = mid;
+          return {
+            lat: midLat,
+            lng: midLng,
+            usedByThisProfile: defaultSegmentIds.includes("seg-saloma-north-stairs"),
+            label: "Stair shortcut",
+          };
+        })()
+      : null;
     return {
       paths: segmentsGeo.features.map((feature) => {
         const id = feature.properties.id;
@@ -296,24 +375,10 @@ export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultS
         } as RoutePath;
       }),
       bounds: [
-        [Math.min(...lats), Math.min(...lngs)],
-        [Math.max(...lats), Math.max(...lngs)],
+        [minLat, minLng],
+        [maxLat, maxLng],
       ] as LatLngBoundsExpression,
-      stairsMarker: (() => {
-        const stairs = segmentsGeo.features.find(
-          (feature) => feature.properties.id === "seg-saloma-north-stairs",
-        );
-        if (!stairs) return null;
-        const coords = stairs.geometry.coordinates as number[][];
-        const mid = coords[Math.floor(coords.length / 2)];
-        const [midLng, midLat] = mid;
-        return {
-          lat: midLat,
-          lng: midLng,
-          usedByThisProfile: defaultSegmentIds.includes("seg-saloma-north-stairs"),
-          label: "Stair shortcut",
-        };
-      })(),
+      stairsMarker,
       worksMarkers: (() => {
         // 🚧 at the midpoint of each staged (proposed-works) segment
         if (stagedMappingIds.length === 0) return [];
@@ -322,13 +387,39 @@ export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultS
             .filter((mapping) => stagedIds.has(mapping.id))
             .flatMap((mapping) => mapping.segmentIds),
         );
-        return segmentsGeo.features
+        const rawMarkers = segmentsGeo.features
           .filter((feature) => stagedSegIds.has(feature.properties.id))
           .map((feature) => {
             const coords = feature.geometry.coordinates as number[][];
             const mid = coords[Math.floor(coords.length / 2)];
             return { lat: mid[1], lng: mid[0], segmentId: feature.properties.id };
           });
+        const clusteredMarkers = clusterWorksMarkers(rawMarkers).filter(
+          (cluster) => !stairsMarker || distanceInMeters(cluster, stairsMarker) >= STAIRS_LABEL_CLEARANCE_METERS,
+        );
+        const latRange = Math.max(maxLat - minLat, Number.EPSILON);
+        const lngRange = Math.max(maxLng - minLng, Number.EPSILON);
+
+        return clusteredMarkers.map((marker) => {
+          const isRightEdge = marker.lng >= maxLng - lngRange * 0.08;
+          const isBottomEdge = marker.lat <= minLat + latRange * 0.08;
+          const isTopLeft = marker.lng <= minLng + lngRange * 0.08 && marker.lat >= maxLat - latRange * 0.08;
+          const tooltipDirection: "top" | "right" | "bottom" | "left" = isRightEdge
+            ? "left"
+            : isBottomEdge
+              ? "bottom"
+              : isTopLeft
+                ? "right"
+                : "top";
+
+          return {
+            ...marker,
+            displayLat: isTopLeft ? marker.lat - latRange * 0.045 : marker.lat,
+            displayLng: isTopLeft ? marker.lng + lngRange * 0.05 : marker.lng,
+            tooltipDirection,
+            tooltipOffset: isTopLeft ? [8, 2] as [number, number] : [0, -8] as [number, number],
+          };
+        });
       })(),
     };
   }, [defaultSegmentIds, mappings, profileId, stagedMappingIds]);
@@ -370,17 +461,17 @@ export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultS
           {paths.map((path) => <RoutePolyline key={path.id} path={path} prefersReducedMotion={prefersReducedMotion} />)}
           {worksMarkers.map((marker) => (
             <Marker
-              key={marker.segmentId}
-              position={[marker.lat, marker.lng]}
+              key={marker.segmentIds.join("-")}
+              position={[marker.displayLat, marker.displayLng]}
               icon={L.divIcon({
                 className: "works-marker-icon",
-                html: `<div class="works-chip" role="img" aria-label="Proposed works area">🚧</div>`,
+                html: `<div class="works-chip" role="img" aria-label="Proposed works area${marker.count > 1 ? `, ${marker.count} areas` : ""}">🚧${marker.count > 1 ? `<span class="works-chip__count">+${marker.count - 1}</span>` : ""}</div>`,
                 iconSize: [30, 30],
                 iconAnchor: [15, 15],
               })}
             >
-              <Tooltip permanent direction="top" offset={[0, -8]} className="works-marker-label">
-                Proposed works
+              <Tooltip permanent direction={marker.tooltipDirection} offset={marker.tooltipOffset} className="works-marker-label">
+                Proposed works{marker.count > 1 ? ` ×${marker.count}` : ""}
               </Tooltip>
             </Marker>
           ))}
@@ -407,7 +498,7 @@ export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultS
             const isEndpoint = place.properties.placeType === "origin" || place.properties.placeType === "destination";
             return (
               <CircleMarker key={place.properties.id} center={[lat, lng]} radius={6} pathOptions={{ color: "#fff", weight: 2, fillColor: isEndpoint ? "#0075de" : "#666", fillOpacity: 1 }}>
-                <Tooltip permanent direction="top" offset={[0, -7]}>{place.properties.name}</Tooltip>
+                <Tooltip permanent direction="bottom" offset={[0, 8]}>{place.properties.name}</Tooltip>
               </CircleMarker>
             );
           })}

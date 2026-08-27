@@ -162,7 +162,11 @@ test.describe("FDN-008 route-verdict browser contract", () => {
     const activityBox = await activity.boundingBox();
     expect(activityBox).not.toBeNull();
     expect(activityBox!.y + activityBox!.height).toBeLessThanOrEqual(844);
-    await expect(page.getByText(/With the staged plan overlay/i)).toBeVisible();
+    const stagedDelta = page.getByText(/With the staged plan overlay/i);
+    await expect(stagedDelta).toBeVisible();
+    const stagedDeltaBox = await stagedDelta.boundingBox();
+    expect(stagedDeltaBox).not.toBeNull();
+    expect(stagedDeltaBox!.y + stagedDeltaBox!.height).toBeLessThanOrEqual(844);
   });
 
   test("V6: absent modelContext human flow shows no assistant activity", async ({ page }) => {
