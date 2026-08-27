@@ -1,7 +1,7 @@
 {
-  "fixtureVersion": "fdn-012-2026-08-27",
+  "fixtureVersion": "fdn-013-2026-08-27",
   "scenarioId": "saloma-link-active-mobility-demo",
-  "areaName": "Kampung Baru / Saloma Link / Jalan Ampang illustrative corridor",
+  "areaName": "North Kampung Baru / Saloma Link / KLCC Park illustrative corridor",
   "reviewer": "M0 Fixture Reviewer",
   "reviewDate": "2026-08-26",
   "sourceClaimIds": [
@@ -27,7 +27,10 @@
     "seg-jalan-saloma-sidewalk",
     "seg-jalan-ampang-signal-crossing",
     "seg-jalan-ampang-crossing-link",
-    "seg-klcc-edge-sidewalk"
+    "seg-klcc-edge-sidewalk",
+    "seg-kampung-baru-north-access",
+    "seg-saloma-to-klcc-park-step-free-approach",
+    "seg-jalan-raja-abdullah-sultan-ismail-cycling-detour"
   ],
   "mappingIds": [
     "map-01",
@@ -55,8 +58,8 @@
     "provider": "OpenStreetMap via Overpass API",
     "queryEndpoint": "https://overpass-api.de/api/interpreter",
     "retrievedDate": "2026-08-27",
-    "extractionMethod": "Selected full OSM way polylines and one ordered contiguous composite of plaza footways/crossing; each segment records its source way ID(s) in route_segments.geojson. The Saloma elevator approach also records OSM node 7146945539.",
-    "wayIds": ["169064885", "776974154", "169064905", "765200305", "765200304", "1237772915", "765200301", "765200306", "507063859", "1424318962", "1424318963", "1301010392", "766409728", "1173851759", "732632239", "732632238", "1344488622"],
+    "extractionMethod": "Selected OSM way polylines and ordered contiguous composites for the north Kampung Baru step-free approach, Saloma Link, KLCC Park approach, and cyclist road detour. Composite vertices are selected from the connected source-way polylines without synthetic interpolation; every segment records its OSM way ID(s). The Saloma elevator approach also records OSM node 7146945539.",
+    "wayIds": ["169064885", "776974154", "169064905", "765200305", "765200304", "1237772915", "765200301", "765200306", "507063859", "1424318962", "1424318963", "1301010392", "766409728", "1173851759", "732632239", "732632238", "1344488622", "1224684945", "157203550", "1221744626", "1218681805", "1215718668", "604138343", "816654451", "1246220437", "512608702", "169064889", "1112304750", "512608698", "1466665232", "1246220443", "512608711", "512608710", "1193791714", "1466372517", "1086403291", "1203480554", "777761220", "1160097378", "1160097375", "900774383", "900774380", "1181333474", "900774378", "782211534", "310047957", "1196633436", "1191314317", "164030048", "164030050", "1194672122", "604444106", "676209657", "1356386886", "648785210", "1218157394", "1218157395", "1218157396", "1217567807", "1217567808", "1444092881", "1444092880", "1331842860", "847442148", "1331842865", "699373158", "778047738", "103777537", "1217567815", "732632235", "732632236", "1363236019", "768745243", "768745239", "1465166066", "836257531", "768745268", "165500670", "526585596", "1095850533", "777843219", "615057435", "615057437", "137918335"],
     "attribution": "© OpenStreetMap contributors, ODbL"
   },
   "publicReleaseStatus": "approved",

@@ -4,7 +4,7 @@
 
 ## Scope freeze
 
-- [x] One exact Kuala Lumpur 5–10 block demonstration area named and bounded: Kampung Baru–Saloma Link–Jalan Ampang (FDN-012, 2026-08-27).
+- [x] One exact Kuala Lumpur demonstration corridor named and bounded: north Kampung Baru–Saloma Link–KLCC Park, with a 2.49 km Jalan Raja Abdullah/Jalan Sultan Ismail cyclist detour (FDN-013, 2026-08-27).
 - [ ] One named planning scenario chosen; it is clearly labelled as a curated demonstration scenario.
 - [ ] Three distinct preset profiles are defined: wheelchair user, school-pickup parent, cyclist.
 - [x] Each profile has an explicit fixture route and constraints; no real home address is present.
@@ -17,11 +17,12 @@
 - [ ] No `SourceClaim` itself includes segment mapping or route-impact language.
 - [x] `fixture_manifest.json` validates every cross-file ID reference and records a fixture version.
 
-## FDN-012 real-geometry record
+## FDN-013 real-geometry and divergence record
 
 - [x] Every route segment records real OSM way reference(s); no synthetic diagonal geometry remains.
 - [x] The Saloma north stair way (765200304) and elevator node (7146945539) were checked in the 2026-08-27 Overpass response.
-- [x] The wheelchair route excludes every segment tagged `steps`; the parent uses the real stair shortcut and the cyclist uses Jalan Saloma service road.
+- [x] The wheelchair route excludes every segment tagged `steps`; the parent traverses real `highway=steps` way 765200304 and the cyclist uses the physically separate Jalan Raja Abdullah/Jalan Sultan Ismail road-and-cycleway detour.
+- [x] Fixture-level haversine point-to-polyline test proves at least 150 m wheelchair/cyclist divergence in both directions (448.1 m and 595.0 m respectively).
 
 ## Public-release readiness
 

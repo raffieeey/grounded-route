@@ -5,11 +5,11 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [101.7057985, 3.1609804]
+        "coordinates": [101.7010417, 3.1650483]
       },
       "properties": {
         "id": "place-demo-home",
-        "name": "Demo Home (Jalan Haji Hassan Salleh)",
+        "name": "Demo origin (north Kampung Baru access)",
         "placeType": "origin"
       }
     },
@@ -17,11 +17,11 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [101.7102705, 3.1596015]
+        "coordinates": [101.7120667, 3.1568216]
       },
       "properties": {
         "id": "place-demo-school",
-        "name": "Demo School (near Jalan Ampang)",
+        "name": "KLCC Park west approach",
         "placeType": "destination"
       }
     },

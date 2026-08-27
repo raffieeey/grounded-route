@@ -541,6 +541,16 @@ button:disabled {
   padding: 2px 5px;
 }
 
+@media (max-width: 430px) {
+  .leaflet-tooltip,
+  .route-detour-label {
+    font-size: 0.72rem;
+    line-height: 1.15;
+    max-width: 150px;
+    white-space: normal;
+  }
+}
+
 .leaflet-tooltip.route-detour-label--profile-wheelchair, .route-detour-label--profile-wheelchair { color: #7c3aed; }
 .leaflet-tooltip.route-detour-label--profile-parent, .route-detour-label--profile-parent { color: #d97706; }
 .leaflet-tooltip.route-detour-label--profile-cyclist, .route-detour-label--profile-cyclist { color: #059669; }

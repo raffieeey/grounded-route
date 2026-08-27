@@ -2,28 +2,21 @@
   {
     "id": "saloma-link-active-mobility-demo",
     "title": "Saloma Link Active-Mobility Corridor — Illustrative Demo",
-    "description": "A curated demonstration exploring how Kuala Lumpur Development Plan 2040 active-mobility policy intent may relate to a bounded Kampung Baru / Saloma Link / Jalan Ampang route. Its geometry follows selected real OSM ways; this remains an illustrative route-evidence mapping, not an official construction or accessibility finding.",
-    "areaBoundsDescription": "Kampung Baru to Saloma Link and Jalan Ampang — about 1.3 km of real street and pedestrian geometry",
+    "description": "A curated demonstration exploring how Kuala Lumpur Development Plan 2040 active-mobility policy intent may relate to a bounded Kampung Baru / Saloma Link / KLCC Park corridor. Its geometry follows selected real OSM ways; this remains an illustrative route-evidence mapping, not an official construction or accessibility finding.",
+    "areaBoundsDescription": "North Kampung Baru to Saloma Link and KLCC Park — roughly a 2 km real-street corridor, with a longer 2.49 km cyclist road detour",
     "disclaimer": "This is an illustrative private-development fixture for demonstration purposes only. Segment impacts, accessibility findings, and construction timelines are not official. Field verification is required for any real-world claim.",
     "profileIds": ["profile-wheelchair", "profile-parent", "profile-cyclist"],
     "originPlaceId": "place-demo-home",
     "destinationPlaceId": "place-demo-school",
     "defaultSegmentIds": [
-      "seg-jalan-haji-hassan-salleh",
-      "seg-jalan-sungai-baru",
-      "seg-lorong-raja-muda-musa-1",
+      "seg-kampung-baru-north-access",
       "seg-saloma-north-access-footway",
       "seg-saloma-north-stairs",
       "seg-saloma-elevator-bridge-approach",
       "seg-saloma-link-main-bridge",
       "seg-saloma-south-slope",
-      "seg-saloma-south-access-footway",
-      "seg-saloma-plaza-crossing-link",
-      "seg-jalan-saloma-road-bypass",
-      "seg-jalan-saloma-sidewalk",
-      "seg-jalan-ampang-signal-crossing",
-      "seg-jalan-ampang-crossing-link",
-      "seg-klcc-edge-sidewalk"
+      "seg-saloma-to-klcc-park-step-free-approach",
+      "seg-jalan-raja-abdullah-sultan-ismail-cycling-detour"
     ]
   }
 ]

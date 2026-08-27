@@ -36,7 +36,7 @@ describe("FDN-010 visual layout — real local route map", () => {
       />,
     );
 
-    for (const name of ["Demo Home (Jalan Haji Hassan Salleh)", "Demo School (near Jalan Ampang)", "Kampung Baru LRT Station", "Saloma Link"]) {
+    for (const name of ["Demo origin (north Kampung Baru access)", "KLCC Park west approach", "Kampung Baru LRT Station", "Saloma Link"]) {
       expect(screen.getByRole("tooltip", { name })).toBeVisible();
     }
   });
