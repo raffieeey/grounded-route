@@ -63,8 +63,8 @@ interface WorksCluster {
   count: number;
 }
 
-const WORKS_CLUSTER_DISTANCE_METERS = 60;
-const STAIRS_LABEL_CLEARANCE_METERS = 75;
+const WORKS_CLUSTER_DISTANCE_METERS = 120;
+const STAIRS_LABEL_CLEARANCE_METERS = 220;
 
 function distanceInMeters(a: Pick<WorksMarker, "lat" | "lng">, b: Pick<WorksMarker, "lat" | "lng">) {
   const earthRadiusMeters = 6_371_000;
@@ -498,7 +498,7 @@ export default function LocalRouteMap({ profileId = DEFAULT_PROFILE_ID, defaultS
             const isEndpoint = place.properties.placeType === "origin" || place.properties.placeType === "destination";
             return (
               <CircleMarker key={place.properties.id} center={[lat, lng]} radius={6} pathOptions={{ color: "#fff", weight: 2, fillColor: isEndpoint ? "#0075de" : "#666", fillOpacity: 1 }}>
-                <Tooltip permanent direction="top" offset={[0, -7]}>{place.properties.name}</Tooltip>
+                <Tooltip permanent direction="bottom" offset={[0, 8]}>{place.properties.name}</Tooltip>
               </CircleMarker>
             );
           })}

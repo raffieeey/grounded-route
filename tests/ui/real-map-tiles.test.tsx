@@ -112,6 +112,8 @@ describe("FDN-010 real map tiles", () => {
 
     expect(screen.getByText("Stair shortcut — on your route")).toBeVisible();
     expect(screen.queryByText("Proposed works ×3")).not.toBeInTheDocument();
-    expect(screen.getAllByTestId("works-marker")).toHaveLength(5);
+    // 120m clustering collapses the 8 staged segments into 3 readable chips
+    // (with ×N count badges) instead of an overlapping pile.
+    expect(screen.getAllByTestId("works-marker")).toHaveLength(3);
   });
 });
